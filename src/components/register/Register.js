@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-
 import {
   validateRegistrationEmail,
   validateRegistrationPassword,
@@ -7,7 +6,7 @@ import {
 import { postRegistrationData } from "../../apiRequests/userApi";
 
 function Register() {
-  const [errors, setErrors] = [];
+  const [errors, setErrors] = useState([]);
 
   const [registrationData, setRegistrationData] = useState({
     email: "",
@@ -24,30 +23,36 @@ function Register() {
     }));
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
+    setErrors([]);
 
-    validateRegistrationEmail(registrationData.email, setErrors);
-    validateRegistrationPassword(
+    const emailErrors = await validateRegistrationEmail(registrationData.email);
+    const passwordErrors = validateRegistrationPassword(
       registrationData.password,
-      registrationData.confirmPassword,
-      setErrors
+      registrationData.confirmPassword
     );
 
-    if (errors.length === 0) {
-      const data = postRegistrationData(registrationData);
+    const allErrors = [...emailErrors, ...passwordErrors];
+    setErrors(allErrors);
+    console.log(errors.length);
+    console.log(errors);
+
+    if (allErrors.length === 0) {
+      const data = await postRegistrationData(registrationData);
       console.log(data.success);
     }
   }
 
   return (
     <>
-      <form>
+      <form className="container">
         <h1>Register</h1>
         <hr />
         <label htmlFor="email">
           email:{" "}
           <input
+            className="textBox"
             type="email"
             required
             placeholder="Please enter your email address"
@@ -59,6 +64,7 @@ function Register() {
         <label htmlFor="password">
           Password:{" "}
           <input
+            className="passwordBox"
             type="password"
             name="password"
             required
@@ -77,7 +83,7 @@ function Register() {
           />
         </label>
 
-        <button type="submit" onClick={handleSubmit}>
+        <button type="submit" className="registerButton" onClick={handleSubmit}>
           Submit
         </button>
         <p>Login</p>
