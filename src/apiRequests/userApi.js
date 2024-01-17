@@ -12,13 +12,13 @@ export async function getUsers() {
   }
 }
 
-export async function postRegistrationData(data) {
-  const payload = { email: data.email, password: data.password };
+export async function postData(endpoint, data) {
   try {
-    const result = await axios.post(baseUrl + "/users/register", payload);
+    const result = await axios.post(baseUrl + endpoint, data);
 
     return result.data;
   } catch (error) {
     console.error(error.message);
+    throw error;
   }
 }

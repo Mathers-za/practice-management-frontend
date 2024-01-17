@@ -3,10 +3,12 @@ import {
   validateRegistrationEmail,
   validateRegistrationPassword,
 } from "../../utiltyFunctions/validationFunctions";
-import { postRegistrationData } from "../../apiRequests/userApi";
+import { postData } from "../../apiRequests/userApi";
+import Login from "../login/Login";
 
 function Register() {
   const [errors, setErrors] = useState([]);
+  const [registered, setRegistered] = useState(false);
 
   const [registrationData, setRegistrationData] = useState({
     email: "",
@@ -15,12 +17,15 @@ function Register() {
   });
 
   function handleChange(event) {
-    console.log(event);
     const { name, value } = event.target;
     setRegistrationData((prev) => ({
       ...prev,
       [name]: value,
     }));
+  }
+
+  function handleClick() {
+    setRegistered(true);
   }
 
   async function handleSubmit(event) {
@@ -33,68 +38,70 @@ function Register() {
       registrationData.confirmPassword
     );
 
-    const allErrors = [...emailErrors, ...passwordErrors];
-    setErrors(allErrors);
-    console.log(errors.length);
-    console.log(errors);
+    setErrors([...emailErrors, ...passwordErrors]);
 
-    if (allErrors.length === 0) {
-      const data = await postRegistrationData(registrationData);
-      console.log(data.success);
+    if (emailErrors.length === 0 && passwordErrors.length === 0) {
+      await postData("/users/register", registrationData);
+      console.log("Post was a success");
+      setRegistered(true);
     }
   }
 
   return (
     <>
-      <form className="container">
-        <h1>Register</h1>
-        <hr />
-        <label htmlFor="email">
-          email:{" "}
-          <input
-            className="textBox"
-            type="email"
-            required
-            placeholder="Please enter your email address"
-            name="email"
-            value={registrationData.email}
-            onChange={handleChange}
-          />
-        </label>
-        <label htmlFor="password">
-          Password:{" "}
-          <input
-            className="passwordBox"
-            type="password"
-            name="password"
-            required
-            value={registrationData.password}
-            onChange={handleChange}
-          />
-        </label>
-        <label htmlFor="confirmPassword">
-          Confirm Password:{" "}
-          <input
-            type="password"
-            required
-            name="confirmPassword"
-            value={registrationData.passwordConfirm}
-            onChange={handleChange}
-          />
-        </label>
+      {!registered ? (
+        <form className="container" onSubmit={handleSubmit}>
+          <h1>Register</h1>
+          <hr />
+          <label htmlFor="email">
+            email:{" "}
+            <input
+              className="textBox"
+              type="email"
+              required
+              placeholder="Please enter your email address"
+              name="email"
+              value={registrationData.email}
+              onChange={handleChange}
+            />
+          </label>
+          <label htmlFor="password">
+            Password:{" "}
+            <input
+              className="passwordBox"
+              type="password"
+              name="password"
+              required
+              value={registrationData.password}
+              onChange={handleChange}
+            />
+          </label>
+          <label htmlFor="confirmPassword">
+            Confirm Password:{" "}
+            <input
+              type="password"
+              required
+              name="confirmPassword"
+              value={registrationData.passwordConfirm}
+              onChange={handleChange}
+            />
+          </label>
 
-        <button type="submit" className="registerButton" onClick={handleSubmit}>
-          Submit
-        </button>
-        <p>Login</p>
-        {errors && errors.length > 0 ? (
-          <ul>
-            {errors.map((errorMessage, index) => (
-              <li key={index}>{errorMessage}</li>
-            ))}
-          </ul>
-        ) : null}
-      </form>
+          <button type="submit" className="registerButton">
+            Submit
+          </button>
+          <p onClick={handleClick}>Already registered? CLick here to login</p>
+          {errors && errors.length > 0 ? (
+            <ul>
+              {errors.map((errorMessage, index) => (
+                <li key={index}>{errorMessage}</li>
+              ))}
+            </ul>
+          ) : null}
+        </form>
+      ) : (
+        <Login />
+      )}
     </>
   );
 }
