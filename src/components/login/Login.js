@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { postData } from "../../apiRequests/userApi";
 import Register from "../register/Register";
+import { useNavigate } from "react-router-dom";
+import cookie from "js-cookie";
 
 function validateEmail(email) {
   const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -30,6 +32,7 @@ function Login() {
     password: "",
   });
   const [validationErrorMessages, setValidationErrorMessages] = useState([]);
+  const navigate = useNavigate();
 
   function hanldeClick() {
     setRegistered(false);
@@ -53,7 +56,10 @@ function Login() {
         const data = await postData("/users/login", loginData);
         console.log("success");
         console.log(data);
-        //sendUser to profile comepoenent
+        const sessionData = cookie.get("connect.sid");
+        console.log(sessionData);
+
+        //navigate("/homePage");
       } catch (error) {
         console.log(error);
         if (error.response.status === 401) {
