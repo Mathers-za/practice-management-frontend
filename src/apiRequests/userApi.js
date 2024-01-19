@@ -12,11 +12,11 @@ export async function getUsers() {
   }
 }
 
-export async function postData(endpoint, data) {
+export async function postData(endpoint, payload) {
   try {
-    const result = await axios.post(baseUrl + endpoint, data);
-
-    return result.data;
+    await axios.post(baseUrl + endpoint, payload, {
+      withCredentials: true,
+    });
   } catch (error) {
     console.error(error.message);
     throw error;

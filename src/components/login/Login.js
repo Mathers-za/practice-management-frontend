@@ -3,6 +3,7 @@ import { postData } from "../../apiRequests/userApi";
 import Register from "../register/Register";
 import { useNavigate } from "react-router-dom";
 import cookie from "js-cookie";
+import axios from "axios";
 
 function validateEmail(email) {
   const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -53,9 +54,13 @@ function Login() {
       setValidationErrorMessages(verification.errorMessages);
     } else {
       try {
-        const data = await postData("/users/login", loginData);
+        const { data } = await axios.post(
+          "http://localhost:4000/users/login",
+          loginData,
+          { withCredentials: true }
+        );
         console.log("success");
-        console.log(data);
+        console.log(data.user);
         const sessionData = cookie.get("connect.sid");
         console.log(sessionData);
 
