@@ -3,8 +3,9 @@ import {
   validateRegistrationEmail,
   validateRegistrationPassword,
 } from "../../utiltyFunctions/validationFunctions";
-import { postData } from "../../apiRequests/userApi";
+
 import Login from "../login/Login";
+import axiosRequest from "../../apiRequests/apiRequests";
 
 function Register() {
   const [errors, setErrors] = useState([]);
@@ -41,7 +42,17 @@ function Register() {
     setErrors([...emailErrors, ...passwordErrors]);
 
     if (emailErrors.length === 0 && passwordErrors.length === 0) {
-      await postData("/users/register", registrationData);
+      try {
+        const response = await axiosRequest(
+          "post",
+          "/users/register",
+          registrationData
+        );
+
+        if (response.status === 201) {
+          console.log("user created");
+        }
+      } catch (error) {}
       console.log("Post was a success");
       setRegistered(true);
     }

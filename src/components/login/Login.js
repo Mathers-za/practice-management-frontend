@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { postData } from "../../apiRequests/userApi";
+
 import Register from "../register/Register";
+
+import axiosRequest from "../../apiRequests/apiRequests";
 import { useNavigate } from "react-router-dom";
-import cookie from "js-cookie";
-import axios from "axios";
 
 function validateEmail(email) {
   const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -32,10 +32,10 @@ function Login() {
     email: "",
     password: "",
   });
-  const [validationErrorMessages, setValidationErrorMessages] = useState([]);
   const navigate = useNavigate();
+  const [validationErrorMessages, setValidationErrorMessages] = useState([]);
 
-  function hanldeClick() {
+  function handleClick() {
     setRegistered(false);
   }
 
@@ -54,17 +54,16 @@ function Login() {
       setValidationErrorMessages(verification.errorMessages);
     } else {
       try {
-        const { data } = await axios.post(
-          "http://localhost:4000/users/login",
-          loginData,
-          { withCredentials: true }
-        );
-        console.log("success");
-        console.log(data.user);
-        const sessionData = cookie.get("connect.sid");
-        console.log(sessionData);
+        const response = await axiosRequest("post", "/users/login", loginData);
 
-        //navigate("/homePage");
+        if (response.status === 200) {
+          console.log("successfully logged in");
+          console.log(response.data.setup);
+
+          if (response.data.data.setup === false) {
+            navigate("/setup", { replace: true });
+          }
+        }
       } catch (error) {
         console.log(error);
         if (error.response.status === 401) {
@@ -110,7 +109,7 @@ function Login() {
             />
           </label>
           <button type="submit">Login</button>
-          <p onClick={hanldeClick}>
+          <p onClick={handleClick}>
             Not Registered? Click here to create an account
           </p>
           {validationErrorMessages && validationErrorMessages.length > 0 && (

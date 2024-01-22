@@ -1,4 +1,4 @@
-import { getUsers } from "../apiRequests/userApi";
+import axiosRequest from "../apiRequests/apiRequests";
 
 export async function validateRegistrationEmail(email) {
   const errorMessages = [];
@@ -8,13 +8,19 @@ export async function validateRegistrationEmail(email) {
     errorMessages.push("please enter a valid email address");
   }
 
-  const data = await getUsers();
-  console.log(data);
+  try {
+    const response = await axiosRequest("get", "/users/view");
+    console.log(response);
 
-  if (
-    data.some((element) => element.email.toLowerCase() === email.toLowerCase())
-  ) {
-    errorMessages.push("Email address already exists");
+    if (response.status === 200) {
+      response.data.data.some((user) => {
+        if (email.toLowerCase() === user.email.toLowerCase()) {
+          errorMessages.push("Email address already exists");
+        }
+      });
+    }
+  } catch (error) {
+    console.error(error);
   }
 
   return errorMessages;

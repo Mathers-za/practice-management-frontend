@@ -1,9 +1,10 @@
 import { Route, Routes, useNavigate } from "react-router-dom";
 import Entry from "./components/Pages/Entry";
 import HomePage from "./components/Pages/HomePage";
+import axiosRequest from "./apiRequests/apiRequests";
 
 import { useEffect } from "react";
-import axios from "axios";
+
 import IntialSetUp from "./components/login/IntialSetUp";
 
 function App() {
@@ -11,13 +12,9 @@ function App() {
   useEffect(() => {
     async function checkSession() {
       try {
-        const { data } = await axios.get(
-          "http://localhost:4000/session/validate",
-          { withCredentials: true }
-        );
+        const response = await axiosRequest("get", "/session/validate");
 
-        console.log(data);
-        if (data) {
+        if (response.data) {
           navigate("/setup", { replace: true });
         } else {
           navigate("/entry");
@@ -35,7 +32,7 @@ function App() {
       <Routes>
         <Route path="/entry" element={<Entry />} />
         <Route path="/" element={<HomePage />} />
-        <Route path="/setUp" element={<IntialSetUp />} />
+        <Route path="/setup" element={<IntialSetUp />} />
       </Routes>
     </>
   );
