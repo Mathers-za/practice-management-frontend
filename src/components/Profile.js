@@ -13,9 +13,7 @@ export default function Profile() {
     council_reg_num: null,
   });
 
-  const profileDataRef = useRef();
-
-  const [originalData, setOriginalData] = useState();
+  const [changes, SetChanges] = useState({});
 
   const [intialSetting, setIntialSetting] = useState(true);
 
@@ -23,6 +21,11 @@ export default function Profile() {
     const { name, value } = event.target;
 
     setProfileData((prev) => ({
+      ...prev,
+      [name]: value === "" ? null : value,
+    }));
+
+    SetChanges((prev) => ({
       ...prev,
       [name]: value === "" ? null : value,
     }));
@@ -72,7 +75,7 @@ export default function Profile() {
     }
   }
 
-  async function handlePatch() {
+  /*async function handlePatch() {
     const patchPayload = patchDataOnly(originalData, profileData);
 
     try {
@@ -91,11 +94,11 @@ export default function Profile() {
     } catch (error) {
       console.error(error);
     }
-  }
+  }*/
 
   return (
     <div>
-      <form onSubmit={intialSetting ? handlePost : handlePatch}>
+      <form onSubmit={intialSetting ? handlePost : null}>
         <TextInput
           onChange={handleChange}
           name="first_name"
