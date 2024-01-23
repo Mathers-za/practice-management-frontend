@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import TextInput from "./textInput";
 import axiosRequest from "../apiRequests/apiRequests";
 
-export default function Profile({ profileSetupStatus }) {
+export default function Profile({ profileSetupStatus, passState }) {
   const [profileData, setProfileData] = useState({
     first_name: null,
     last_name: null,
@@ -69,6 +69,7 @@ export default function Profile({ profileSetupStatus }) {
         console.log("profile successfully created");
 
         profileSetupStatus && profileSetupStatus();
+        passState && passState(profileData.id);
         SetChanges();
       } else {
         console.log("failed to create profile");
