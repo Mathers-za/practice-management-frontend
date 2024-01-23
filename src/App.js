@@ -2,10 +2,8 @@ import { Route, Routes, useNavigate } from "react-router-dom";
 import Entry from "./components/Pages/Entry";
 import HomePage from "./components/Pages/HomePage";
 import axiosRequest from "./apiRequests/apiRequests";
-
 import { useEffect } from "react";
-
-import IntialSetUp from "./components/login/IntialSetUp";
+import InitialSetUpPage from "./components/Pages/initialSetUpPage";
 
 function App() {
   const navigate = useNavigate();
@@ -32,7 +30,7 @@ function App() {
       <Routes>
         <Route path="/entry" element={<Entry />} />
         <Route path="/" element={<HomePage />} />
-        <Route path="/setup" element={<IntialSetUp />} />
+        <Route path="/setup" element={<InitialSetUpPage />} />
       </Routes>
     </>
   );

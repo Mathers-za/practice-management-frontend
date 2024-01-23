@@ -1,10 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import TextInput from "./textInput";
-import { patchDataOnly } from "../utiltyFunctions/dataHandling";
-
 import axiosRequest from "../apiRequests/apiRequests";
 
-export default function Profile() {
+export default function Profile({ profileSetupStatus }) {
   const [profileData, setProfileData] = useState({
     first_name: null,
     last_name: null,
@@ -13,9 +11,9 @@ export default function Profile() {
     council_reg_num: null,
   });
 
-  const [changes, SetChanges] = useState({});
+  const [changes, SetChanges] = useState();
 
-  const [intialSetting, setIntialSetting] = useState(true);
+  const [initialSetting, setInitialSetting] = useState(true);
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -40,16 +38,16 @@ export default function Profile() {
           console.log("made get request");
 
           setProfileData({
-            //pick up where you left off. you need to alter backend route and focus on sending the correct status codes which you can use in your cindtions
-
             first_name: response.data.data.first_name,
             last_name: response.data.data.last_name,
             profile_email: response.data.data.profile_email,
             contact_num: response.data.data.contact_num,
             council_reg_num: response.data.data.council_reg_num,
+            user_id: response.data.data.user_id,
+            id: response.data.data.id,
           });
 
-          setIntialSetting(false);
+          setInitialSetting(false);
         }
       } catch (error) {
         console.error(error);
@@ -69,36 +67,55 @@ export default function Profile() {
 
       if (response.status === 201) {
         console.log("profile successfully created");
+
+        profileSetupStatus && profileSetupStatus();
+        SetChanges();
+      } else {
+        console.log("failed to create profile");
       }
     } catch (error) {
       console.error(error);
     }
   }
 
-  /*async function handlePatch() {
-    const patchPayload = patchDataOnly(originalData, profileData);
+  async function handlePatch() {
+    const id = profileData.id;
+    console.log(id);
 
     try {
       const response = await axiosRequest(
-        "post",
-        "/profile/updateProfile",
-        patchPayload
+        "patch",
+        `/profile/update${id}`,
+        changes
       );
-      if (response.status === 201) {
-        setOriginalData(profileData);
-      }
 
-      if (response.status === 404) {
-        console.log("Data not found");
+      if (response.status === 201) {
+        console.log(response.status);
+        console.log(response.data.message);
+        SetChanges();
+      } else {
+        console.log("failed to update record");
       }
     } catch (error) {
-      console.error(error);
+      console.error(error.message);
     }
-  }*/
+  }
 
   return (
     <div>
-      <form onSubmit={intialSetting ? handlePost : null}>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (initialSetting && profileData) {
+            handlePost();
+          }
+
+          if (!initialSetting && changes) {
+            console.log("here");
+            handlePatch();
+          }
+        }}
+      >
         <TextInput
           onChange={handleChange}
           name="first_name"
