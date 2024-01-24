@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import TextInput from "./textInput";
 import axiosRequest from "../apiRequests/apiRequests";
+import { profileIdContext } from "./myContext";
 
-export default function PracticeDetails({ profile_id, practiceSetupStatus }) {
+export default function PracticeDetails() {
   const [practiceData, setPracticeData] = useState({
     practice_name: null,
     practice_num: null,
@@ -11,7 +12,9 @@ export default function PracticeDetails({ profile_id, practiceSetupStatus }) {
     profile_id: null,
     id: null,
   });
-  const [isSetupInitially, setIsSetupInitially] = useState(false);
+
+  const profileId = useContext(profileIdContext);
+
   const [changes, setChanges] = useState();
 
   function handleChange(event) {
@@ -21,14 +24,18 @@ export default function PracticeDetails({ profile_id, practiceSetupStatus }) {
       ...prev,
       [name]: value === "" ? null : value,
     }));
+
+    setChanges((prev) => ({
+      ...prev,
+      [name]: value === "" ? null : value,
+    }));
   }
 
-  useEffect(async () => {
+  useEffect(() => {
     async function fetchData() {
-      const profileId = profile_id;
       const response = await axiosRequest(
         "get",
-        `/practiceDetails/view:${profileId}`
+        `/practiceDetails/view${profileId}`
       );
       if (response.status === 200) {
         setPracticeData({
@@ -39,8 +46,6 @@ export default function PracticeDetails({ profile_id, practiceSetupStatus }) {
           profile_id: response.data.data.profile_id,
           id: response.data.data.id,
         });
-
-        setIsSetupInitially(true);
       }
     }
     fetchData();
@@ -50,33 +55,13 @@ export default function PracticeDetails({ profile_id, practiceSetupStatus }) {
     try {
       const response = await axiosRequest(
         "patch",
-        "/PracticeDetails/update:id"
+        `/PracticeDetails/update${practiceData.id}`,
+        changes
       );
 
       if (response.status === 201) {
-        console.log("patient information updated");
+        console.log("Practice information updated");
         setChanges();
-      }
-    } catch (error) {
-      console.error(error.message);
-    }
-  }
-
-  async function handlePost() {
-    const profileId = profile_id;
-
-    try {
-      const response = await axiosRequest(
-        "post",
-        `/practiceDetails/create:${profileId}`
-      );
-
-      if (response.status === 201) {
-        console.log("successfully created resource");
-        setChanges();
-        practiceSetupStatus();
-      } else {
-        console.log("failed to create resourse. Error: " + response.status);
       }
     } catch (error) {
       console.error(error.message);
@@ -88,13 +73,7 @@ export default function PracticeDetails({ profile_id, practiceSetupStatus }) {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          if (isSetupInitially && changes) {
-            handlePatch();
-          }
-
-          if (!isSetupInitially && practiceData) {
-            handlePost();
-          }
+          handlePatch();
         }}
       >
         <TextInput

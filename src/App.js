@@ -1,9 +1,10 @@
 import { Route, Routes, useNavigate } from "react-router-dom";
 import Entry from "./components/Pages/Entry";
-import HomePage from "./components/Pages/HomePage";
+import DashBoard from "./components/Pages/Dashboard";
 import axiosRequest from "./apiRequests/apiRequests";
 import { useEffect } from "react";
-import InitialSetUpPage from "./components/Pages/initialSetUpPage";
+import Profile from "./components/Profile";
+import PracticeDetails from "./components/PracticeDetails";
 
 function App() {
   const navigate = useNavigate();
@@ -13,7 +14,7 @@ function App() {
         const response = await axiosRequest("get", "/session/validate");
 
         if (response.data) {
-          navigate("/setup", { replace: true });
+          navigate("/dashboard/*", { replace: true });
         } else {
           navigate("/entry");
         }
@@ -29,8 +30,7 @@ function App() {
     <>
       <Routes>
         <Route path="/entry" element={<Entry />} />
-        <Route path="/" element={<HomePage />} />
-        <Route path="/setup" element={<InitialSetUpPage />} />
+        <Route path="/dashboard/*" element={<DashBoard />} />
       </Routes>
     </>
   );

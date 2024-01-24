@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import TextInput from "./textInput";
 import axiosRequest from "../apiRequests/apiRequests";
 
-export default function Profile({ profileSetupStatus, passState }) {
+export default function Profile() {
   const [profileData, setProfileData] = useState({
     first_name: null,
     last_name: null,
@@ -12,8 +12,6 @@ export default function Profile({ profileSetupStatus, passState }) {
   });
 
   const [changes, SetChanges] = useState();
-
-  const [initialSetting, setInitialSetting] = useState(true);
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -46,8 +44,6 @@ export default function Profile({ profileSetupStatus, passState }) {
             user_id: response.data.data.user_id,
             id: response.data.data.id,
           });
-
-          setInitialSetting(false);
         }
       } catch (error) {
         console.error(error);
@@ -56,28 +52,6 @@ export default function Profile({ profileSetupStatus, passState }) {
 
     fetchData();
   }, []);
-
-  async function handlePost() {
-    try {
-      const response = await axiosRequest(
-        "post",
-        "/profile/createProfile",
-        profileData
-      );
-
-      if (response.status === 201) {
-        console.log("profile successfully created");
-
-        profileSetupStatus && profileSetupStatus();
-        passState && passState(profileData.id);
-        SetChanges();
-      } else {
-        console.log("failed to create profile");
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
 
   async function handlePatch() {
     const id = profileData.id;
@@ -103,57 +77,52 @@ export default function Profile({ profileSetupStatus, passState }) {
   }
 
   return (
-    <div>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (initialSetting && profileData) {
-            handlePost();
-          }
-
-          if (!initialSetting && changes) {
-            console.log("here");
+    <>
+      <div>
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
             handlePatch();
-          }
-        }}
-      >
-        <TextInput
-          onChange={handleChange}
-          name="first_name"
-          value={profileData.first_name || ""}
-          type="text"
-          labelText="first Name"
-        />
-        <TextInput
-          onChange={handleChange}
-          name="last_name"
-          value={profileData.last_name || ""}
-          type="text"
-          labelText="Last Name"
-        />
-        <TextInput
-          onChange={handleChange}
-          name="profile_email"
-          value={profileData.profile_email || ""}
-          type="text"
-          labelText="Profile Email"
-        />
-        <TextInput
-          onChange={handleChange}
-          name="contact_num"
-          value={profileData.contact_num || ""}
-          type="tel"
-          labelText="contact Number"
-        />
-        <TextInput
-          onChange={handleChange}
-          name="council_reg_num"
-          value={profileData.council_reg_num || ""}
-          type="text"
-          labelText="Council Registration number"
-        />
-        <button type="submit">Save</button>
-      </form>
-    </div>
+          }}
+        >
+          <TextInput
+            onChange={handleChange}
+            name="first_name"
+            value={profileData.first_name || ""}
+            type="text"
+            labelText="First Name"
+          />
+          <TextInput
+            onChange={handleChange}
+            name="last_name"
+            value={profileData.last_name || ""}
+            type="text"
+            labelText="Last Name"
+          />
+          <TextInput
+            onChange={handleChange}
+            name="profile_email"
+            value={profileData.profile_email || ""}
+            type="text"
+            labelText="Profile Email"
+          />
+          <TextInput
+            onChange={handleChange}
+            name="contact_num"
+            value={profileData.contact_num || ""}
+            type="tel"
+            labelText="Contact Number"
+          />
+          <TextInput
+            onChange={handleChange}
+            name="council_reg_num"
+            value={profileData.council_reg_num || ""}
+            type="text"
+            labelText="Council Registration Number"
+          />
+          <button type="submit">Save</button>
+        </form>
+      </div>
+    </>
   );
 }

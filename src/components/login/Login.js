@@ -58,11 +58,7 @@ function Login() {
 
         if (response.status === 200) {
           console.log("successfully logged in");
-          console.log(response.data.setup);
-
-          if (response.data.data.setup === false) {
-            navigate("/setup", { replace: true });
-          }
+          navigate("/", { replace: true });
         }
       } catch (error) {
         console.log(error);
