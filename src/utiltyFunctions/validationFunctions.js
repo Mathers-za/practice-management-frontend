@@ -12,7 +12,7 @@ export async function validateRegistrationEmail(email) {
     const response = await axiosRequest("get", "/users/view");
     console.log(response);
 
-    if (response.status === 200) {
+    if (response.status === 200 && response.data.data.length > 0) {
       response.data.data.some((user) => {
         if (email.toLowerCase() === user.email.toLowerCase()) {
           errorMessages.push("Email address already exists");

@@ -27,12 +27,13 @@ function validateEmail(email) {
 }
 
 function Login() {
+  const navigate = useNavigate();
   const [registered, setRegistered] = useState(true);
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
   });
-  const navigate = useNavigate();
+
   const [validationErrorMessages, setValidationErrorMessages] = useState([]);
 
   function handleClick() {

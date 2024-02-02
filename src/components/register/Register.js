@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import {
   validateRegistrationEmail,
   validateRegistrationPassword,
-} from "../../utiltyFunctions/validationFunctions";
+} from "../../utiltyFunctions/validationFunctions.js";
 
 import Login from "../login/Login";
-import axiosRequest from "../../apiRequests/apiRequests";
+import axiosRequest from "../../apiRequests/apiRequests.js";
 
 function Register() {
   const [errors, setErrors] = useState([]);
@@ -29,16 +29,13 @@ function Register() {
     setRegistered(true);
   }
 
-  async function handleSubmit(event) {
-    event.preventDefault();
-    setErrors([]);
-
+  async function handleSubmit() {
     const emailErrors = await validateRegistrationEmail(registrationData.email);
     const passwordErrors = validateRegistrationPassword(
       registrationData.password,
       registrationData.confirmPassword
     );
-
+    console.log(passwordErrors);
     setErrors([...emailErrors, ...passwordErrors]);
 
     if (emailErrors.length === 0 && passwordErrors.length === 0) {
@@ -52,7 +49,9 @@ function Register() {
         if (response.status === 201) {
           console.log("user created");
         }
-      } catch (error) {}
+      } catch (error) {
+        console.error(error);
+      }
       console.log("Post was a success");
       setRegistered(true);
     }
@@ -61,7 +60,13 @@ function Register() {
   return (
     <>
       {!registered ? (
-        <form className="container" onSubmit={handleSubmit}>
+        <form
+          className="container"
+          onSubmit={(event) => {
+            event.preventDefault();
+            handleSubmit();
+          }}
+        >
           <h1>Register</h1>
           <hr />
           <label htmlFor="email">

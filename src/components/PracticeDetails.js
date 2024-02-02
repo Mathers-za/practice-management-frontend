@@ -1,110 +1,85 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import TextInput from "./textInput";
-import axiosRequest from "../apiRequests/apiRequests";
-import { profileIdContext } from "./myContext";
+import { useFetchData, usePatchData } from "../CustomHooks/serverStateHooks";
 
-export default function PracticeDetails() {
-  const [practiceData, setPracticeData] = useState({
-    practice_name: null,
-    practice_num: null,
-    practice_address: null,
-    billing_address: null,
-    profile_id: null,
-    id: null,
-  });
+export default function PracticeDetails({ profileId }) {
+  const { data, httpStatus } = useFetchData(
+    `/practiceDetails/view${profileId}`,
+    "practiceDetails"
+  );
+  const [practiceData, setPracticeData] = useState(data ?? {});
+  const [changes, setChanges] = useState({});
 
-  const profileId = useContext(profileIdContext);
+  const { handlePatch, patchMutation } = usePatchData(
+    `/practiceDetails/update${practiceData?.id}`,
+    "practiceDetails"
+  );
 
-  const [changes, setChanges] = useState();
+  console.log("practice id hook in practice", practiceData?.id);
+
+  useEffect(() => {
+    if (httpStatus === 200) {
+      setPracticeData(data);
+      console.log("practice data set");
+    }
+  }, [data]);
 
   function handleChange(event) {
     const { name, value } = event.target;
 
     setPracticeData((prev) => ({
       ...prev,
-      [name]: value === "" ? null : value,
+      [name]: value,
     }));
 
-    setChanges((prev) => ({
-      ...prev,
-      [name]: value === "" ? null : value,
-    }));
-  }
-
-  useEffect(() => {
-    async function fetchData() {
-      const response = await axiosRequest(
-        "get",
-        `/practiceDetails/view${profileId}`
-      );
-      if (response.status === 200) {
-        setPracticeData({
-          practice_name: response.data.data.practice_name,
-          practice_num: response.data.data.practice_num,
-          practice_address: response.data.data.practice_address,
-          billing_address: response.data.data.billing_address,
-          profile_id: response.data.data.profile_id,
-          id: response.data.data.id,
-        });
-      }
-    }
-    fetchData();
-  }, []);
-
-  async function handlePatch() {
-    try {
-      const response = await axiosRequest(
-        "patch",
-        `/PracticeDetails/update${practiceData.id}`,
-        changes
-      );
-
-      if (response.status === 201) {
-        console.log("Practice information updated");
-        setChanges();
-      }
-    } catch (error) {
-      console.error(error.message);
+    if (value !== practiceData[name]) {
+      setChanges((prev) => ({
+        ...prev,
+        [name]: value === "" ? null : value,
+      }));
     }
   }
 
   return (
     <>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handlePatch();
-        }}
-      >
+      <form>
         <TextInput
           type="text"
           name="practice_name"
           labelText="Practice Name"
-          value={practiceData.practice_name || ""}
+          value={practiceData?.practice_name || ""}
           onChange={handleChange}
         />
         <TextInput
           type="text"
           name="practice_num"
           labelText="Practice Number"
-          value={practiceData.practice_num || ""}
+          value={practiceData?.practice_num || ""}
           onChange={handleChange}
         />
         <TextInput
           type="text"
           name="practice_address"
           labelText="Practice Address"
-          value={practiceData.practice_address || ""}
+          value={practiceData?.practice_address || ""}
           onChange={handleChange}
         />
         <TextInput
           type="text"
           name="billing_address"
           labelText="Billing Address"
-          value={practiceData.billing_address || ""}
+          value={practiceData?.billing_address || ""}
           onChange={handleChange}
         />
-        <button type="submit">Save</button>
+        <button
+          disabled={Object.keys(changes).length === 0}
+          onClick={() => {
+            handlePatch(changes);
+            setChanges({});
+          }}
+        >
+          Save
+        </button>
       </form>
     </>
   );

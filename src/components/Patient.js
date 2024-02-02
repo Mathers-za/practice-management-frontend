@@ -1,46 +1,25 @@
-import { useContext, useEffect, useState } from "react";
-import axiosRequest from "../apiRequests/apiRequests";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+
 import TextInput from "./textInput";
-import { profileIdContext } from "./myContext";
+import { useFetchData, usePatchData } from "../CustomHooks/serverStateHooks";
 
-export default function Patient({ key, profileId }) {
-  const [patientInformation, setPatientInformation] = useState({
-    first_name: null,
-    last_name: null,
-    email: null,
-    contact_number: null,
-  });
+export default function Patient({ profileId }) {
+  const { patientId } = useParams();
+  console.log("the pateintId param in pateint" + patientId);
 
-  const [isInitialPost, setIsInitialPost] = useState(true);
+  const { data, httpStatus } = useFetchData(
+    `/patients/viewPatient${patientId}`,
+    "patientGenInfo"
+  );
 
-  const [changes, setChanges] = useState();
+  const [patientInformation, setPatientInformation] = useState(data ?? {});
+  const [changes, setChanges] = useState({});
 
-  const profileId = useContext(profileIdContext);
-
-  useEffect(() => {
-    async function getPatientData() {
-      try {
-        const response = await axiosRequest(
-          "get",
-          `/patients/viewPatient${key}`
-        );
-
-        if (response.status === 200) {
-          setIsInitialPost(false);
-          setPatientInformation({
-            first_name: response.data.data.first_name,
-            last_name: response.data.data.last_name,
-            email: response.data.data.email,
-            contact_number: response.data.contact_number,
-            id: response.data.data.id,
-          });
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    getPatientData();
-  }, []);
+  const { handlePatch } = usePatchData(
+    `/patients/update${patientInformation?.id}`,
+    "patientGenInfo"
+  );
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -50,91 +29,65 @@ export default function Patient({ key, profileId }) {
       [name]: value === "" ? null : value,
     }));
 
-    value === patientInformation[name]
-      ? null
-      : setChanges((prev) => ({
-          ...prev,
-          [name]: value === "" ? null : value,
-        }));
-  }
-
-  async function handlePost() {
-    try {
-      const response = await axiosRequest(
-        "post",
-        `/patients/create${profileId}`,
-        patientInformation
-      );
-
-      if (response.status === 201) {
-        setIsInitialPost(false);
-        setChanges();
-      }
-    } catch (error) {
-      console.error(error);
+    if (value !== patientInformation[name]) {
+      setChanges((prev) => ({
+        ...prev,
+        [name]: value === "" ? null : value,
+      }));
     }
   }
 
-  async function handlePatch() {
-    try {
-      const response = await axiosRequest(
-        "patch",
-        `/patients/update${patientInformation.id}`,
-        changes
-      );
+  console.log(httpStatus);
 
-      if (response.status === 201) {
-        setChanges();
-      }
-    } catch (error) {
-      console.error(error);
+  useEffect(() => {
+    if (httpStatus === 200) {
+      setPatientInformation(data);
+      console.log("is setting state");
     }
-  }
+  }, [data, httpStatus]);
+
+  console.log(patientInformation);
 
   return (
     <>
       <form
-        onSubmit={() => {
-          if (isInitialPost) {
-            handlePost();
-          } else if (
-            !isInitialPost &&
-            changes &&
-            Object.keys(changes).length > 0
-          ) {
-            handlePatch();
-          }
+        onSubmit={(e) => {
+          e.preventDefault();
+          handlePatch(changes);
         }}
       >
         <TextInput
           type="text"
           name="first_name"
-          value={patientInformation.first_name || ""}
+          value={patientInformation?.first_name || ""}
           labelText="First Name"
           onChange={handleChange}
+          required={true}
         />
         <TextInput
           type="text"
           name="last_name"
-          value={patientInformation.last_name || ""}
+          value={patientInformation?.last_name || ""}
           labelText="Last Name"
           onChange={handleChange}
         />
         <TextInput
           type="email"
           name="email"
-          value={patientInformation.email || ""}
+          value={patientInformation?.email || ""}
           labelText="Email"
           onChange={handleChange}
         />
         <TextInput
           type="text"
           name="contact_number"
-          value={patientInformation.contact_number || ""}
+          value={patientInformation?.contact_number || ""}
           labelText="Contact number"
           onChange={handleChange}
         />
-        <button type="submit">Save</button>
+        <button type="submit" disabled={Object.keys(changes).length === 0}>
+          Save
+        </button>
       </form>
     </>
   );

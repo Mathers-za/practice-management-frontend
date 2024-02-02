@@ -7,6 +7,7 @@ export default function TextInput({
   className,
   value,
   onChange,
+  required,
 }) {
   return (
     <>
@@ -18,6 +19,7 @@ export default function TextInput({
           className="bgColor"
           name={name}
           value={value}
+          required={required}
         />
       </label>
     </>

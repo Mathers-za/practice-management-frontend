@@ -1,47 +1,45 @@
-import { useEffect, useState } from "react";
-import axiosRequest from "../apiRequests/apiRequests";
 import { useNavigate } from "react-router-dom";
+import { useFetchData } from "../CustomHooks/serverStateHooks";
+import { useEffect, useState } from "react";
 
 export default function PatientList({ profileId }) {
-  const [patientList, setPatientList] = useState([]);
-  const [filteredList, setFilteredList] = useState();
-  const [incrementByFive, setIncrementbyFive] = useState(5);
-
+  const { data, httpStatus, isLoading } = useFetchData(
+    `/patients/viewAll${profileId}`
+  );
   const navigate = useNavigate();
+  const [input, setInput] = useState();
+  const [incrementByFive, setIncrementbyFive] = useState(5);
+  const [filteredList, setFilteredList] = useState([]);
+
+  console.log(data);
+  console.log(httpStatus);
 
   useEffect(() => {
-    async function getAllPatients() {
-      try {
-        const response = await axiosRequest(
-          "get",
-          `/patients/viewAll${profileId}`
-        );
-
-        if (response.status === 200) {
-          setPatientList(response.data.data);
-        }
-      } catch (error) {
-        console.error(error);
-      }
+    if (httpStatus === 200) {
+      setFilteredList(data);
     }
-    getAllPatients();
-  }, []);
-
-  function handleClick() {
-    navigate("/patientPage");
-  }
+  }, [data, httpStatus]);
 
   function handleSearchBarChange(event) {
     const value = event.target.value;
+    setInput(value);
 
-    setFilteredList(
-      patientList.filter((patient) => {
-        return (
-          patient.first_name.toLowerCase().includes(value.toLowerCase()) ||
-          patient.last_name.toLowerCase().includes(value.toLowerCase())
-        );
-      })
-    );
+    if (httpStatus && data && httpStatus === 200 && data?.length > 0) {
+      setFilteredList(
+        data?.filter((patient) => {
+          return (
+            patient.first_name?.toLowerCase().includes(value.toLowerCase()) ||
+            patient.last_name?.toLowerCase().includes(value.toLowerCase())
+          );
+        })
+      );
+    }
+  }
+
+  function handleNavigate(id) {
+    if (id) {
+      navigate(`/view/${id}`);
+    }
   }
 
   function loadMore() {
@@ -57,16 +55,19 @@ export default function PatientList({ profileId }) {
         value={input}
       />
 
-      {filteredList && filteredList.length > 0 ? (
-        filteredList.slice(0, incrementByFive + 1).map((patient) => {
-          return (
-            <div key={patient.id} profileId={patient.profile_id}>
-              {patient.first_name} {patient.last_name}
-            </div>
-          );
-        })
+      {filteredList && !isLoading && filteredList.length > 0 ? (
+        filteredList.slice(0, incrementByFive + 1).map((patient) => (
+          <div
+            onClick={() => {
+              handleNavigate(patient.id);
+            }}
+            key={patient.id}
+          >
+            {patient.first_name} {patient.last_name} {patient.id}
+          </div>
+        ))
       ) : (
-        <div>No data. Try creating some patients</div>
+        <div>No data to display - try creating some patients</div>
       )}
 
       <div onClick={loadMore}>LoadMore</div>
