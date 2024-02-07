@@ -1,13 +1,9 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 
 import TextInput from "./textInput";
 import { useFetchData, usePatchData } from "../CustomHooks/serverStateHooks";
 
-export default function Patient({ profileId }) {
-  const { patientId } = useParams();
-  console.log("the pateintId param in pateint" + patientId);
-
+export default function Patient({ patientId }) {
   const { data, httpStatus } = useFetchData(
     `/patients/viewPatient${patientId}`,
     "patientGenInfo"

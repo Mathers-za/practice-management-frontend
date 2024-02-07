@@ -1,7 +1,12 @@
+import { useHandleChange } from "../CustomHooks/otherHooks";
+import TextInput from "./textInput";
+import { usePostData } from "../CustomHooks/serverStateHooks";
+import { useState } from "react";
 export default function AppTypeCreation({ profileId }) {
   const { createMutation } = usePostData(
     `/appointmentTypes/create${profileId}`
   );
+
   const [appTypeData, setAppTypeData] = useState({});
   const { handleChange } = useHandleChange(setAppTypeData);
 
@@ -11,10 +16,9 @@ export default function AppTypeCreation({ profileId }) {
         onSubmit={(e) => {
           e.preventDefault();
           if (appTypeData.price) {
-            const newPrice = cleanCurrency(appTypeData.price);
             createMutation.mutate({
               ...appTypeData,
-              price: newPrice,
+              price: appTypeData.price.replace(".", ","),
             });
           }
         }}

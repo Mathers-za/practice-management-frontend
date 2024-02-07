@@ -10,12 +10,17 @@ import Patient from "./components/Patient";
 import { QueryClient, QueryClientProvider } from "react-query";
 import CreatePatient from "./components/CreatePatient";
 import AppTypeCreation from "./components/AppointmentTypes";
+import CreateAppointment from "./components/CreateAppointment";
+import PatientPicker from "./components/Pages/PatientPickerPage";
+import PatientPortal from "./components/Pages/PatientPortal";
+import MedicalAid from "./components/MedicalAid";
 
 const queryClient = new QueryClient();
 
 function App() {
   const [profileId, setProfileId] = useState();
   const navigate = useNavigate();
+  const [patientId, setPatientId] = useState();
 
   useEffect(() => {
     async function checkSession() {
@@ -40,7 +45,9 @@ function App() {
     setProfileId(id);
   }
 
-  console.log("profile id state in app", profileId);
+  function setPatientIdProp(id) {
+    setPatientId(id);
+  }
 
   return (
     <>
@@ -56,9 +63,15 @@ function App() {
               path="practice"
               element={<PracticeDetails profileId={profileId} />}
             />
+
             <Route
               path="patient/search"
-              element={<PatientList profileId={profileId} />}
+              element={
+                <PatientList
+                  profileId={profileId}
+                  setPatientId={setPatientIdProp}
+                />
+              }
             />
             <Route
               path="createAppointmentType"
@@ -68,10 +81,25 @@ function App() {
               path="patientCreate"
               element={<CreatePatient profileId={profileId} />}
             />
+
             <Route
-              path="view/:patientId"
-              element={<Patient profileId={profileId} />}
+              path="createAppointment"
+              element={<CreateAppointment profileId={profileId} />}
             />
+
+            <Route path="patientPicker" element={<PatientPicker />} />
+            <Route
+              path="patientPortal"
+              element={
+                <PatientPortal patientId={patientId} profileId={profileId} />
+              }
+            >
+              <Route index element={<Patient patientId={patientId} />} />
+              <Route
+                path="medicalAid"
+                element={<MedicalAid patientId={patientId} />}
+              />
+            </Route>
           </Route>
         </Routes>
       </QueryClientProvider>

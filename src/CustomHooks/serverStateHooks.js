@@ -3,13 +3,11 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 
 const useFetchData = (endpoint = "", queryKey) => {
-  console.log(endpoint);
-  console.log(queryKey);
   const [httpStatus, setHttpStatus] = useState();
   const { data, isSuccess, isError, error, isLoading, isRefetching } = useQuery(
     {
       //data.data.property to acces properties. data.status to access http codes
-      queryKey: [queryKey],
+      queryKey: queryKey,
       queryFn: async () => {
         const response = await axios.get(`http://localhost:4000${endpoint}`, {
           withCredentials: true,
@@ -52,6 +50,7 @@ const usePostData = (endpoint = "", queryKey = undefined) => {
       return response.data;
     },
     onSuccess: () => {
+      console.log("post was a success, teh queyr key is" + queryKey);
       queryKey && queryClient.invalidateQueries(queryKey);
     },
   });
