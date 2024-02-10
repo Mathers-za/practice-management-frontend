@@ -18,7 +18,7 @@ export default function CreateAppointment({ profileId }) {
     `/appointmentTypes/viewAll${profileId}`,
     "appTypes"
   );
-  let selectedAppointmentTypeObject = {};
+
   const { currentDate, currentTime, endTime } = setDateAndTimes();
 
   const navigate = useNavigate();
@@ -32,7 +32,7 @@ export default function CreateAppointment({ profileId }) {
 
   function handleChange(e) {
     const { name, value } = e.target;
-    console.log(value);
+
     setAppointment((prev) => ({
       ...prev,
 

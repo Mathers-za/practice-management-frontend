@@ -26,6 +26,9 @@ export default function SideBar() {
         <li>
           <Link to="createAppointment">Create appointment</Link>
         </li>
+        <li>
+          <Link to="appointmentTypePortal">Appointment Type Portal</Link>
+        </li>
       </ul>
     </>
   );

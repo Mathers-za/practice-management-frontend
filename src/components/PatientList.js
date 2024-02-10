@@ -6,6 +6,10 @@ export default function PatientList({ profileId, setPatientId }) {
   function handleClickProp(id) {
     navigate(`/patientPortal`);
     setPatientId(id);
+    console.log(
+      "the patinetid being set from Patient List is (should match with app) " +
+        id
+    );
   }
 
   return (

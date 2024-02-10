@@ -50,7 +50,6 @@ const usePostData = (endpoint = "", queryKey = undefined) => {
       return response.data;
     },
     onSuccess: () => {
-      console.log("post was a success, teh queyr key is" + queryKey);
       queryKey && queryClient.invalidateQueries(queryKey);
     },
   });
@@ -84,3 +83,34 @@ const usePatchData = (endpoint = "", queryKey = undefined) => {
 };
 
 export { usePatchData };
+
+const useDeleteData = (endpoint = "", queryKey = undefined) => {
+  const queryClient = useQueryClient();
+  const deleteMutation = useMutation(
+    {
+      mutationFn: async () => {
+        const response = await axios.delete(
+          `http://localhost:4000${endpoint}`,
+          {
+            withCredentials: true,
+          }
+        );
+        console.log(
+          "The delete hook in react query retuned the folloing object " +
+            response
+        );
+        console.log(
+          "what is rteuned as datat from recat queyr delete is " + response.data
+        );
+        return response.data;
+      },
+    },
+    {
+      onSuccess: () => {
+        queryKey && queryClient.invalidateQueries(queryKey);
+      },
+    }
+  );
+  return { deleteMutation };
+};
+export { useDeleteData };

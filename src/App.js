@@ -14,6 +14,8 @@ import CreateAppointment from "./components/CreateAppointment";
 import PatientPicker from "./components/Pages/PatientPickerPage";
 import PatientPortal from "./components/Pages/PatientPortal";
 import MedicalAid from "./components/MedicalAid";
+import AppointmentTypePortal from "./components/Pages/AppointTypePortal";
+import AppointmentTypeList from "./components/AppointmentTypeList";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +23,7 @@ function App() {
   const [profileId, setProfileId] = useState();
   const navigate = useNavigate();
   const [patientId, setPatientId] = useState();
+  const [appTypeId, setAppTypeId] = useState();
 
   useEffect(() => {
     async function checkSession() {
@@ -36,7 +39,6 @@ function App() {
         console.error(error);
       }
     }
-    console.log("mounted");
 
     checkSession();
   }, []);
@@ -47,6 +49,11 @@ function App() {
 
   function setPatientIdProp(id) {
     setPatientId(id);
+    console.log("patinet id in app set to " + id);
+  }
+
+  function setAppointmentTypeId(id) {
+    setAppTypeId(id);
   }
 
   return (
@@ -73,10 +80,7 @@ function App() {
                 />
               }
             />
-            <Route
-              path="createAppointmentType"
-              element={<AppTypeCreation profileId={profileId} />}
-            />
+
             <Route
               path="patientCreate"
               element={<CreatePatient profileId={profileId} />}
@@ -91,7 +95,11 @@ function App() {
             <Route
               path="patientPortal"
               element={
-                <PatientPortal patientId={patientId} profileId={profileId} />
+                <PatientPortal
+                  patientId={patientId}
+                  profileId={profileId}
+                  appTypeId={appTypeId}
+                />
               }
             >
               <Route index element={<Patient patientId={patientId} />} />
@@ -99,6 +107,27 @@ function App() {
                 path="medicalAid"
                 element={<MedicalAid patientId={patientId} />}
               />
+            </Route>
+            <Route
+              path="appointmentTypePortal"
+              element={<AppointmentTypePortal profileId={profileId} />}
+            >
+              <Route
+                path="createAppointmentType"
+                element={<AppTypeCreation profileId={profileId} />}
+              />
+
+              <Route
+                index
+                element={
+                  <AppointmentTypeList
+                    profileId={profileId}
+                    passAppTypeIdtoParent={setAppointmentTypeId}
+                  />
+                }
+              />
+
+              <Route path="view/:id" element={<AppTypeCreation />} />
             </Route>
           </Route>
         </Routes>
