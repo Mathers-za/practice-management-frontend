@@ -5,20 +5,24 @@ import {
   usePostData,
 } from "../CustomHooks/serverStateHooks";
 import { useEffect, useState } from "react";
-
-import { useParams } from "react-router-dom";
+import PreDefinedIcdCoding from "./PreDefinedIcd10";
+import { useNavigate, useParams } from "react-router-dom";
 
 function cleanedDataForPatching(data) {
   const patchedData = {};
   for (const property in data) {
     if (property === "appointment_name") {
-      patchedData[property] = data[property].trim();
+      patchedData[property] = data[property] ? data[property].trim() : null;
     }
     if (property === "price") {
-      patchedData[property] = data[property].replace(".", ",");
+      patchedData[property] = data[property]
+        ? data[property].replace(".", ",")
+        : null;
     }
     if (property === "duration") {
-      patchedData[property] = data[property] + " minutes";
+      patchedData[property] = data[property]
+        ? data[property] + " minutes"
+        : null;
     }
   }
 
@@ -62,6 +66,7 @@ function parseDataIntoFormatForDisplay(data) {
 export default function AppTypeCreation({ profileId }) {
   //set apptype id in app.pass it from apptype portal
   const { id } = useParams();
+  const navgiate = useNavigate();
 
   const appTypeId = id ? id : 0;
   console.log("the appointment id passed as params is" + appTypeId);
@@ -150,13 +155,23 @@ export default function AppTypeCreation({ profileId }) {
           labelText="Price"
           type="number"
         />
+        <hr />
+        {!createMode && <PreDefinedIcdCoding appTypeId={id} />}
 
         <button
+          hidden={!createMode && Object.keys(changes).length === 0}
           type="submit"
           disabled={
             Object.keys(appTypeData).length === 0 ||
             Object.keys(changes).length === 0
           }
+        >
+          Save
+        </button>
+
+        <button
+          hidden={createMode && Object.keys(changes).length > 0}
+          onClick={navgiate("/")}
         >
           Save
         </button>

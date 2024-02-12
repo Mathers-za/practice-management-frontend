@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
 import {
   useDeleteData,
   useFetchData,
   usePostData,
 } from "../CustomHooks/serverStateHooks";
+import { useState } from "react";
 
 function cleanData(data) {
   const cleanedPrice = data?.price.replace(".", ",") ?? null;
@@ -19,7 +19,7 @@ function cleanData(data) {
   };
 }
 
-export default function PreDefinedIcdCoding({ profile, appTypeId }) {
+export default function PreDefinedIcdCoding({ appTypeId }) {
   const { data } = useFetchData(`/predefinedIcd10/view${appTypeId}`);
   const { createMutation } = usePostData(`/predefinedIcd10/create${appTypeId}`);
 
@@ -93,7 +93,12 @@ export default function PreDefinedIcdCoding({ profile, appTypeId }) {
                 <tr key={code.id}>
                   <td>{code.icd10_code}</td>
                   <td>{code.procedural_code}</td>
-                  <td>{code.price}</td>
+                  <td>
+                    {code.price}{" "}
+                    <button onClick={deleteMutation.mutate({ id: code.id })}>
+                      Delete
+                    </button>
+                  </td>
                 </tr>
               );
             })

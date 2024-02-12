@@ -16,6 +16,8 @@ import PatientPortal from "./components/Pages/PatientPortal";
 import MedicalAid from "./components/MedicalAid";
 import AppointmentTypePortal from "./components/Pages/AppointTypePortal";
 import AppointmentTypeList from "./components/AppointmentTypeList";
+import AppointmentSearch from "./components/AppointmentSearch";
+import AppointmentPortal from "./components/Pages/AppointmentPortal";
 
 const queryClient = new QueryClient();
 
@@ -50,10 +52,6 @@ function App() {
   function setPatientIdProp(id) {
     setPatientId(id);
     console.log("patinet id in app set to " + id);
-  }
-
-  function setAppointmentTypeId(id) {
-    setAppTypeId(id);
   }
 
   return (
@@ -95,11 +93,7 @@ function App() {
             <Route
               path="patientPortal"
               element={
-                <PatientPortal
-                  patientId={patientId}
-                  profileId={profileId}
-                  appTypeId={appTypeId}
-                />
+                <PatientPortal patientId={patientId} profileId={profileId} />
               }
             >
               <Route index element={<Patient patientId={patientId} />} />
@@ -119,16 +113,16 @@ function App() {
 
               <Route
                 index
-                element={
-                  <AppointmentTypeList
-                    profileId={profileId}
-                    passAppTypeIdtoParent={setAppointmentTypeId}
-                  />
-                }
+                element={<AppointmentTypeList profileId={profileId} />}
               />
 
               <Route path="view/:id" element={<AppTypeCreation />} />
             </Route>
+
+            <Route
+              path="appointmentPortal"
+              element={<AppointmentPortal profileId={profileId} />}
+            />
           </Route>
         </Routes>
       </QueryClientProvider>
