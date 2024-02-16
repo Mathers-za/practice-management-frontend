@@ -6,8 +6,6 @@ export default function CreatePatient({ profileId }) {
   const { handlePost } = usePostData(`/patients/create${profileId}`);
   const [patientInfo, setPatientInfo] = useState({});
 
-  console.log("profile id prop in pateint create is " + profileId);
-
   function handleChange(e) {
     const { name, value } = e.target;
 

@@ -20,9 +20,7 @@ export default function SideBar() {
         <li>
           <Link to="patientCreate">Create Patient</Link>
         </li>
-        <li>
-          <Link to="createAppointmentType">Create Appointment type</Link>
-        </li>
+
         <li>
           <Link to="createAppointment">Create appointment</Link>
         </li>

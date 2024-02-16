@@ -18,6 +18,8 @@ import AppointmentTypePortal from "./components/Pages/AppointTypePortal";
 import AppointmentTypeList from "./components/AppointmentTypeList";
 import AppointmentSearch from "./components/AppointmentSearch";
 import AppointmentPortal from "./components/Pages/AppointmentPortal";
+import PatientTreatmentNotesList from "./components/Pages/PatientTreatmentNotes/TreatmentNotesList";
+import EditCreateTreatmentNote from "./components/Pages/PatientTreatmentNotes/TreatmentNotesEditCreate";
 
 const queryClient = new QueryClient();
 
@@ -47,11 +49,11 @@ function App() {
 
   function setProfileIdProp(id) {
     setProfileId(id);
+    console.log("profile id set in parent is " + id);
   }
 
   function setPatientIdProp(id) {
     setPatientId(id);
-    console.log("patinet id in app set to " + id);
   }
 
   return (
@@ -96,6 +98,20 @@ function App() {
                 <PatientPortal patientId={patientId} profileId={profileId} />
               }
             >
+              <Route
+                path="treatmentNotes"
+                element={<PatientTreatmentNotesList patientId={patientId} />}
+              />
+
+              <Route
+                path="editTreatmentNote/:id"
+                element={<EditCreateTreatmentNote patientId={patientId} />}
+              />
+              <Route
+                path="createTreatmentNote"
+                element={<EditCreateTreatmentNote patientId={patientId} />}
+              />
+
               <Route index element={<Patient patientId={patientId} />} />
               <Route
                 path="medicalAid"

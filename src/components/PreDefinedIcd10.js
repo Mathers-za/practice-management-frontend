@@ -3,35 +3,43 @@ import {
   useFetchData,
   usePostData,
 } from "../CustomHooks/serverStateHooks";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function cleanData(data) {
-  const cleanedPrice = data?.price.replace(".", ",") ?? null;
+  const newObject = {};
 
-  const trimmedICD10Code = data?.icd10_code.trim() ?? null;
-  const TrimmedProceduralCode = data?.procedural_code.trim() ?? null;
-  return {
-    cleanedData: {
-      price: cleanedPrice,
-      icd10_code: trimmedICD10Code,
-      procedural_code: TrimmedProceduralCode,
-    },
-  };
+  for (const property in data) {
+    const value = data[property];
+
+    if (property === "price" && typeof value === "string") {
+      newObject[property] = data[property].replace(",", ".");
+    } else {
+      newObject[property] = data[property];
+    }
+  }
+  return newObject;
 }
 
 export default function PreDefinedIcdCoding({ appTypeId }) {
-  const { data } = useFetchData(`/predefinedIcd10/view${appTypeId}`);
-  const { createMutation } = usePostData(`/predefinedIcd10/create${appTypeId}`);
-
+  const { data } = useFetchData(
+    `/predefinedIcd10/view${appTypeId}`,
+    "icd10Data"
+  );
+  const { createMutation } = usePostData(
+    `/predefinedIcd10/create${appTypeId}`,
+    "icd10Data"
+  );
   const { deleteMutation } = useDeleteData(
-    `/predefinedIcd10/delete${appTypeId}`
+    `/predefinedIcd10/delete`,
+    "icd10Data"
   );
 
   const [preDefinedIcdInputData, setPreDefinedIcdInputData] = useState({});
 
-  function handleIcd10Delete(id) {
-    deleteMutation.mutate({ id: id });
-  }
+  useEffect(() => {
+    if (data) {
+    }
+  }, [data]);
 
   function handleIcdInputChange(e) {
     const { name, value } = e.target;
@@ -71,10 +79,8 @@ export default function PreDefinedIcdCoding({ appTypeId }) {
         <button
           disabled={Object.keys(preDefinedIcdInputData).length === 0}
           onClick={() => {
-            const { cleanedData } = cleanData(preDefinedIcdInputData);
-            console.log(
-              "this is what the cleaned data looks like" + cleanedData
-            );
+            const cleanedData = cleanData(preDefinedIcdInputData);
+
             createMutation.mutate(cleanedData);
             setPreDefinedIcdInputData({});
           }}
@@ -94,8 +100,11 @@ export default function PreDefinedIcdCoding({ appTypeId }) {
                   <td>{code.icd10_code}</td>
                   <td>{code.procedural_code}</td>
                   <td>
-                    {code.price}{" "}
-                    <button onClick={deleteMutation.mutate({ id: code.id })}>
+                    {code.price}
+                    <button
+                      type="button"
+                      onClick={() => deleteMutation.mutate(code.id)}
+                    >
                       Delete
                     </button>
                   </td>

@@ -8,74 +8,57 @@ import { useEffect, useState } from "react";
 import PreDefinedIcdCoding from "./PreDefinedIcd10";
 import { useNavigate, useParams } from "react-router-dom";
 
-function cleanedDataForPatching(data) {
+function cleanedData(data) {
+  console.log("data sent to function " + data);
   const patchedData = {};
   for (const property in data) {
-    if (property === "appointment_name") {
-      patchedData[property] = data[property] ? data[property].trim() : null;
+    const value = data[property];
+    if (property === "appointment_name" && typeof value === "string") {
+      patchedData[property] = data[property].trim();
     }
-    if (property === "price") {
-      patchedData[property] = data[property]
-        ? data[property].replace(".", ",")
-        : null;
+    if (property === "price" && typeof value === "string") {
+      patchedData[property] = data[property].replace(".", ",");
     }
-    if (property === "duration") {
-      patchedData[property] = data[property]
-        ? data[property] + " minutes"
-        : null;
+    if (property === "duration" && typeof value === "string") {
+      patchedData[property] = parseInt(data[property]);
+    }
+
+    if (value === null) {
+      patchedData[property] = null;
     }
   }
+  console.log(patchedData);
 
   return patchedData;
 }
 
-function cleanDataForPosting(data) {
-  console.log("data recive din function" + data);
-  //this function converts the relevant data into a format that postgres accepts
-
-  const trimmedAppTypeName = data?.appointment_name
-    ? data.appointment_name.trim()
-    : null;
-  const formattedPrice = data?.price
-    ? data.price.replace(".", ",").padEnd(data.price.indexOf(".") + 3, "0")
-    : null;
-  const formattedDuration = data?.duration ? data.duration + " minutes" : null;
-
-  return {
-    cleanedData: {
-      appointment_name: trimmedAppTypeName,
-      duration: formattedDuration,
-      price: formattedPrice,
-    },
-  };
-}
-
 function parseDataIntoFormatForDisplay(data) {
-  //this function reformats data received from db into format that the inputs accept
-  const priceToInt =
-    data?.price?.slice(1, data.price.length + 1).replace(",", ".") || null;
-  const formattedDuration = data?.duration?.minutes.toString() || null;
+  const newObject = {};
+  for (const property in data) {
+    const value = data[property];
 
-  return {
-    price: priceToInt,
-    appointment_name: data?.appointment_name || null,
-    duration: formattedDuration,
-  };
+    if (property !== "duration" && property !== "price") {
+      newObject[property] = data[property];
+    } else if (typeof value === "number") {
+      newObject[property] = data[property].toString();
+    } else if (property === "price" && value !== null) {
+      newObject[property] = data[property]
+        .slice(1, data[property].length + 1)
+        .replace(",", ".");
+    }
+  }
+
+  return newObject;
 }
 
 export default function AppTypeCreation({ profileId }) {
   //set apptype id in app.pass it from apptype portal
   const { id } = useParams();
-  const navgiate = useNavigate();
 
   const appTypeId = id ? id : 0;
-  console.log("the appointment id passed as params is" + appTypeId);
 
   const fetchEndpoint = `/appointmentTypes/view${appTypeId}`;
-  console.log(
-    "appmenttypeId endpoint created based on cdontional initlisation " +
-      fetchEndpoint
-  );
+
   const { data, httpStatus } = useFetchData(
     fetchEndpoint,
     "AppointmentTypeDataQueryKey"
@@ -89,15 +72,13 @@ export default function AppTypeCreation({ profileId }) {
   const { patchMutation } = usePatchData(`/appointmentTypes/update${id}`);
   const [appTypeData, setAppTypeData] = useState({});
   const [changes, setChanges] = useState({});
-  console.log(data && data);
 
   useEffect(() => {
     if (data && httpStatus === 200) {
-      console.log("ran data that exists- heres the apprent data" + data);
       //try with data. may need to utilise http state variable from useFetch Hook
       setCreateMode(false);
       const parsedData = parseDataIntoFormatForDisplay(data);
-      console.log(parsedData);
+
       setAppTypeData(parsedData);
     } else if (httpStatus === 204) {
       setCreateMode(true);
@@ -124,11 +105,11 @@ export default function AppTypeCreation({ profileId }) {
         onSubmit={(e) => {
           e.preventDefault();
           if (createMode === true) {
-            const { cleanedData } = cleanDataForPosting(appTypeData);
-            createMutation.mutate(cleanedData);
+            const cleansedData = cleanedData(appTypeData);
+            createMutation.mutate(cleansedData);
             setAppTypeData({});
           } else if (createMode === false) {
-            const result = cleanedDataForPatching(changes);
+            const result = cleanedData(changes);
             patchMutation.mutate(result);
             setChanges({});
           }
@@ -154,24 +135,17 @@ export default function AppTypeCreation({ profileId }) {
           value={appTypeData?.price || ""}
           labelText="Price"
           type="number"
+          min="0"
         />
         <hr />
         {!createMode && <PreDefinedIcdCoding appTypeId={id} />}
 
         <button
-          hidden={!createMode && Object.keys(changes).length === 0}
           type="submit"
           disabled={
             Object.keys(appTypeData).length === 0 ||
             Object.keys(changes).length === 0
           }
-        >
-          Save
-        </button>
-
-        <button
-          hidden={createMode && Object.keys(changes).length > 0}
-          onClick={navgiate("/")}
         >
           Save
         </button>

@@ -33,16 +33,11 @@ export default function Patient({ patientId }) {
     }
   }
 
-  console.log(httpStatus);
-
   useEffect(() => {
     if (httpStatus === 200) {
       setPatientInformation(data);
-      console.log("is setting state");
     }
   }, [data, httpStatus]);
-
-  console.log(patientInformation);
 
   return (
     <>

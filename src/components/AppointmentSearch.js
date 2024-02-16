@@ -1,16 +1,17 @@
 import { useState } from "react";
 import axios from "axios";
-
+import { format, startOfMonth, endOfMonth } from "date-fns";
 export default function AppointmentSearch({
   profileId,
   setResultsInAppPortal,
 }) {
-  const [searchParams, setSearchParams] = useState({});
-  console.log(" profileId in appointment search is " + profileId);
+  const [searchParams, setSearchParams] = useState({
+    start_date: format(startOfMonth(new Date()), "yyyy-MM-dd"),
+    end_date: format(endOfMonth(new Date()), "yyyy-MM-dd"),
+  });
 
   async function handleFilteredSearach(profileId, searchParams) {
     try {
-      console.log(searchParams);
       const result = await axios.get(
         `http://localhost:4000/appointments/filter${profileId}`,
         {
@@ -18,9 +19,6 @@ export default function AppointmentSearch({
         }
       );
 
-      console.log(
-        "the format of the resulting data from the serach is " + result.data
-      );
       setResultsInAppPortal(result.data);
     } catch (error) {
       console.error(error);
@@ -56,20 +54,22 @@ export default function AppointmentSearch({
         onChange={handleChange}
         type="date"
         name="start_date"
-        value={searchParams?.start_Date || null}
+        value={searchParams?.start_date || null}
       />
       <input
         onChange={handleChange}
         type="date"
         name="end_date"
-        value={searchParams?.end_Date || searchParams?.start_Date || null}
+        value={searchParams?.end_date || null}
       />
 
       <button
-        disabled={Object.keys(searchParams).length === 0}
         onClick={() => {
           handleFilteredSearach(profileId, searchParams);
-          setSearchParams({});
+          setSearchParams({
+            start_date: searchParams.start_date,
+            end_date: searchParams.end_date,
+          });
         }}
       >
         {" "}

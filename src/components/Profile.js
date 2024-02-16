@@ -17,10 +17,7 @@ export default function Profile() {
     "profileData"
   );
 
-  console.log(data && data);
-
   useEffect(() => {
-    console.log("useEffct fired", httpStatus);
     if (httpStatus === 200) {
       setProfileData(data);
     }

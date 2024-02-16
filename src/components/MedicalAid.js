@@ -13,9 +13,6 @@ export default function MedicalAid({ patientId }) {
     `/medicalAid/view${patientId}`,
     "medicalAidData"
   );
-  console.log(
-    "the patinet id in medical aid is (should match with other 2) " + patientId
-  );
 
   const [isFirstTimeCreatingPost, setIsFirstTimeCreatingPost] = useState(false);
   const { createMutation } = usePostData(
@@ -35,7 +32,7 @@ export default function MedicalAid({ patientId }) {
       setIsFirstTimeCreatingPost(true);
       setMedAidInformation({});
     }
-    console.log("makes it this far");
+
     queryClient.invalidateQueries("medicalAidData"); // had to inlcude this in order to sync patient Id prop. patient id was not syncng in medicalAid and thus displaying data of previous id
     if (data) {
       setMedAidInformation(data);

@@ -3,15 +3,13 @@ import { useEffect, useState } from "react";
 
 export default function PatientSearch({ profileId, onclick }) {
   const { data, httpStatus, isLoading } = useFetchData(
-    `/patients/viewAll${profileId}`
+    `/patients/viewAll${profileId}`,
+    "listOfPatients"
   );
 
   const [input, setInput] = useState();
   const [incrementByFive, setIncrementbyFive] = useState(5);
   const [filteredList, setFilteredList] = useState([]);
-
-  console.log(data);
-  console.log(httpStatus);
 
   useEffect(() => {
     if (httpStatus === 200) {

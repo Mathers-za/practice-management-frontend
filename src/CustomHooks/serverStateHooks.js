@@ -3,9 +3,15 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 
 const useFetchData = (endpoint = "", queryKey) => {
+  console.log(
+    "ftech data hook fired. the endpoint is and querykey is " +
+      endpoint +
+      " " +
+      queryKey
+  );
   const [httpStatus, setHttpStatus] = useState();
-  const { data, isSuccess, isError, error, isLoading, isRefetching } = useQuery(
-    {
+  const { data, isSuccess, isError, error, isLoading, isRefetching, refetch } =
+    useQuery({
       //data.data.property to acces properties. data.status to access http codes
       queryKey: queryKey,
       queryFn: async () => {
@@ -16,8 +22,7 @@ const useFetchData = (endpoint = "", queryKey) => {
         return response.data;
       },
       refetchOnWindowFocus: false,
-    }
-  );
+    });
 
   return {
     data,
@@ -27,6 +32,7 @@ const useFetchData = (endpoint = "", queryKey) => {
     isLoading,
     httpStatus,
     isRefetching,
+    refetch,
   };
 };
 
@@ -85,28 +91,20 @@ const usePatchData = (endpoint = "", queryKey = undefined) => {
 export { usePatchData };
 
 const useDeleteData = (endpoint = "", queryKey = undefined) => {
+  console.log(queryKey);
   const queryClient = useQueryClient();
   const deleteMutation = useMutation(
     {
-      mutationFn: async () => {
-        const response = await axios.delete(
-          `http://localhost:4000${endpoint}`,
-          {
-            withCredentials: true,
-          }
-        );
-        console.log(
-          "The delete hook in react query retuned the folloing object " +
-            response
-        );
-        console.log(
-          "what is rteuned as datat from recat queyr delete is " + response.data
-        );
-        return response.data;
+      mutationFn: async (id) => {
+        return await axios.delete(`http://localhost:4000${endpoint}${id}`, {
+          withCredentials: true,
+        });
       },
     },
+
     {
-      onSuccess: () => {
+      onSettled: () => {
+        console.log("deletion was a success");
         queryKey && queryClient.invalidateQueries(queryKey);
       },
     }

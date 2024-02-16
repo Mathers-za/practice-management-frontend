@@ -10,7 +10,6 @@ export async function validateRegistrationEmail(email) {
 
   try {
     const response = await axiosRequest("get", "/users/view");
-    console.log(response);
 
     if (response.status === 200 && response.data.data.length > 0) {
       response.data.data.some((user) => {

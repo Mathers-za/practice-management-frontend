@@ -15,12 +15,9 @@ export default function PracticeDetails({ profileId }) {
     "practiceDetails"
   );
 
-  console.log("practice id hook in practice", practiceData?.id);
-
   useEffect(() => {
     if (httpStatus === 200) {
       setPracticeData(data);
-      console.log("practice data set");
     }
   }, [data]);
 
