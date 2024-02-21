@@ -20,6 +20,7 @@ import AppointmentSearch from "./components/AppointmentSearch";
 import AppointmentPortal from "./components/Pages/AppointmentPortal";
 import PatientTreatmentNotesList from "./components/Pages/PatientTreatmentNotes/TreatmentNotesList";
 import EditCreateTreatmentNote from "./components/Pages/PatientTreatmentNotes/TreatmentNotesEditCreate";
+import InvoicePortal from "./components/Pages/ICD10/InvoicePage";
 
 const queryClient = new QueryClient();
 
@@ -139,6 +140,8 @@ function App() {
               path="appointmentPortal"
               element={<AppointmentPortal profileId={profileId} />}
             />
+
+            <Route path="invoicePortal" element={<InvoicePortal />} />
           </Route>
         </Routes>
       </QueryClientProvider>

@@ -11,6 +11,7 @@ export default function AppointmentCard(props) {
           <AppointmentCardDropDown
             patientId={props.patient_id}
             appointmentId={props.appointment_id}
+            appointmentTypeId={props.apptype_id}
           />
         </div>
         <div className="middle">
