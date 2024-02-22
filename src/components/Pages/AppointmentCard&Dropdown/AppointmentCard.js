@@ -1,27 +1,31 @@
-import "./appCardStyle.css";
+import styles from "./appCardStyle.module.css";
 import { format } from "date-fns";
 import AppointmentCardDropDown from "./AppointmentCardDropdown";
+import { useEffect } from "react";
 
 export default function AppointmentCard(props) {
-  console.log("thr props in appoiuntment card is" + props.appointment_id);
+  useEffect(() => {
+    console.log("props in appointment card is " + props);
+  }, [props]);
+
   return (
     <>
-      <div className="container">
-        <div className="left">
+      <div className={styles.container}>
+        <div className={styles.left}>
           <AppointmentCardDropDown
             patientId={props.patient_id}
             appointmentId={props.appointment_id}
             appointmentTypeId={props.apptype_id}
           />
         </div>
-        <div className="middle">
+        <div className={styles.middle}>
           {" "}
           <p>{props.patient_first_name + " " + props.patient_last_name}</p>{" "}
           <p>
             {" "}
             {format(new Date(props.appointment_date), "eee dd MMM yyyy")}{" "}
-            {props.start_time.slice(0, props.start_time.length - 3)} -{" "}
-            {props.end_time.slice(0, props.end_time.length - 3)}
+            {props?.start_time?.slice(0, props.start_time.length - 3)} -{" "}
+            {props?.end_time?.slice(0, props.end_time.length - 3)}
           </p>
           <p>
             {props.appointment_name} With{" "}
@@ -29,7 +33,7 @@ export default function AppointmentCard(props) {
             at {props.practice_name}
           </p>
         </div>
-        <div className="right">{props.apptype_price}</div>
+        <div className={styles.right}>{props.apptype_price}</div>
       </div>
     </>
   );

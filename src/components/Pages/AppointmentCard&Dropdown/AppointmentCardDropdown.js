@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import "./appCardDropdownStyle.css";
+import styles from "./appCardDropdownStyle.module.css";
 import { useNavigate } from "react-router-dom";
 
 export default function AppointmentCardDropDown({
@@ -29,12 +29,15 @@ export default function AppointmentCardDropDown({
 
   return (
     <>
-      <div className="dropdown">
-        <button onClick={() => setIsOpen(!isOpen)} className="drop-btn">
+      <div className={styles.dropdown}>
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className={styles["drop-btn"]}
+        >
           e
         </button>
         {isOpen && (
-          <div className="dropdown-content" ref={dropDownRef}>
+          <div className={styles["dropdown-content"]} ref={dropDownRef}>
             <div
               onClick={() =>
                 navigate("/invoicePortal", {

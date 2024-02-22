@@ -1,17 +1,20 @@
+.table {
+  width: 30%;
+  height: fit-content;
+  text-align: center;
+  margin: auto;
+  
+}
+
 table,
 tr,
 td,
 th {
   border: 1px solid black;
   border-collapse: collapse;
+  
 }
 
-.table {
-  width: 30%;
-  height: fit-content;
-  text-align: center;
-  margin: auto;
-}
 
 th,
 td,
@@ -19,18 +22,36 @@ tr {
   width: 30%;
 }
 
+input{
+  border: none;
+  
+}
+
+input:focus {
+  
+  outline: none;
+}
+input:hover{
+  cursor: text;
+   
+}
+
+
+
+
+
 .container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 10px; 
 }
 
 button {
   width: 30%;
 }
 
-.button-grouping {
+.buttonGrouping {
   display: flex;
   flex-direction: column;
   width: 50%;

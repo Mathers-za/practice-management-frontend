@@ -1,20 +1,25 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import AppointmentSearch from "../AppointmentSearch";
-
 import AppointmentCard from "./AppointmentCard&Dropdown/AppointmentCard.js";
 
 export default function AppointmentPortal({ profileId }) {
   const [searchResultsForDisplay, setSearchResultsForDisplay] = useState([]);
 
-  function SetSearchResults(result) {
+  function setSearchResults(result) {
     setSearchResultsForDisplay(result);
   }
+  useEffect(() => {
+    console.log(
+      "serach results for display to be passed down to appointment card is " +
+        searchResultsForDisplay
+    );
+  }, [searchResultsForDisplay]);
 
   return (
     <>
       <AppointmentSearch
         profileId={profileId}
-        setResultsInAppPortal={SetSearchResults}
+        setResultsInAppPortal={setSearchResults}
       />
 
       {searchResultsForDisplay &&

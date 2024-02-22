@@ -1,16 +1,22 @@
-import { useState } from "react";
-
-import "./CodeLineItem.css";
+import { useEffect, useState } from "react";
+import style from "./CodeLineItem.module.css";
 
 export default function CodeLineItem({
   toggleLineItemFlag,
   createMode,
   postData,
   patchData,
-  ...passCodeData
+  passedData,
 }) {
-  const [lineItemData, setLineItemData] = useState({ passCodeData });
+  const [lineItemData, setLineItemData] = useState({ ...passedData });
   const [changes, setChanges] = useState({});
+
+  useEffect(() => {
+    if (createMode) {
+      setLineItemData({});
+      setChanges({});
+    }
+  }, []);
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -28,8 +34,8 @@ export default function CodeLineItem({
 
   return (
     <>
-      <div className="container">
-        <table className="table">
+      <div className={style.container}>
+        <table className={style.table}>
           <tr>
             <th>ICD10-Code</th>
             <th>Procedural-Code</th>
@@ -41,7 +47,7 @@ export default function CodeLineItem({
                 onChange={handleChange}
                 type="text"
                 name="icd_10_code"
-                value={lineItemData?.icd_10_code || null}
+                value={lineItemData?.icd_10_code || ""}
               />
             </td>
             <td>
@@ -49,7 +55,7 @@ export default function CodeLineItem({
                 onChange={handleChange}
                 type="text"
                 name="procedural_codes"
-                value={lineItemData?.procedural_codes || null}
+                value={lineItemData?.procedural_codes || ""}
               />
             </td>
             <td>
@@ -57,12 +63,12 @@ export default function CodeLineItem({
                 onChange={handleChange}
                 type="text"
                 name="price"
-                value={lineItemData?.price || null}
+                value={lineItemData?.price || ""}
               />
             </td>
           </tr>
         </table>
-        <div className="button-grouping">
+        <div className={style.buttonGrouping}>
           {" "}
           <button>Delete</button>
           {!createMode && (

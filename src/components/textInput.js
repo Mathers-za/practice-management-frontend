@@ -1,4 +1,4 @@
-import "../components/textBoxStyle.css";
+import styles from "./textBoxStyle.module.css";
 
 export default function TextInput({
   labelText,
@@ -16,7 +16,7 @@ export default function TextInput({
         <input
           onChange={onChange}
           type={type}
-          className="bgColor"
+          className={styles.bgColor}
           name={name}
           value={value}
           required={required}

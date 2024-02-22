@@ -4,7 +4,7 @@ import {
   usePatchData,
   usePostData,
 } from "../../../CustomHooks/serverStateHooks";
-import "./ICDTable.css";
+import styles from "./ICDTable.module.css";
 import CodeLineItem from "./LineItemSelection";
 
 export default function ICD10Table({ appointmentId, appointmentTypeId }) {
@@ -13,29 +13,47 @@ export default function ICD10Table({ appointmentId, appointmentTypeId }) {
     `/icd10Codes/view${appointmentId}`,
     "PatientICD10Data"
   );
-  const { data: predefinedICDCData, reFetch } = useFetchData(
+  const { data: predefinedICDCData } = useFetchData(
     `/predefinedIcd10/view${appointmentTypeId}`,
     "predefinedICDData"
   );
   const { patchMutation } = usePatchData(
-    `/icd10Codes/update${passCodeData.id}`,
+    `/icd10Codes/update${passCodeData.current?.id}`,
     "PatientICD10Data"
+  );
+
+  console.log(
+    " appointmentId and appointmentTypeId in icd10 table comp is " +
+      appointmentId +
+      " " +
+      appointmentTypeId
   );
 
   const [codesForMapping, setCodesForMapping] = useState();
 
-  const { createMutation } = usePostData(`/icd10Codes/create${appointmentId}`);
+  const { createMutation } = usePostData(
+    `/icd10Codes/create${appointmentId}`,
+    "PatientICD10Data"
+  );
   const [showLineItem, setShowLineItem] = useState(false);
   const [createMode, setCreateMode] = useState();
 
   useEffect(() => {
-    if (ICD10Data && predefinedICDCData) {
+    if (ICD10Data) {
       setCodesForMapping(ICD10Data);
     } else if (predefinedICDCData && !ICD10Data) {
+      console.log(
+        "made it to predefinedICD statement- the data is " + predefinedICDCData
+      );
       predefinedICDCData.forEach(async (codeObject) => {
-        await createMutation.mutateAsync(codeObject);
+        console.log("the codeObject " + codeObject);
+
+        await createMutation.mutateAsync({
+          icd_10_code: codeObject?.icd10_code,
+          procedural_codes: codeObject?.procedural_code,
+          price: codeObject?.price,
+        });
       });
-      reFetch();
     } else if (!ICD10Data && !predefinedICDCData) {
       setCodesForMapping([]);
     }
@@ -55,14 +73,14 @@ export default function ICD10Table({ appointmentId, appointmentTypeId }) {
 
   return (
     <>
-      <div className="container">
-        <table className="tableContainer">
+      <div className={styles.container}>
+        <table className={styles.tableContainer}>
           <button
             onClick={() => {
               setShowLineItem(true);
               setCreateMode(true);
             }}
-            className="addBtn"
+            className={styles.addBtn}
           >
             Add
           </button>
@@ -75,15 +93,8 @@ export default function ICD10Table({ appointmentId, appointmentTypeId }) {
             codesForMapping.map((code) => {
               return (
                 <tr>
-                  <td>
-                    {code?.icd_10_code} <button className="edit-btn">E</button>{" "}
-                    <button className="delete-btn">D</button>
-                  </td>
-                  <td>
-                    {code?.procedural_codes}{" "}
-                    <button className="edit-btn">E</button>{" "}
-                    <button className="delete-btn">D</button>
-                  </td>
+                  <td>{code?.icd_10_code}</td>
+                  <td>{code?.procedural_codes}</td>
                   <td>
                     {code?.price}{" "}
                     <button
@@ -92,32 +103,32 @@ export default function ICD10Table({ appointmentId, appointmentTypeId }) {
                         passCodeData.current = code;
                         setCreateMode(false);
                       }}
-                      className="edit-btn"
+                      className={styles["edit-btn"]}
                     >
                       E
                     </button>{" "}
-                    <button className="delete-btn">D</button>
+                    <button className={styles["delete-btn"]}>D</button>
                   </td>
                 </tr>
               );
             })
           ) : (
             <tr>
-              <td className="noData" colSpan="3">
+              <td className={styles.noData} colSpan="3">
                 No data to display
               </td>
             </tr>
           )}
         </table>
         {showLineItem && (
-          <div className="overlay">
-            <div className="overlay-content">
+          <div className={styles.overlay}>
+            <div className={styles["overlay-content"]}>
               <CodeLineItem
                 toggleLineItemFlag={toggleLineItemFlag}
                 createMode={createMode}
                 postData={postData}
                 patchData={patchData}
-                {...passCodeData}
+                passedData={passCodeData.current}
               />
             </div>
           </div>
