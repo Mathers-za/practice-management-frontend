@@ -3,6 +3,7 @@ import { useFetchData, usePostData } from "../CustomHooks/serverStateHooks";
 import { useState } from "react";
 import { format, add } from "date-fns";
 import PatientPicker from "./Pages/PatientPickerPage";
+import { checkAndSetIcds } from "../apiRequests/apiRequests";
 
 function setDateAndTimes() {
   const currentDate = format(new Date(), "yyyy-MM-dd");
@@ -66,9 +67,10 @@ export default function CreateAppointment({ profileId }) {
     <>
       {!showPatientPicker ? (
         <form
-          onSubmit={(e) => {
+          onSubmit={async (e) => {
             e.preventDefault();
-            createMutation.mutate(appointment);
+            const result = await createMutation.mutateAsync(appointment);
+            await checkAndSetIcds(result.id, result.appointment_type_id);
           }}
         >
           {data ? (

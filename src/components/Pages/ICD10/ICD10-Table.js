@@ -6,6 +6,7 @@ import {
 } from "../../../CustomHooks/serverStateHooks";
 import styles from "./ICDTable.module.css";
 import CodeLineItem from "./LineItemSelection";
+import { checkAndSetIcds } from "../../../apiRequests/apiRequests";
 
 export default function ICD10Table({ appointmentId, appointmentTypeId }) {
   const passCodeData = useRef(null);
@@ -39,24 +40,15 @@ export default function ICD10Table({ appointmentId, appointmentTypeId }) {
   const [createMode, setCreateMode] = useState();
 
   useEffect(() => {
+    const runCheckAndSetFunction = async () => {
+      checkAndSetIcds(appointmentId, appointmentTypeId);
+    };
     if (ICD10Data) {
       setCodesForMapping(ICD10Data);
-    } else if (predefinedICDCData && !ICD10Data) {
-      console.log(
-        "made it to predefinedICD statement- the data is " + predefinedICDCData
-      );
-      predefinedICDCData.forEach(async (codeObject) => {
-        console.log("the codeObject " + codeObject);
-
-        await createMutation.mutateAsync({
-          icd_10_code: codeObject?.icd10_code,
-          procedural_codes: codeObject?.procedural_code,
-          price: codeObject?.price,
-        });
-      });
     } else if (!ICD10Data && !predefinedICDCData) {
       setCodesForMapping([]);
     }
+    runCheckAndSetFunction();
   }, [ICD10Data, predefinedICDCData]);
 
   function toggleLineItemFlag() {

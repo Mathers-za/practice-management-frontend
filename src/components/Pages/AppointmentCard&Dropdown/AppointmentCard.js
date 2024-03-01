@@ -16,6 +16,7 @@ export default function AppointmentCard(props) {
             patientId={props.patient_id}
             appointmentId={props.appointment_id}
             appointmentTypeId={props.apptype_id}
+            setOverlayFlag={props.setOverlayFlag}
           />
         </div>
         <div className={styles.middle}>

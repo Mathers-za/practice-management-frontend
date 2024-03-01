@@ -1,0 +1,108 @@
+.show {
+    display: block;
+  }
+  
+  .hide {
+    display: none;
+  }
+  
+  .component {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+  
+  .bottom-menu {
+    border: 1px black solid;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 40px;
+    width: 90%;
+    margin: auto;
+  
+    height: 60%;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    background-color: antiquewhite;
+    box-shadow: 4px 4px 2px rgba(0, 0, 0, 0.5);
+  }
+  
+  .menu-item {
+    background-color: white;
+    height: 25%;
+    border-bottom: 1px solid black;
+    padding-left: 20px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .top {
+    position: relative;
+    top: 20px;
+    width: 88%;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    background-color: blanchedalmond;
+    border: 1px solid black;
+    height: 15%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: start;
+    padding: 0 16px;
+  
+    box-shadow: 3px 3px 2px rgba(0, 0, 0, 0.5);
+  }
+  
+  .nav-top {
+    height: 10%;
+    background-color: rgb(116, 112, 112);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+  }
+  
+  .nav-top div {
+    padding: 0 15px;
+  }
+  
+  .amounts-container {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    width: 100%;
+  
+    height: 100%;
+    gap: 50px;
+  }
+  
+  .amounts-container > div {
+    padding-right: 20px;
+    border-bottom: solid 1px black;
+    width: 98.6%;
+    height: 30%;
+    text-align: end;
+  }
+  button {
+    position: absolute;
+    right: 28px;
+    bottom: 8px;
+    background-color: blue;
+    color: white;
+    border: none;
+    padding: 5px;
+    outline: black 1px solid;
+  }
+  
+  button:hover {
+    background-color: rgba(0, 0, 255, 0.8);
+    outline: none;
+  }

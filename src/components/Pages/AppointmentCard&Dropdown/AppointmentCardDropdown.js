@@ -1,17 +1,25 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "./appCardDropdownStyle.module.css";
 import { useNavigate } from "react-router-dom";
+import PaymentPage from "../Payments/PaymentPage";
 
 export default function AppointmentCardDropDown({
   appointmentId,
   patientId,
   appointmentTypeId,
+  setOverlayFlag,
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const dropDownRef = useRef(null);
   const navigate = useNavigate();
+  const [showPaymentsPage, setShowPaymentsPage] = useState(false);
 
   console.log("appoitnmentId in appointmentDropDown is" + appointmentId);
+
+  function setShowPayment() {
+    setShowPaymentsPage(!showPaymentsPage);
+    setOverlayFlag();
+  }
 
   useEffect(() => {
     function handleOutsideClick(event) {
@@ -29,6 +37,15 @@ export default function AppointmentCardDropDown({
 
   return (
     <>
+      {showPaymentsPage && (
+        <PaymentPage
+          setOverlayFlag={setOverlayFlag}
+          setShowPayment={setShowPayment}
+          appointmentId={appointmentId}
+          appointmentTypeId={appointmentTypeId}
+        />
+      )}
+      ;
       <div className={styles.dropdown}>
         <button
           onClick={() => setIsOpen(!isOpen)}
@@ -49,6 +66,13 @@ export default function AppointmentCardDropDown({
             </div>
             <div> Manage ICD-10 codes</div>
             <div> View patient</div>
+            <div
+              onClick={() => {
+                setShowPayment();
+              }}
+            >
+              Make a payment
+            </div>
           </div>
         )}
       </div>
