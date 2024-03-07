@@ -1,5 +1,8 @@
 .show {
     display: block;
+    height: auto;
+    background-color: white;
+    border-bottom: solid 1px black;
   }
   
   .hide {
@@ -11,8 +14,11 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
+    max-height: auto;
+    min-height: 100%;
     z-index: 1;
+    background-color: white;
+    overflow: scroll;
   }
   
   .bottom-menu {
@@ -24,17 +30,22 @@
     width: 90%;
     margin: auto;
   
-    height: 60%;
+    min-height: 50%;
+    max-height: auto;
+   
     display: flex;
-    flex-direction: column;
+    flex-direction: column; 
     justify-content: start;
     background-color: antiquewhite;
     box-shadow: 4px 4px 2px rgba(0, 0, 0, 0.5);
+    
+    
+    
   }
   
   .menu-item {
     background-color: white;
-    height: 25%;
+    min-height: 20%;
     border-bottom: 1px solid black;
     padding-left: 20px;
     display: flex;
@@ -74,25 +85,33 @@
   }
   
   .amounts-container {
-    margin-top: 30px;
+    
     display: flex;
     flex-direction: column;
     align-items: end;
     width: 100%;
   
-    height: 100%;
-    gap: 50px;
+   max-height: auto;
+   min-height: fit-content;
+    
+    justify-content: center;
+   
   }
   
   .amounts-container > div {
     padding-right: 20px;
     border-bottom: solid 1px black;
     width: 98.6%;
-    height: 30%;
+    height: 20%;
     text-align: end;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    
+    
+    
   }
-  button {
-    position: absolute;
+  .create-invoice-btn {
+    position: fixed;
     right: 28px;
     bottom: 8px;
     background-color: blue;
@@ -106,3 +125,27 @@
     background-color: rgba(0, 0, 255, 0.8);
     outline: none;
   }
+
+  .paymentCard{
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .paymentCardLeft{
+    display: flex;
+    gap: 5px;
+  }
+
+
+  .paymentsDropDownContainer{
+    display: flex;
+    flex-direction: column;
+  }
+
+  .makeCol{
+    display: flex;
+    flex-direction: column;
+  }
+
+
+ 

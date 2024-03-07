@@ -68,6 +68,13 @@ export default function PracticeDetails({ profileId }) {
           value={practiceData?.billing_address || ""}
           onChange={handleChange}
         />
+        <TextInput
+          type="text"
+          name="bank_details"
+          labelText="Bank Details"
+          onChange={handleChange}
+          value={practiceData?.bank_details || ""}
+        />
         <button
           disabled={Object.keys(changes).length === 0}
           onClick={() => {

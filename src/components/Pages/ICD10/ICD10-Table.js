@@ -8,7 +8,11 @@ import styles from "./ICDTable.module.css";
 import CodeLineItem from "./LineItemSelection";
 import { checkAndSetIcds } from "../../../apiRequests/apiRequests";
 
-export default function ICD10Table({ appointmentId, appointmentTypeId }) {
+export default function ICD10Table({
+  appointmentId,
+  appointmentTypeId,
+  financialsDataRefetch,
+}) {
   const passCodeData = useRef(null);
   const { data: ICD10Data } = useFetchData(
     `/icd10Codes/view${appointmentId}`,
@@ -40,27 +44,25 @@ export default function ICD10Table({ appointmentId, appointmentTypeId }) {
   const [createMode, setCreateMode] = useState();
 
   useEffect(() => {
-    const runCheckAndSetFunction = async () => {
-      checkAndSetIcds(appointmentId, appointmentTypeId);
-    };
     if (ICD10Data) {
       setCodesForMapping(ICD10Data);
     } else if (!ICD10Data && !predefinedICDCData) {
       setCodesForMapping([]);
     }
-    runCheckAndSetFunction();
   }, [ICD10Data, predefinedICDCData]);
 
   function toggleLineItemFlag() {
     setShowLineItem(false);
   }
 
-  function postData(data) {
-    createMutation.mutate(data);
+  async function postData(data) {
+    await createMutation.mutateAsync(data);
+    financialsDataRefetch();
   }
 
-  function patchData(data) {
-    patchMutation.mutate(data);
+  async function patchData(data) {
+    await patchMutation.mutateAsync(data);
+    financialsDataRefetch();
   }
 
   return (
@@ -116,6 +118,7 @@ export default function ICD10Table({ appointmentId, appointmentTypeId }) {
           <div className={styles.overlay}>
             <div className={styles["overlay-content"]}>
               <CodeLineItem
+                financialsDataRefetch={() => financialsDataRefetch()}
                 toggleLineItemFlag={toggleLineItemFlag}
                 createMode={createMode}
                 postData={postData}

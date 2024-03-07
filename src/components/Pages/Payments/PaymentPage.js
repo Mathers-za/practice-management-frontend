@@ -7,6 +7,7 @@ import {
   usePostData,
 } from "../../../CustomHooks/serverStateHooks";
 import { format } from "date-fns";
+import { usePaymentsPageStore } from "../../../zustandStore/store";
 
 function checkForErrors(paymentPayload, data) {
   const errors = [];
@@ -41,14 +42,14 @@ function cleanAmount(payload) {
   return { ...payload, amount: cleanedAmount };
 }
 
-export default function PaymentPage({
-  appointmentId,
-  setShowPayment,
-  appointmentTypeId,
-}) {
+export default function PaymentPage({ appointmentId, appointmentTypeId }) {
   const { data, refetch } = useFetchData(
     `/financials/view${appointmentId}`,
     "financialsData"
+  );
+
+  const togglePaymentsPage = usePaymentsPageStore(
+    (state) => state.toggleUniquePaymentsPage
   );
 
   const [paymentsPayload, setPaymentsPayload] = useState({
@@ -94,14 +95,13 @@ export default function PaymentPage({
       <div className={styles.overlay}>
         <div className={styles["top-nav"]}>
           <p>Payments</p>
-          <p onClick={() => setShowPayment()}>Close</p>
+          <p onClick={() => togglePaymentsPage(appointmentId)}>Close</p>
         </div>
         <div className={styles["top-half"]}>
           <p className={styles.totals}>totals</p>
           <div>
             <input
               onChange={(event) => {
-                setIsChecked(true);
                 handleChange(event);
               }}
               value={data?.amount_due}
@@ -111,16 +111,10 @@ export default function PaymentPage({
             <label> Paid In Full</label>
           </div>
           <div>
-            <p>Appointment Totall: {data?.total_amount}</p>
-            <p>Discounts: {data?.discount}</p>
-            <p>Payments: {data?.amount_paid}</p>
-            <p>
-              {" "}
-              Amount outstanding:{" "}
-              {data?.discount
-                ? data?.amount_due - data?.discount
-                : data?.amount_due}
-            </p>
+            <p>Appointment Total: R{data?.total_amount}</p>
+            <p>Discounts: R{data?.discount}</p>
+            <p>Payments: R{data?.amount_paid}</p>
+            <p>Amount outstanding: R {data?.amount_due}</p>
           </div>
         </div>
         <div className={styles["bottom-half"]}>
@@ -179,7 +173,9 @@ export default function PaymentPage({
             </select>
           </div>
           <div className={styles["button-placement"]}>
-            <button onClick={() => setShowPayment()}>Cancel</button>
+            <button onClick={() => togglePaymentsPage(appointmentId)}>
+              Cancel
+            </button>
             <button
               disabled={Object.keys(paymentsPayload).length === 0}
               onClick={async () => {

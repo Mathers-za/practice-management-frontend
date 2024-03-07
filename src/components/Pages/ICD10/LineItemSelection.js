@@ -7,6 +7,7 @@ export default function CodeLineItem({
   postData,
   patchData,
   passedData,
+  financialsDataRefetch,
 }) {
   const [lineItemData, setLineItemData] = useState({ ...passedData });
   const [changes, setChanges] = useState({});
