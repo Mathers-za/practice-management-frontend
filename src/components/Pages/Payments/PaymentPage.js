@@ -13,25 +13,32 @@ function checkForErrors(paymentPayload, data) {
   const errors = [];
 
   for (const property in paymentPayload) {
-    if (property === "amount") {
+    if (property === "amount" && paymentPayload[property] !== null) {
       if (parseFloat(paymentPayload[property]) > parseFloat(data?.amount_due)) {
         errors.push(
           "Please enter a valid amount that does not exceed amount due"
         );
         return errors;
       }
+    }
 
-      if (paymentPayload[property].includes("-")) {
-        errors.push("please enter a valid number");
+    if (
+      paymentPayload[property] !== null &&
+      property !== "payment_date" &&
+      paymentPayload[property].includes("-")
+    ) {
+      errors.push("please enter a valid number");
+      return errors;
+    }
+
+    if (
+      paymentPayload[property] !== null &&
+      paymentPayload[property].includes(".")
+    ) {
+      const parts = paymentPayload[property].split(".");
+      if (parts[1].trim().length > 2) {
+        errors.push("invalid-greater than 2 decomals");
         return errors;
-      }
-
-      if (paymentPayload[property].includes(".")) {
-        const parts = paymentPayload[property].split(".");
-        if (parts[1].trim().length > 2) {
-          errors.push("invalid-greater than 2 decomals");
-          return errors;
-        }
       }
     }
   }
@@ -101,6 +108,7 @@ export default function PaymentPage({ appointmentId, appointmentTypeId }) {
           <p className={styles.totals}>totals</p>
           <div>
             <input
+              disabled={parseFloat(data?.amount_due) <= 0}
               onChange={(event) => {
                 handleChange(event);
               }}

@@ -10,55 +10,65 @@
   }
   
   .component {
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    max-height: auto;
-    min-height: 100%;
-    z-index: 1;
+    
+    
+    z-index: 10;
     background-color: white;
-    overflow: scroll;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
   }
   
   .bottom-menu {
     border: 1px black solid;
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 40px;
+   
+   box-sizing: border-box;
     width: 90%;
-    margin: auto;
+    
+    
   
-    min-height: 50%;
-    max-height: auto;
+    
+  
    
     display: flex;
     flex-direction: column; 
-    justify-content: start;
+    
     background-color: antiquewhite;
     box-shadow: 4px 4px 2px rgba(0, 0, 0, 0.5);
-    
+     
     
     
   }
   
-  .menu-item {
-    background-color: white;
-    min-height: 20%;
-    border-bottom: 1px solid black;
-    padding-left: 20px;
-    display: flex;
-    align-items: center;
-  }
+  .row{
+  border-bottom: 1px solid black;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 15px 15px;
+  margin: 0;
   
-  .top {
-    position: relative;
-    top: 20px;
-    width: 88%;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
+
+ }
+
+ .amounts {
+  text-align: end;
+ }
+  
+  .top { 
+
+    box-sizing: border-box;
+   
+    
+    width: 90%;
+    
+   
     background-color: blanchedalmond;
     border: 1px solid black;
     height: 15%;
@@ -66,86 +76,98 @@
     flex-direction: column;
     justify-content: space-around;
     align-items: start;
-    padding: 0 16px;
+    padding: 10px 10px;
   
     box-shadow: 3px 3px 2px rgba(0, 0, 0, 0.5);
   }
   
   .nav-top {
-    height: 10%;
+    position: relative;
+    top: 0;
+    left: 0; 
+    height: 80px;
+    width: 100%;
     background-color: rgb(116, 112, 112);
     display: flex;
     justify-content: space-between;
     align-items: center;
     color: white;
+    padding: 0 10px;
+    box-sizing: border-box;
+   
   }
   
   .nav-top div {
     padding: 0 15px;
   }
   
-  .amounts-container {
-    
-    display: flex;
-    flex-direction: column;
-    align-items: end;
-    width: 100%;
-  
-   max-height: auto;
-   min-height: fit-content;
-    
-    justify-content: center;
-   
-  }
-  
-  .amounts-container > div {
-    padding-right: 20px;
-    border-bottom: solid 1px black;
-    width: 98.6%;
-    height: 20%;
-    text-align: end;
-    padding-top: 12px;
-    padding-bottom: 12px;
-    
-    
-    
-  }
-  .create-invoice-btn {
-    position: fixed;
-    right: 28px;
-    bottom: 8px;
-    background-color: blue;
-    color: white;
-    border: none;
-    padding: 5px;
-    outline: black 1px solid;
-  }
-  
-  button:hover {
-    background-color: rgba(0, 0, 255, 0.8);
-    outline: none;
-  }
+ 
+
+ 
 
   .paymentCard{
     display: flex;
-    justify-content: space-between;
-  }
-
-  .paymentCardLeft{
-    display: flex;
+    flex-direction: column;
     gap: 5px;
   }
 
+  
 
-  .paymentsDropDownContainer{
-    display: flex;
-    flex-direction: column;
-  }
 
-  .makeCol{
-    display: flex;
-    flex-direction: column;
+   .bottom-menu.row.amounts {
+    text-align: end;
   }
 
 
+  .component .create-invoice-btn{
+    align-self:flex-end;
+   margin-right: 80px;
+   
+  }
+  .create-invoice-btn , .addPaymentBtn {
+    text-align: center;
+    width: fit-content;
+    padding: 5px 8px;
+    background-color: blue;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    transition: opacity 0.2s, box-shadow 0.2s;
+    
+  }
  
+  .addPaymentBtn:hover , .create-invoice-btn:hover{
+    background-color: blue;
+    box-shadow: 1px 1px 1px gray;
+    opacity: 0.8;
+    color: white;
+    cursor: pointer;
+    
+  }
+  .addPaymentBtn:active, .create-invoice-btn:active{
+    color: black;
+  }
+
+  
+ 
+  .addPaymentButtonPositioning{
+    width: 100%;
+    display: flex;
+    justify-content: end;
+    padding: 10px 10px;
+    box-sizing: border-box;
+    
+    
+  }
+
+  .errorMessage{
+    position: absolute;
+    height: 80px;
+    width: fit-content;
+    background-color: grey;
+    color: red;
+    padding: 15px 15px;
+    bottom: 0;
+    left: 45;
+  }
+
