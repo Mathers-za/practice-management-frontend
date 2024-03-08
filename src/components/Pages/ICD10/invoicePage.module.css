@@ -3,6 +3,9 @@
     height: auto;
     background-color: white;
     border-bottom: solid 1px black;
+    border-left: solid 1px black;
+    border-right: 1px solid black;
+    padding: 8px 8px;
   }
   
   .hide {
@@ -170,4 +173,24 @@
     bottom: 0;
     left: 45;
   }
+
+  .invoiceDates{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+
+  .invoiceName input{
+    border: none;
+    min-width: 50%;
+    box-sizing: border-box;
+    border-bottom: 1px solid black;
+    
+    outline: none;
+
+  }
+  
+
+  
 

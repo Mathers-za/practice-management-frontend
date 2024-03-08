@@ -38,4 +38,8 @@
     color: white;
     font-weight: bold;
   }
+
+  .disable{
+    color: rgba(97, 96, 96, 0.616);
+  }
   

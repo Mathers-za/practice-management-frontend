@@ -18,6 +18,7 @@ export default function ICD10Table({
     `/icd10Codes/view${appointmentId}`,
     "PatientICD10Data"
   );
+
   const { data: predefinedICDCData } = useFetchData(
     `/predefinedIcd10/view${appointmentTypeId}`,
     "predefinedICDData"

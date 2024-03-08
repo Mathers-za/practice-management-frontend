@@ -11,12 +11,13 @@ import {
 import PaymentPage from "../Payments/PaymentPage";
 import { usePaymentsPageStore } from "../../../zustandStore/store";
 import PaymentReference from "./PaymentReference";
+import { format } from "date-fns";
 
 function invoiceCreationValidation(payloadData, financialData) {
   const invoiceErrors = [];
 
   for (const key in payloadData) {
-    if (key === "discount") {
+    if (payloadData[key] !== null && key === "discount") {
       if (
         parseFloat(payloadData?.discount) >
         parseFloat(financialData?.amount_due)
@@ -29,7 +30,7 @@ function invoiceCreationValidation(payloadData, financialData) {
         invoiceErrors.push("Please enter a valid discount amount");
       }
 
-      if (key === "amount_total") {
+      if (payloadData[key] !== null && key === "amount_total") {
         if (
           parseFloat(payloadData?.amount_due) >
           parseFloat(financialData?.amount_paid)
@@ -39,7 +40,10 @@ function invoiceCreationValidation(payloadData, financialData) {
           );
           return invoiceErrors;
         }
-        if (payloadData?.total_amount.includes("-")) {
+        if (
+          payloadData?.total_amount !== null &&
+          payloadData?.total_amount.includes("-")
+        ) {
           invoiceErrors.push("Please enter a valid appointment total value");
           return invoiceErrors;
         }
@@ -64,7 +68,16 @@ export default function InvoicePortal() {
   const [isErrors, setIsErrors] = useState(false);
   const [errorMessage, setErrorMessage] = useState();
   const { data: paymentsData } = useFetchData(
-    `/payments/view${state.appointmentId}`
+    `/payments/view${state.appointmentId}`,
+    "paymentsDataInInvoices"
+  );
+
+  const { patchMutation: invoiceMutation } = usePatchData(
+    `/invoices/update${state.appointmentId}`
+  );
+
+  const { createMutation } = usePostData(
+    `/invoice/create${state.appointmentId}`
   );
 
   const togglePaymentsPage = usePaymentsPageStore(
@@ -76,6 +89,12 @@ export default function InvoicePortal() {
   const paymentsPageVisibilty = visibilty[state.appointmentId];
 
   const [mutableFinancialsData, setMutableFinancialsData] = useState({});
+  const [invoicePayloadChanges, setInvoicePayloadChanges] = useState({});
+  const [invoicePayload, setInvoicePayload] = useState({
+    invoice_start_date: format(new Date(), "yyyy-MM-dd"),
+    invoice_end_date: format(new Date(), "yyyy-MM-dd"),
+    paid: false,
+  });
 
   useEffect(() => {
     if (state) {
@@ -84,26 +103,54 @@ export default function InvoicePortal() {
   }, [state]);
 
   useEffect(() => {
+    if (invoicePayload) {
+      setInvoicePayload((prev) => ({
+        ...prev,
+        invoice_title:
+          state?.invoiceData?.invoice_title ??
+          `${state?.patient_first_name} ${state?.patient_last_name ?? ""} - ${
+            invoicePayload?.invoice_start_date
+          }`,
+      }));
+    }
     if (financialsData) {
       setMutableFinancialsData(() => ({
         total_amount: financialsData?.total_amount,
         discount: financialsData?.discount,
       }));
     }
+
+    if (financialsData && parseFloat(financialsData.amount_due) <= 0) {
+      setInvoicePayload((prev) => ({
+        ...prev,
+        paid: true,
+      }));
+    }
   }, [financialsData]);
 
   function handleChange(event) {
-    const { name, value } = event.target;
+    const { name, value, id } = event.target;
 
-    setMutableFinancialsData((prev) => ({
-      ...prev,
-      [name]: value === "" ? null : value,
-    }));
+    if (id !== "invoiceData") {
+      setMutableFinancialsData((prev) => ({
+        ...prev,
+        [name]: value === "" ? null : value,
+      }));
 
-    setChanges((prev) => ({
-      ...prev,
-      [name]: value === "" ? null : value,
-    }));
+      setChanges((prev) => ({
+        ...prev,
+        [name]: value === "" ? null : value,
+      }));
+    } else if (id === "invoiceData") {
+      setInvoicePayloadChanges((prev) => ({
+        ...prev,
+        [name]: value === "" ? null : value,
+      }));
+      setInvoicePayload((prev) => ({
+        ...prev,
+        [name]: value === "" ? null : value,
+      }));
+    }
   }
 
   function handleShow(index) {
@@ -171,28 +218,80 @@ export default function InvoicePortal() {
         </div>
         <div className={styles["bottom-menu"]}>
           <div className={styles.row} onClick={() => handleShow(0)}>
+            Invoice Name
+          </div>
+          <div
+            className={
+              drop[0] ? `${styles.show} ${styles.invoiceName}` : styles.hide
+            }
+          >
+            <label>
+              Invoice Name
+              <br />
+              <input
+                onChange={handleChange}
+                type="text"
+                name="invoice_title"
+                value={invoicePayload?.invoice_title ?? ""}
+                id="invoiceData"
+              />
+            </label>
+          </div>
+
+          <div className={styles.row} onClick={() => handleShow(1)}>
             Medical Aid Coding
           </div>
-          <div className={drop[0] ? styles.show : styles.hide}>
+          <div className={drop[1] ? styles.show : styles.hide}>
             <ICD10Table
               appointmentId={state?.appointmentId}
               appointmentTypeId={state?.appointmentTypeId}
               financialsDataRefetch={() => refetch()}
             />
           </div>
-          <div className={styles.row} onClick={() => handleShow(1)}>
-            Invoices{" "}
-          </div>
-          <div className={drop[1] ? styles.show : styles.hide}>content 2</div>
           <div className={styles.row} onClick={() => handleShow(2)}>
+            Invoice Dates
+          </div>
+          <div
+            className={
+              drop[2] ? ` ${styles.invoiceDates} ${styles.show}` : styles.hide
+            }
+          >
+            {" "}
+            <div>
+              <label>
+                Invoice Start Date <br />
+                <input
+                  onChange={handleChange}
+                  type="date"
+                  name="invoice_start_date"
+                  value={invoicePayload?.invoice_start_date}
+                  id="invoiceData"
+                />
+              </label>
+            </div>
+            <div>
+              <label>
+                {" "}
+                Invoice End Date <br />
+                <input
+                  onChange={handleChange}
+                  type="date"
+                  name="invoice_end_date"
+                  value={invoicePayload.invoice_end_date}
+                  id="invoiceData"
+                />
+              </label>
+            </div>
+          </div>
+          <div className={styles.row} onClick={() => handleShow(3)}>
             Payments
           </div>
-          <div className={drop[2] ? styles.show : styles.hide}>
+          <div className={drop[3] ? styles.show : styles.hide}>
             {paymentsData &&
               paymentsData.map((payment) => (
                 <>
                   <div>
-                    <PaymentReference paymentsData={payment} />
+                    <PaymentReference key={payment.id} paymentsData={payment} />
                   </div>
                 </>
               ))}
@@ -228,7 +327,18 @@ export default function InvoicePortal() {
             Due <br />R{financialsData?.amount_due}
           </div>
         </div>
-        <button className={styles["create-invoice-btn"]}>Create Invoice</button>
+        <button
+          disabled={Object.keys(invoicePayloadChanges).length === 0}
+          onClick={() => {
+            state?.invoiceData
+              ? invoiceMutation.mutate(invoicePayloadChanges)
+              : createMutation.mutate(invoicePayload);
+            setInvoicePayloadChanges({});
+          }}
+          className={styles["create-invoice-btn"]}
+        >
+          {state?.invoiceData ? "Save Changes" : "Create Invoice"}
+        </button>
         {isErrors && errorMessage ? (
           <div className={styles.errorMessage}>{errorMessage}</div>
         ) : null}
