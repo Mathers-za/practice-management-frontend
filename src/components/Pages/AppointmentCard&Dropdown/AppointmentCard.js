@@ -4,10 +4,6 @@ import AppointmentCardDropDown from "./AppointmentCardDropdown";
 import { useEffect } from "react";
 
 export default function AppointmentCard(props) {
-  useEffect(() => {
-    console.log("props in appointment card is " + props);
-  }, [props]);
-
   return (
     <>
       <div className={styles.container}>
@@ -19,6 +15,8 @@ export default function AppointmentCard(props) {
             setOverlayFlag={props.setOverlayFlag}
             patient_first_name={props.patient_first_name}
             patient_last_name={props.patient_last_name}
+            amount_due={props.amount_due}
+            appointmentsWithInvoicesRef={props.appointmentsWithInvoicesRef}
           />
         </div>
         <div className={styles.middle}>

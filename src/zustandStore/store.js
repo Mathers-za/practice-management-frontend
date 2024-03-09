@@ -18,4 +18,15 @@ const usePaymentsPageStore = create((set) => ({
   },
 }));
 
-export { usePaymentsPageStore };
+const useAppointmentPortalStore = create((set) => ({
+  appointmentsThathaveInvoices: {},
+  setAppsThatHaveInvoices: (dataObject) =>
+    set((state) => ({
+      appointmentsThathaveInvoices: {
+        ...state.appointmentsThathaveInvoices,
+        ...dataObject,
+      },
+    })),
+}));
+
+export { usePaymentsPageStore, useAppointmentPortalStore };

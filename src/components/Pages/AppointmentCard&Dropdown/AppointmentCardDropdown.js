@@ -12,6 +12,8 @@ export default function AppointmentCardDropDown({
   setOverlayFlag,
   patient_first_name,
   patient_last_name,
+  amount_due,
+  appointmentsWithInvoicesRef,
 }) {
   const togglePaymentsPageDisplay = usePaymentsPageStore(
     (state) => state.toggleUniquePaymentsPage
@@ -20,25 +22,15 @@ export default function AppointmentCardDropDown({
     (state) => state.paymentsPageDropDownStates
   );
 
-  const { data: invoiceData } = useFetchData(`/invoices/view${appointmentId}`);
+  const isappointmentHaveInvoice =
+    appointmentsWithInvoicesRef.hasOwnProperty(appointmentId);
 
-  const [disable, setDisable] = useState(false);
-
-  const { data: financialData } = useFetchData(
-    `/financials/view${appointmentId}`,
-    "financialsInAppdropdown"
-  );
+  const isDisabled = parseFloat(amount_due) <= 0 ? true : false;
 
   const paymentsPageVisbilty = visibilty[appointmentId];
   const [isOpen, setIsOpen] = useState(false);
   const dropDownRef = useRef(null);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (financialData && parseFloat(financialData.amount_due) <= 0) {
-      setDisable(true);
-    }
-  }, [financialData]);
 
   useEffect(() => {
     function handleOutsideClick(event) {
@@ -63,7 +55,7 @@ export default function AppointmentCardDropDown({
           appointmentTypeId={appointmentTypeId}
         />
       )}
-      ;
+
       <div className={styles.dropdown}>
         <button
           onClick={() => setIsOpen(!isOpen)}
@@ -81,19 +73,18 @@ export default function AppointmentCardDropDown({
                     appointmentTypeId,
                     patient_first_name,
                     patient_last_name,
-                    invoiceData,
                   },
                 })
               }
             >
-              {invoiceData ? "Edit Invoice" : "Create Invoice"}
+              {isappointmentHaveInvoice ? "Edit Invoice" : "Create Invoice"}
             </div>
             <div> Manage ICD-10 codes</div>
             <div> View patient</div>
             <div
-              className={disable && styles.disablePayment}
+              className={isDisabled && styles.disablePayment}
               onClick={() => {
-                if (!disable) {
+                if (!isDisabled) {
                   togglePaymentsPageDisplay(appointmentId);
                 }
               }}

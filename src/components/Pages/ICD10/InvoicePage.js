@@ -9,7 +9,10 @@ import {
   usePostData,
 } from "../../../CustomHooks/serverStateHooks";
 import PaymentPage from "../Payments/PaymentPage";
-import { usePaymentsPageStore } from "../../../zustandStore/store";
+import {
+  useAppointmentPortalStore,
+  usePaymentsPageStore,
+} from "../../../zustandStore/store";
 import PaymentReference from "./PaymentReference";
 import { format } from "date-fns";
 
@@ -61,6 +64,11 @@ export default function InvoicePortal() {
     `/financials/view${state.appointmentId}`,
     "financialsDataInInvoicePage"
   );
+
+  const invoiceDataObject = useAppointmentPortalStore(
+    (state) => state.appointmentsThathaveInvoices
+  );
+
   const { patchMutation } = usePatchData(
     `/financials/update${state.appointmentId}`
   );
@@ -72,12 +80,16 @@ export default function InvoicePortal() {
     "paymentsDataInInvoices"
   );
 
+  const invoiceData = invoiceDataObject.hasOwnProperty(state.appointmentId)
+    ? invoiceDataObject[state.appointmentId]
+    : undefined;
+
   const { patchMutation: invoiceMutation } = usePatchData(
     `/invoices/update${state.appointmentId}`
   );
 
   const { createMutation } = usePostData(
-    `/invoice/create${state.appointmentId}`
+    `/invoices/create${state.appointmentId}`
   );
 
   const togglePaymentsPage = usePaymentsPageStore(
@@ -103,16 +115,17 @@ export default function InvoicePortal() {
   }, [state]);
 
   useEffect(() => {
-    if (invoicePayload) {
+    if (invoiceData) {
+      setInvoicePayload(invoiceData);
+    } else if (invoicePayload) {
       setInvoicePayload((prev) => ({
         ...prev,
-        invoice_title:
-          state?.invoiceData?.invoice_title ??
-          `${state?.patient_first_name} ${state?.patient_last_name ?? ""} - ${
-            invoicePayload?.invoice_start_date
-          }`,
+        invoice_title: `${state?.patient_first_name} ${
+          state?.patient_last_name ?? ""
+        } - ${invoicePayload?.invoice_start_date}`,
       }));
     }
+
     if (financialsData) {
       setMutableFinancialsData(() => ({
         total_amount: financialsData?.total_amount,
@@ -165,7 +178,9 @@ export default function InvoicePortal() {
     <>
       <div className={styles.component}>
         <div className={styles["nav-top"]}>
-          <div>Patients details</div>
+          <div>
+            {state?.patient_first_name} {state?.patient_last_name ?? ""}
+          </div>
           <div>Close</div>
         </div>
         <div className={styles.top}>
@@ -177,7 +192,7 @@ export default function InvoicePortal() {
                   changes,
                   financialsData
                 );
-                if (errors.length > 0) {
+                if (errors && errors.length > 0) {
                   setIsErrors(true);
                   setErrorMessage(errors[0]);
                 } else {
@@ -264,7 +279,10 @@ export default function InvoicePortal() {
                   onChange={handleChange}
                   type="date"
                   name="invoice_start_date"
-                  value={invoicePayload?.invoice_start_date}
+                  value={format(
+                    new Date(invoicePayload?.invoice_start_date),
+                    "yyyy-MM-dd"
+                  )}
                   id="invoiceData"
                 />
               </label>
@@ -277,7 +295,10 @@ export default function InvoicePortal() {
                   onChange={handleChange}
                   type="date"
                   name="invoice_end_date"
-                  value={invoicePayload.invoice_end_date}
+                  value={format(
+                    new Date(invoicePayload?.invoice_end_date),
+                    "yyyy-MM-dd"
+                  )}
                   id="invoiceData"
                 />
               </label>
@@ -298,7 +319,12 @@ export default function InvoicePortal() {
 
             <div className={styles.addPaymentButtonPositioning}>
               <button
-                className={styles.addPaymentBtn}
+                disabled={parseFloat(financialsData?.amount_due) <= 0}
+                className={
+                  parseFloat(financialsData?.amount_due) <= 0
+                    ? `${styles.addPaymentBtn} ${styles.disableBtn}`
+                    : styles.addPaymentBtn
+                }
                 onClick={() => togglePaymentsPage(state.appointmentId)}
               >
                 Add Payment
@@ -328,16 +354,20 @@ export default function InvoicePortal() {
           </div>
         </div>
         <button
-          disabled={Object.keys(invoicePayloadChanges).length === 0}
+          disabled={
+            invoiceData && Object.keys(invoicePayloadChanges).length === 0
+              ? true
+              : false
+          }
           onClick={() => {
-            state?.invoiceData
+            invoiceData
               ? invoiceMutation.mutate(invoicePayloadChanges)
               : createMutation.mutate(invoicePayload);
             setInvoicePayloadChanges({});
           }}
           className={styles["create-invoice-btn"]}
         >
-          {state?.invoiceData ? "Save Changes" : "Create Invoice"}
+          {invoiceData ? "Save Changes" : "Create Invoice"}
         </button>
         {isErrors && errorMessage ? (
           <div className={styles.errorMessage}>{errorMessage}</div>
