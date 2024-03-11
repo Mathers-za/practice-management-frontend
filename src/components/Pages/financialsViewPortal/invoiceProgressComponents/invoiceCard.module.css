@@ -1,0 +1,57 @@
+.card-container {
+    min-width: 100%;
+    height: fit-content;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+    display: flex;
+    gap: 5px;
+    padding: 10px 30px;
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .middleContent {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+  
+  .middleContent > * {
+    margin: 0;
+    padding: 0;
+  }
+  
+  .amountsContent {
+    display: flex;
+    gap: 5px;
+    min-width: fit-content;
+  }
+  .amountsContent > * {
+    margin: 0;
+  }
+  
+  .invNum {
+    margin: 0;
+    margin-left: 10px;
+    border: 1px soolid black;
+    padding: 3px;
+    background-color: grey;
+  }
+  
+  .amountDue {
+    max-width: fit-content;
+  }
+  .dropdown-elipsis {
+    max-width: fit-content;
+  }
+  
+  .left {
+    width: 100%;
+    display: flex;
+    gap: 0.8rem;
+    align-items: center;
+    flex-grow: 1;
+  }
+  
