@@ -30,6 +30,10 @@ export default function SideBar() {
         <li>
           <Link to="appointmentPortal">View Appointments</Link>
         </li>
+
+        <li>
+          <Link to="InvoiceProgress"> Invoice Progress </Link>
+        </li>
       </ul>
     </>
   );

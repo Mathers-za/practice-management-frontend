@@ -1,6 +1,17 @@
 import styles from "./invoiceCard.module.css";
+import { formatDateYearMonthDay } from "./progressUtilFunctions";
 
-export default function InvoiceDisplayCard() {
+export default function InvoiceDisplayCard({ invoiceData }) {
+  const {
+    amount_due,
+    amount_paid,
+    total_amount,
+    invoice_number,
+    invoice_start_date,
+    invoice_end_date,
+    invoice_title,
+  } = invoiceData;
+
   return (
     <>
       <div className={styles["card-container"]}>
@@ -8,16 +19,19 @@ export default function InvoiceDisplayCard() {
           <div className={styles["dropdown-elipsis"]}>:</div>
           <div className={styles.middleContent}>
             <p>
-              Daniel Mathers - 2024-07-07
-              <span className={styles.invNum}>Invoice number</span>
+              {invoice_title}
+              <span className={styles.invNum}>{invoice_number}</span>
             </p>
-            <p> 2024-02-13/2024-05-04 </p>
+            <p>
+              Date: {formatDateYearMonthDay(invoice_start_date)}/Due:{" "}
+              {formatDateYearMonthDay(invoice_end_date)}
+            </p>
             <div className={styles.amountsContent}>
-              <p>amount paid</p> <p>amount due </p>
+              <p>Total: R{total_amount}</p> <p>Paid: R{amount_paid}</p>
             </div>
           </div>
         </div>
-        <div className={styles.amountDue}>amount due</div>
+        <div className={styles.amountDue}>Due: R{amount_due} </div>
       </div>
     </>
   );

@@ -2,22 +2,21 @@ import axios from "axios";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 
-const useFetchData = (endpoint = "", queryKey) => {
-  console.log(
-    "ftech data hook fired. the endpoint is and querykey is " +
-      endpoint +
-      " " +
-      queryKey
-  );
+const useFetchData = (endpoint = "", queryKey, paramsData = "") => {
   const [httpStatus, setHttpStatus] = useState();
   const { data, isSuccess, isError, error, isLoading, isRefetching, refetch } =
     useQuery({
       //data.data.property to acces properties. data.status to access http codes
       queryKey: queryKey,
       queryFn: async () => {
-        const response = await axios.get(`http://localhost:4000${endpoint}`, {
-          withCredentials: true,
-        });
+        const response = await axios.get(
+          `http://localhost:4000${endpoint}`,
+
+          {
+            params: paramsData,
+            withCredentials: true,
+          }
+        );
         setHttpStatus(response.status);
         return response.data;
       },

@@ -2,68 +2,53 @@ import styles from "./invoiceProgress.module.css";
 import InvoiceDisplayCard from "./InvoiceDisplayCard";
 import { useFetchData } from "../../../../CustomHooks/serverStateHooks";
 import { useEffect, useState } from "react";
-import { startOfWeek, endOfWeek, format } from "date-fns";
-
-function formatDateYearMonthDay(date) {
-  return format(date, "yyyy-MM-dd");
-}
-
-function filterInvoiceData(data, invoiceStatus, searchBarInput = null) {
-  let filtered = data.filter(
-    (invoice) => invoice.invoice_status === invoiceStatus
-  );
-  if (searchBarInput) {
-    filtered = filtered.filter((invoice) => {
-      const invoiceValues = Object.values(invoice);
-      return searchBarInput
-        ? invoiceValues.some((value) =>
-            value.toLowerCase().includes(searchBarInput.toLowerCase())
-          )
-        : false;
-    });
-  }
-  return filtered;
-}
+import { startOfWeek, endOfWeek } from "date-fns";
+import {
+  filterInvoiceData,
+  formatDateYearMonthDay,
+} from "./progressUtilFunctions";
 
 export default function InvoiceProgressPage({ profileId }) {
-  const [inProgressInvoices, setInProgressInvoices] = useState();
-  const [sentInvoices, setSentInvoices] = useState();
-  const [paidInvoices, setPaidInvoices] = useState();
-  const [searchDateCriteria, setSearchDateCriteria] = {
-    start_date: startOfWeek(new Date()),
-    end_date: endOfWeek(new Date()),
-  };
-  const [searchBarInput, setSearchBarInput] = useState();
+  console.log(profileId);
+  const [inProgressInvoices, setInProgressInvoices] = useState([]);
+  const [sentInvoices, setSentInvoices] = useState([]);
+  const [paidInvoices, setPaidInvoices] = useState([]);
+  const [searchDateCriteria, setSearchDateCriteria] = useState({
+    invoice_start_date: formatDateYearMonthDay(startOfWeek(new Date())),
+    invoice_end_date: formatDateYearMonthDay(endOfWeek(new Date())),
+  });
+  const [searchBarInput, setSearchBarInput] = useState("");
 
-  const { data: invoiceData } = useFetchData(`/invoices/view${profileId}`);
+  const { data: invoiceData, refetch: invoiceDataRefetch } = useFetchData(
+    `/invoices/filteredView`,
+    "invoiceDataInvoiceProgressPage",
+    { ...searchDateCriteria, profile_id: profileId }
+  );
 
   useEffect(() => {
     if (invoiceData) {
       setInProgressInvoices(
         filterInvoiceData(invoiceData, "In progress", searchBarInput)
       );
-    }
-
-    if (invoiceData) {
       setSentInvoices(filterInvoiceData(invoiceData, "Sent", searchBarInput));
+      setPaidInvoices(filterInvoiceData(invoiceData, "Paid", searchBarInput));
     }
+  }, [invoiceData, searchBarInput]);
 
-    if (invoiceData) {
-      setPaidInvoices(invoiceData, "Paid", searchBarInput);
-    }
-  }, [invoiceData, searchDateCriteria]);
+  useEffect(() => {
+    invoiceDataRefetch();
+  }, [searchDateCriteria]);
 
   function handleChange(event) {
     const { name, value, id } = event.target;
-    if (searchDateCriteria.hasOwnProperty(name)) {
-      setSearchDateCriteria((prev) => ({
-        ...prev,
-        [name]:
-          value === ""
-            ? formatDateYearMonthDay(startOfWeek(new Date()))
-            : value,
-      }));
-    }
+
+    setSearchDateCriteria((prev) => ({
+      ...prev,
+      [name]:
+        value === ""
+          ? formatDateYearMonthDay(startOfWeek(new Date()))
+          : formatDateYearMonthDay(value),
+    }));
   }
 
   return (
@@ -77,9 +62,10 @@ export default function InvoiceProgressPage({ profileId }) {
               <input
                 onChange={handleChange}
                 type="date"
-                value={formatDateYearMonthDay(searchDateCriteria.start_date)}
-                name="start_date"
-                id="searchDates"
+                value={formatDateYearMonthDay(
+                  searchDateCriteria.invoice_start_date
+                )}
+                name="invoice_start_date"
               />
             </div>
             <div>
@@ -87,13 +73,20 @@ export default function InvoiceProgressPage({ profileId }) {
               <input
                 onChange={handleChange}
                 type="date"
-                value={formatDateYearMonthDay(searchDateCriteria.end_date)}
-                name="end_date"
-                id="searchDates"
+                value={formatDateYearMonthDay(
+                  searchDateCriteria.invoice_end_date
+                )}
+                name="invoice_end_date"
               />
             </div>
             <div className={styles.searchBar}>
-              Search bar <input type="text" placeholder="Search" />
+              Search bar{" "}
+              <input
+                type="text"
+                placeholder="Search"
+                value={searchBarInput ?? ""}
+                onChange={(event) => setSearchBarInput(event.target.value)}
+              />
             </div>
           </div>
           <div className={styles["top-bar-bottomhalf"]}>Number of invoices</div>
@@ -106,19 +99,34 @@ export default function InvoiceProgressPage({ profileId }) {
         </div>
         <div className={styles["invoice-status-list-container"]}>
           <div>
-            {filteredInprogress
-              ? filteredInprogress.map((invoice) => <InvoiceDisplayCard />)
+            {inProgressInvoices
+              ? inProgressInvoices.map((invoice) => (
+                  <InvoiceDisplayCard
+                    key={invoice.invoice_id}
+                    invoiceData={invoice}
+                  />
+                ))
               : "No Invoices Found"}
           </div>
           <div>
             {" "}
-            {filteredSent
-              ? filteredPaid.map((invoice) => <InvoiceDisplayCard />)
+            {sentInvoices
+              ? sentInvoices.map((invoice) => (
+                  <InvoiceDisplayCard
+                    key={invoice.invoice_id}
+                    invoiceData={invoice}
+                  />
+                ))
               : "No Invoices Found"}
           </div>
           <div>
-            {filteredPaid
-              ? filteredPaid.map((invoice) => <InvoiceDisplayCard />)
+            {paidInvoices
+              ? paidInvoices.map((invoice) => (
+                  <InvoiceDisplayCard
+                    key={invoice.invoice_id}
+                    invoiceData={invoice}
+                  />
+                ))
               : "No Invoices Found"}
           </div>
         </div>
