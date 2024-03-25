@@ -1,5 +1,7 @@
 import styles from "./invoiceCard.module.css";
 import { formatDateYearMonthDay } from "./progressUtilFunctions";
+import InvoiceListDropdown from "./InvoiceListDropDown";
+import { useState } from "react";
 
 export default function InvoiceDisplayCard({ invoiceData }) {
   const {
@@ -12,26 +14,47 @@ export default function InvoiceDisplayCard({ invoiceData }) {
     invoice_title,
   } = invoiceData;
 
+  const [showDropDown, setShowDropDown] = useState(false);
+
+  function toggleDropdown() {
+    setShowDropDown(!showDropDown);
+  }
+
   return (
     <>
-      <div className={styles["card-container"]}>
-        <div className={styles.left}>
-          <div className={styles["dropdown-elipsis"]}>:</div>
-          <div className={styles.middleContent}>
+      <div className={styles["invoiceCard-container"]}>
+        <div className={styles["invoiceCard-left"]}>
+          <div
+            onClick={() => setShowDropDown(!showDropDown)}
+            className={styles["invoiceCard-dropdown-elipsis"]}
+          >
+            :
+          </div>
+          {showDropDown && (
+            <InvoiceListDropdown
+              toggleDropdown={toggleDropdown}
+              invoiceData={invoiceData}
+            />
+          )}
+          <div className={styles["invoiceCard-middleContent"]}>
             <p>
               {invoice_title}
-              <span className={styles.invNum}>{invoice_number}</span>
+              <span className={styles["invoiceCard-invNum"]}>
+                {invoice_number}
+              </span>
             </p>
             <p>
               Date: {formatDateYearMonthDay(invoice_start_date)}/Due:{" "}
               {formatDateYearMonthDay(invoice_end_date)}
             </p>
-            <div className={styles.amountsContent}>
+            <div className={styles["invoiceCard-amountsContent"]}>
               <p>Total: R{total_amount}</p> <p>Paid: R{amount_paid}</p>
             </div>
           </div>
         </div>
-        <div className={styles.amountDue}>Due: R{amount_due} </div>
+        <div className={styles["invoiceCard-amountDue"]}>
+          Due: R{amount_due}{" "}
+        </div>
       </div>
     </>
   );

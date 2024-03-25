@@ -1,4 +1,4 @@
-.card-container {
+.invoiceCard-container {
     min-width: 100%;
     height: fit-content;
     border-left: 1px solid black;
@@ -12,27 +12,27 @@
     justify-content: space-between;
   }
   
-  .middleContent {
+  .invoiceCard-middleContent {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
   }
   
-  .middleContent > * {
+  .invoiceCard-middleContent > * {
     margin: 0;
     padding: 0;
   }
   
-  .amountsContent {
+  .invoiceCard-amountsContent {
     display: flex;
     gap: 5px;
     min-width: fit-content;
   }
-  .amountsContent > * {
+  .invoiceCard-amountsContent > * {
     margin: 0;
   }
   
-  .invNum {
+  .invoiceCard-invNum {
     margin: 0;
     margin-left: 10px;
     border: 1px soolid black;
@@ -40,14 +40,14 @@
     background-color: grey;
   }
   
-  .amountDue {
+  .invoiceCard-amountDue {
     max-width: fit-content;
   }
-  .dropdown-elipsis {
+  .invoiceCard-dropdown-elipsis {
     max-width: fit-content;
   }
   
-  .left {
+  .invoiceCard-left {
     width: 100%;
     display: flex;
     gap: 0.8rem;

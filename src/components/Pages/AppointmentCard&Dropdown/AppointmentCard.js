@@ -17,6 +17,7 @@ export default function AppointmentCard(props) {
             patient_last_name={props.patient_last_name}
             amount_due={props.amount_due}
             appointmentsWithInvoicesRef={props.appointmentsWithInvoicesRef}
+            profile_id={props.profile_id}
           />
         </div>
         <div className={styles.middle}>

@@ -1,103 +1,128 @@
-.overlay {
+.paymentPage-overlay {
     position: fixed;
     left: 0;
     top: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 4;
+    min-width: 100vw;
+    min-height: 100vh;
+    z-index: 1000 !important;
   
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 15px;
+    
     background-color: white;
+    
+    
+    
+  }
+
+  .paymentPage-overlay *{
+    box-sizing: border-box;
+    
   }
   
-  .top-nav {
-    height: 10%;
+
+ 
+  
+  
+  .paymentPage-top-nav {
+    min-height: 70px;
     position: relative;
     top: 0;
   
-    width: 100%;
+    min-width: 100%;
     background-color: grey;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    box-sizing: border-box;
+    padding: 0 30px;
+   
+    
   
     color: white;
     margin-bottom: 5px;
   }
   
-  .top-nav p {
+  .paymentPage-top-nav p {
     font-size: 1.3rem;
+    margin: 0;
   
-    margin-left: 20px;
-    margin-right: 20px;
+   
   }
-  
-  .top-half {
-    position: relative;
+ 
+  .paymentPage-top-half {
+    
     display: flex;
     justify-content: space-between;
-    width: 90%;
-    position: relative;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
+    min-width: 90%;
+   
     align-items: center;
   
     padding-left: 20px;
     padding-right: 20px;
-    height: 40%;
+   
     border: 1px solid black;
     background-color: white;
     box-shadow: 3px 3px 2px grey;
+    flex-grow: 0.4;
+    box-sizing:border-box ;
   }
   
-  .bottom-half {
+  .paymentPage-bottom-half {
     display: flex;
     flex-direction: column;
-    height: 45%;
+    min-height: 45%;
     justify-content: space-between;
-    width: 92%;
+    min-width: 92%;
     background-color: white;
     padding-left: 10px;
     border: 1px solid black;
     box-shadow: 3px 3px 2px grey;
+    
+    margin-bottom: 20px;
+    flex-grow: 1;
+    min-width: 90%;
+    box-sizing: border-box;
+    padding: 10px 10px;
   }
   
-  .bottom-half input {
-    width: 98%;
+  .paymentPage-bottom-half * input {
+    min-width: 97%;
+    max-width: 97%;
     border: none;
     outline: none;
     border-bottom: 1px solid;
     margin-top: 4px;
+    
+    
   }
   
-  label {
+  .paymentPage-overlay  * label {
     color: grey;
   }
   
-  input.date-input {
+  input.paymentPage-date-input {
     width: auto;
     border: none;
   }
   
-  .date-input-div {
+  .paymentPage-date-input-div {
     border-bottom: solid 1px black;
-    width: 98%;
+    min-width: 98%;
   }
   
-  .button-placement {
+  .paymentPage-button-placement {
     display: flex;
     justify-content: space-between;
   }
   
-  .button-placement button:nth-child(2) {
+  .paymentPage-button-placement button:nth-child(2) {
     margin-right: 5px;
   }
   
-  .button-placement button {
+  .paymentPage-button-placement button {
     margin-bottom: 5px;
     background-color: blue;
     color: white;
@@ -107,30 +132,30 @@
     border-radius: 5px;
   }
   
-  .button-placement button:hover {
+  .paymentPage-button-placement button:hover {
     background-color: rgba(0, 0, 240, 0.7);
     outline: 1px solid black;
     text-decoration: ;
   }
-  .totals {
-    position: absolute;
+  .paymentPage-totals {
+    position: relative;
     left: 15px;
     top: 15px;
     margin: 0;
   }
   
-  .inputWrapper {
+  .paymentPage-inputWrapper {
     display: flex;
     border-bottom: solid 1px black;
     position: relative;
   }
   
-  input.amount {
+  input.paymentPage-amount {
     border: none;
     outline: none;
   }
   
-  .prefix {
+  .paymentPage-prefix {
     position: relative;
     bottom: -5px;
     font-size: 0.9rem;
@@ -138,10 +163,10 @@
     margin-bottom: 0;
   }
 
-  .errorMessages{
+  .paymentPage-errorMessages{
     
-    height: 10%;
-    width: 25%;
+    min-height: 10%;
+    min-width: 25%;
     background-color: rgb(176, 65, 65);
     display: flex; 
     justify-content: space-between; 
@@ -149,7 +174,7 @@
 
   }
 
-  .errorMessages-container{
+  .paymentPage-errorMessages-container{
     display: flex;
     justify-content: center;
     align-items: center;

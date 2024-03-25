@@ -99,13 +99,13 @@ export default function PaymentPage({ appointmentId, appointmentTypeId }) {
 
   return (
     <>
-      <div className={styles.overlay}>
-        <div className={styles["top-nav"]}>
+      <div className={styles["paymentPage-overlay"]}>
+        <div className={styles["paymentPage-top-nav"]}>
           <p>Payments</p>
           <p onClick={() => togglePaymentsPage(appointmentId)}>Close</p>
         </div>
-        <div className={styles["top-half"]}>
-          <p className={styles.totals}>totals</p>
+        <div className={styles["paymentPage-top-half"]}>
+          <p className={styles["paymentPage-totals"]}>totals</p>
           <div>
             <input
               disabled={parseFloat(data?.amount_due) <= 0}
@@ -125,14 +125,14 @@ export default function PaymentPage({ appointmentId, appointmentTypeId }) {
             <p>Amount outstanding: R {data?.amount_due}</p>
           </div>
         </div>
-        <div className={styles["bottom-half"]}>
-          <div className={styles["date-input-div"]}>
+        <div className={styles["paymentPage-bottom-half"]}>
+          <div className={styles["paymentPage-date-input-div"]}>
             {" "}
             <label htmlFor="date">Payment Date</label>
             {<br />}
             <input
               onChange={handleChange}
-              className={styles["date-input"]}
+              className={styles["paymentPage-date-input"]}
               type="date"
               id="date"
               name="payment_date"
@@ -141,12 +141,12 @@ export default function PaymentPage({ appointmentId, appointmentTypeId }) {
           </div>
           <div>
             <label htmlFor="number">Payment Amount</label>
-            <div className={styles.inputWrapper}>
-              <div className={styles.prefix}> ZAR </div>
+            <div className={styles["paymentPage-inputWrapper"]}>
+              <div className={styles["paymentPage-prefix"]}> ZAR </div>
               <input
                 required
                 onChange={handleChange}
-                className={styles.amount}
+                className={styles["paymentPage-amount"]}
                 type="number"
                 id="number"
                 name="amount"
@@ -180,7 +180,7 @@ export default function PaymentPage({ appointmentId, appointmentTypeId }) {
               <option value="Medical Aid">Medical AId</option>
             </select>
           </div>
-          <div className={styles["button-placement"]}>
+          <div className={styles["paymentPage-button-placement"]}>
             <button onClick={() => togglePaymentsPage(appointmentId)}>
               Cancel
             </button>
@@ -212,8 +212,10 @@ export default function PaymentPage({ appointmentId, appointmentTypeId }) {
           </div>
         </div>
         {isErrors ? (
-          <div className={styles["errorMessages-container"]}>
-            <div className={styles.errorMessages}>{errors[0]}</div>
+          <div className={styles["paymentPage-errorMessages-container"]}>
+            <div className={styles["paymentPage-errorMessages"]}>
+              {errors[0]}
+            </div>
           </div>
         ) : null}
       </div>

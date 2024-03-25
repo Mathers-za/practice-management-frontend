@@ -1,0 +1,61 @@
+.invoice-container {
+    min-width: 80%;
+    height:auto;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+   background-color:white;
+   
+   
+    padding: 20px 20px;
+  }
+  
+  .top-half-content {
+    display: flex;
+    min-height: fit-content;
+    gap: 10px;
+  }
+  
+  .top-half-content > * {
+    margin: 0px 0px;
+  }
+  
+  .top-bar {
+    display: flex;
+    flex-direction: column;
+    padding: 20px 20px;
+    height: auto;
+    gap: 10px;
+    box-sizing: border-box;
+    border: 1px solid black;
+  }
+  
+  .top-half {
+    display: flex;
+    gap: 100px;
+    align-items: center;
+  }
+  .top-half-content-left {
+    display: flex;
+    gap: 2rem;
+  }
+  .top-half-content-left > * {
+    margin: 0;
+  }
+  
+  .searchBar {
+    width: 400px;
+  }
+  
+  .bottom-half {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+
+  .pageNav{
+    display: flex;
+    gap: 2px;
+  }
+  
+  

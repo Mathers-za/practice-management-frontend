@@ -14,6 +14,7 @@ export default function AppointmentCardDropDown({
   patient_last_name,
   amount_due,
   appointmentsWithInvoicesRef,
+  profile_id,
 }) {
   const togglePaymentsPageDisplay = usePaymentsPageStore(
     (state) => state.toggleUniquePaymentsPage
@@ -73,6 +74,8 @@ export default function AppointmentCardDropDown({
                     appointmentTypeId,
                     patient_first_name,
                     patient_last_name,
+                    patientId,
+                    profile_id,
                   },
                 })
               }

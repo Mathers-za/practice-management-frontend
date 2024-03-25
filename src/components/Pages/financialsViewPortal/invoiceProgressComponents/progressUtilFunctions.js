@@ -1,12 +1,12 @@
-import { format } from "date-fns";
+import { format, differenceInDays } from "date-fns";
 
 function formatDateYearMonthDay(date) {
   return format(date, "yyyy-MM-dd");
 }
 
-function filterInvoiceData(data, invoiceStatus, searchBarInput = null) {
+function filterInvoiceData(data, invoice_status, searchBarInput = null) {
   let filtered = data.filter(
-    (invoice) => invoice.invoice_status === invoiceStatus
+    (invoice) => invoice.invoice_status === invoice_status
   );
   if (searchBarInput) {
     filtered = filtered.filter((invoice) => {
@@ -28,4 +28,18 @@ function filterInvoiceData(data, invoiceStatus, searchBarInput = null) {
   return filtered;
 }
 
-export { filterInvoiceData, formatDateYearMonthDay };
+function filterPastDueInvoices(invoiceData, startIntInDays, endIntInDays) {
+  const filteredData = invoiceData.filter((invoice) => {
+    if (parseFloat(invoice.amount_due) > 0) {
+      console.log("in past due made it here");
+      const result = differenceInDays(new Date(), invoice.invoice_end_date);
+      console.log(result);
+      return result >= startIntInDays && result <= endIntInDays;
+    } else {
+      return false;
+    }
+  });
+  return filteredData;
+}
+
+export { filterInvoiceData, formatDateYearMonthDay, filterPastDueInvoices };

@@ -110,4 +110,16 @@ const useDeleteData = (endpoint = "", queryKey = undefined) => {
   );
   return { deleteMutation };
 };
-export { useDeleteData };
+
+const usePagination = (queryString, queryID, fetchData) => {
+  return useQuery({
+    queryKey: [queryString, queryID],
+    queryFn: fetchData,
+    refetchOnWindowFocus: false,
+    select: (data) => ({
+      data: data?.data,
+      metadata: data?.metadata,
+    }),
+  });
+};
+export { useDeleteData, usePagination };

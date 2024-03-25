@@ -16,12 +16,13 @@ import PatientPortal from "./components/Pages/PatientPortal";
 import MedicalAid from "./components/MedicalAid";
 import AppointmentTypePortal from "./components/Pages/AppointTypePortal";
 import AppointmentTypeList from "./components/AppointmentTypeList";
-import AppointmentSearch from "./components/AppointmentSearch";
 import AppointmentPortal from "./components/Pages/AppointmentPortal";
 import PatientTreatmentNotesList from "./components/Pages/PatientTreatmentNotes/TreatmentNotesList";
 import EditCreateTreatmentNote from "./components/Pages/PatientTreatmentNotes/TreatmentNotesEditCreate";
 import InvoicePortal from "./components/Pages/ICD10/InvoicePage";
-import InvoiceProgressPage from "./components/Pages/financialsViewPortal/invoiceProgressComponents/InvoiceProgressList";
+import InvoiceProgressPage from "./components/Pages/financialsViewPortal/invoiceProgressComponents/InvoiceProgress";
+import PastDueInvoices from "./components/Pages/financialsViewPortal/PastDueInvoices";
+import PaymentsList from "./components/Pages/financialsViewPortal/paymentsList/PaymentsList";
 
 const queryClient = new QueryClient();
 
@@ -145,8 +146,18 @@ function App() {
             <Route path="invoicePortal" element={<InvoicePortal />} />
 
             <Route
-              path="InvoiceProgress"
+              path="invoiceProgress"
               element={<InvoiceProgressPage profileId={profileId} />}
+            />
+
+            <Route
+              path="invoicesPastDue"
+              element={<PastDueInvoices profileId={profileId} />}
+            />
+
+            <Route
+              path="paymentsTracker"
+              element={<PaymentsList profileId={profileId} />}
             />
           </Route>
         </Routes>

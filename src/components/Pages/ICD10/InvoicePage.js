@@ -65,6 +65,13 @@ export default function InvoicePortal() {
     "financialsDataInInvoicePage"
   );
 
+  const { data: existingInvoiceData } = useFetchData(
+    `/invoices/view${state.appointmentId}`,
+    "invoiceIdInPortal"
+  );
+
+  const invoiceId = existingInvoiceData?.id;
+
   const invoiceDataObject = useAppointmentPortalStore(
     (state) => state.appointmentsThathaveInvoices
   );
@@ -92,6 +99,10 @@ export default function InvoicePortal() {
     `/invoices/create${state.appointmentId}`
   );
 
+  const { createMutation: statementMutation } = usePostData(
+    `/invoices/generateUpdatedInvoiceStatement`
+  );
+
   const togglePaymentsPage = usePaymentsPageStore(
     (state) => state.toggleUniquePaymentsPage
   );
@@ -106,6 +117,9 @@ export default function InvoicePortal() {
     invoice_start_date: format(new Date(), "yyyy-MM-dd"),
     invoice_end_date: format(new Date(), "yyyy-MM-dd"),
     paid: false,
+    patient_id: state.patientId,
+    appointment_id: state.appointmentId,
+    profile_id: state.profile_id,
   });
 
   useEffect(() => {
@@ -359,11 +373,23 @@ export default function InvoicePortal() {
               ? true
               : false
           }
-          onClick={() => {
-            invoiceData
-              ? invoiceMutation.mutate(invoicePayloadChanges)
-              : createMutation.mutate(invoicePayload);
-            setInvoicePayloadChanges({});
+          onClick={async () => {
+            if (invoiceData) {
+              const { data } = await invoiceMutation.mutateAsync(
+                invoicePayloadChanges
+              );
+
+              statementMutation.mutate({
+                patient_id: state.patientId,
+                appointment_id: state.appointmentId,
+                profile_id: state.profile_id,
+                invoice_number: data.invoice_number,
+                invoice_id: data.id,
+              });
+            } else {
+              createMutation.mutate(invoicePayload);
+              setInvoicePayloadChanges({});
+            }
           }}
           className={styles["create-invoice-btn"]}
         >

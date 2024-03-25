@@ -32,7 +32,15 @@ export default function SideBar() {
         </li>
 
         <li>
-          <Link to="InvoiceProgress"> Invoice Progress </Link>
+          <Link to="invoiceProgress"> Invoice Progress </Link>
+        </li>
+
+        <li>
+          <Link to="invoicesPastDue">Invoices Past Due</Link>
+        </li>
+
+        <li>
+          <Link to="paymentsTracker">Payments Tracker</Link>
         </li>
       </ul>
     </>
