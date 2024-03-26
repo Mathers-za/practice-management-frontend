@@ -15,6 +15,7 @@ import {
 } from "../../../zustandStore/store";
 import PaymentReference from "./PaymentReference";
 import { format } from "date-fns";
+import InvoiceSendCard from "./InvoiceSendCard/InvoiceSendCard";
 
 function invoiceCreationValidation(payloadData, financialData) {
   const invoiceErrors = [];
@@ -65,16 +66,16 @@ export default function InvoicePortal() {
     "financialsDataInInvoicePage"
   );
 
-  const { data: existingInvoiceData } = useFetchData(
-    `/invoices/view${state.appointmentId}`,
-    "invoiceIdInPortal"
-  );
-
-  const invoiceId = existingInvoiceData?.id;
+  const [showInvoiceSendCard, setShowInvoiceSendCard] = useState(false);
 
   const invoiceDataObject = useAppointmentPortalStore(
     (state) => state.appointmentsThathaveInvoices
   );
+  const addToAppsWithInvoices = useAppointmentPortalStore(
+    (state) => state.setAppsThatHaveInvoices
+  );
+
+  const [invoiceExist, setInvoiceExist] = useState();
 
   const { patchMutation } = usePatchData(
     `/financials/update${state.appointmentId}`
@@ -97,10 +98,6 @@ export default function InvoicePortal() {
 
   const { createMutation } = usePostData(
     `/invoices/create${state.appointmentId}`
-  );
-
-  const { createMutation: statementMutation } = usePostData(
-    `/invoices/generateUpdatedInvoiceStatement`
   );
 
   const togglePaymentsPage = usePaymentsPageStore(
@@ -131,6 +128,7 @@ export default function InvoicePortal() {
   useEffect(() => {
     if (invoiceData) {
       setInvoicePayload(invoiceData);
+      setInvoiceExist(true);
     } else if (invoicePayload) {
       setInvoicePayload((prev) => ({
         ...prev,
@@ -154,6 +152,22 @@ export default function InvoicePortal() {
       }));
     }
   }, [financialsData]);
+
+  async function handleSubmission(index) {
+    if (invoiceExist) {
+      invoiceMutation.mutate(invoicePayloadChanges);
+      setInvoicePayloadChanges({});
+
+      setShowInvoiceSendCard(true);
+    } else {
+      await createMutation.mutateAsync(invoicePayload);
+      setShowInvoiceSendCard(true);
+      setInvoiceExist(true);
+      setInvoicePayloadChanges({});
+      {
+      }
+    }
+  }
 
   function handleChange(event) {
     const { name, value, id } = event.target;
@@ -369,36 +383,34 @@ export default function InvoicePortal() {
         </div>
         <button
           disabled={
-            invoiceData && Object.keys(invoicePayloadChanges).length === 0
+            invoiceExist && Object.keys(invoicePayloadChanges).length === 0
               ? true
               : false
           }
-          onClick={async () => {
-            if (invoiceData) {
-              const { data } = await invoiceMutation.mutateAsync(
-                invoicePayloadChanges
-              );
-
-              statementMutation.mutate({
-                patient_id: state.patientId,
-                appointment_id: state.appointmentId,
-                profile_id: state.profile_id,
-                invoice_number: data.invoice_number,
-                invoice_id: data.id,
-              });
-            } else {
-              createMutation.mutate(invoicePayload);
-              setInvoicePayloadChanges({});
-            }
-          }}
+          onClick={() =>
+            invoiceData ? handleSubmission(1) : handleSubmission(0)
+          }
           className={styles["create-invoice-btn"]}
         >
-          {invoiceData ? "Save Changes" : "Create Invoice"}
+          {invoiceExist ? "Save Changes" : "Create Invoice"}
         </button>
         {isErrors && errorMessage ? (
           <div className={styles.errorMessage}>{errorMessage}</div>
         ) : null}
       </div>
+      {showInvoiceSendCard && (
+        <InvoiceSendCard
+          patientData={{
+            patientId: state.patientId,
+            patient_first_name: state.patient_first_name,
+            patient_last_name: state.patient_last_name,
+          }}
+          profileId={state.profile_id}
+          appointmentId={state.appointmentId}
+          hideComponent={() => setShowInvoiceSendCard(false)}
+        />
+      )}
+      ;
     </>
   );
 }

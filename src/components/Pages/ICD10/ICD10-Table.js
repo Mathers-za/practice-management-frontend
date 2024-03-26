@@ -6,7 +6,6 @@ import {
 } from "../../../CustomHooks/serverStateHooks";
 import styles from "./ICDTable.module.css";
 import CodeLineItem from "./LineItemSelection";
-import { checkAndSetIcds } from "../../../apiRequests/apiRequests";
 
 export default function ICD10Table({
   appointmentId,

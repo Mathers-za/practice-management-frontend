@@ -1,0 +1,81 @@
+.invSendCard-overlay{
+    position: fixed;
+    left: 0;
+    top: 0;
+    min-width: 100%;
+    min-height: 100vh;
+    z-index: 20;
+    background-color: rgba(0, 0, 0, 0.096);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.invSendCard-container * {
+    box-sizing: border-box;
+    margin: 0;
+
+}
+
+.invSendCard-card{
+    min-width: 30%;
+    background-color: antiquewhite;
+    min-height: 25rem;
+    display: flex;
+    flex-direction: column;
+    padding: 10px 10px;
+    min-height: 70vh;
+   
+
+}
+
+.invSendCard-row{
+    border-bottom: 2px solid black;
+    display: flex;
+    padding: 15px;
+    gap: 10px;
+
+   
+    
+}
+
+.invSendCard-row div p:nth-child(2){
+    font-size: 0.9rem
+    
+}
+
+.invSendCard-tile{
+    margin: 10px 0;
+    min-width: 100%;
+    background-color: white;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.invSendCard-patientName{
+    background-color: rgb(171, 166, 175);
+    max-width: fit-content;
+    padding: 3px 5px;
+   
+}
+
+
+.invSendCard-top-bar{
+    
+    
+    border-bottom: 1px solid black;
+    padding: 0 14px 8px 3px;
+    
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+
+
