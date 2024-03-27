@@ -23,7 +23,7 @@ export default function InvoiceSendCard({
   ) {
     try {
       const { data } = await axios.get(
-        `//localhost:4000/invoices//retrieveInvoiceStatement`,
+        `http://localhost:4000/invoices/retrieveInvoiceStatement`,
         {
           withCredentials: true,
           params: {
@@ -43,6 +43,15 @@ export default function InvoiceSendCard({
       console.error(error);
     }
   }
+
+  async function emailInvoiceStatement(profileId, appointmentId, patientId) {
+    await axios.post(
+      `http://localhost:4000/invoices//sendInvoiceStatment`,
+      { profileId, appointmentId, patientId },
+      { withCredentials: true }
+    );
+  }
+
   return (
     <div className={styles["invSendCard-overlay"]}>
       <div className={styles["invSendCard-card"]}>
@@ -59,7 +68,16 @@ export default function InvoiceSendCard({
           <p>img</p>
           <p>{invoiceData?.invoice_title || "Invoice successfuly created."}</p>
         </div>
-        <div className={styles["invSendCard-row"]}>
+        <div
+          onClick={() =>
+            emailInvoiceStatement(
+              profileId,
+              invoiceData.appointment_id,
+              patientData.patientId
+            )
+          }
+          className={styles["invSendCard-row"]}
+        >
           {" "}
           <p>img</p> <p>Send to Patient</p>
         </div>
