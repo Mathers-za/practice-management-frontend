@@ -1,0 +1,15 @@
+
+.selectionOptions-btn{
+
+    padding: 8px;
+    border-radius: 10px;
+    border: none;
+    background-color: bisque;
+}
+
+.selectionOptions-btn:hover{
+    background-color: burlywood;
+}
+.selectionOptions-btn:active{
+    background-color: brown;
+}

@@ -23,6 +23,7 @@ import InvoicePortal from "./components/Pages/ICD10/InvoicePage";
 import InvoiceProgressPage from "./components/Pages/financialsViewPortal/invoiceProgressComponents/InvoiceProgress";
 import PastDueInvoices from "./components/Pages/financialsViewPortal/PastDueInvoices";
 import PaymentsList from "./components/Pages/financialsViewPortal/paymentsList/PaymentsList";
+import EmailCustomizationPage from "./components/Pages/email customizations/email customization page/EmailCustomizationPage";
 
 const queryClient = new QueryClient();
 
@@ -153,6 +154,11 @@ function App() {
             <Route
               path="invoicesPastDue"
               element={<PastDueInvoices profileId={profileId} />}
+            />
+
+            <Route
+              path="emailNotifications"
+              element={<EmailCustomizationPage profileId={profileId} />}
             />
 
             <Route

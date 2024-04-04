@@ -16,6 +16,10 @@ export default function DashBoard({ profileIdStateSetter }) {
     `/practiceDetails/create`
   );
 
+  const { createMutation: emailNotificationMutation } = usePostData(
+    `/emailNotifications/create`
+  );
+
   useEffect(() => {
     async function createInitialRowProfileAndPractice() {
       try {
@@ -24,6 +28,7 @@ export default function DashBoard({ profileIdStateSetter }) {
         profileIdStateSetter(data.id);
 
         practiceMutation.mutate({ profile_id: data.id });
+        emailNotificationMutation.mutate({ profile_id: data.id });
         sessionStorage.setItem("initialLogin", "false");
       } catch (error) {
         throw error;

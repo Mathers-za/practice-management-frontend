@@ -42,6 +42,10 @@ export default function SideBar() {
         <li>
           <Link to="paymentsTracker">Payments Tracker</Link>
         </li>
+
+        <li>
+          <Link to="emailNotifications">email Notification Customization</Link>
+        </li>
       </ul>
     </>
   );

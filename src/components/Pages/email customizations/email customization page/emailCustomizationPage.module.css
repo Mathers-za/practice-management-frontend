@@ -1,0 +1,16 @@
+
+
+.customEmail-dropdownsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    
+   
+}
+.customEmail-dropdownsContainer .customEmail-reminderDropDown ,customEmail-confirmationDropDown {
+    background-color: lightgray;
+    padding: 8px;
+    max-height: fit-content;
+    min-width: 100%;
+}
+
