@@ -1,30 +1,42 @@
 import { useNavigate } from "react-router-dom";
 import { useFetchData, usePostData } from "../CustomHooks/serverStateHooks";
-import { useState } from "react";
-import { format, add } from "date-fns";
+import { useEffect, useState } from "react";
+import { format, add, set, parse } from "date-fns";
 import PatientPicker from "./Pages/PatientPickerPage";
 import { checkAndSetIcds } from "../apiRequests/apiRequests";
 
 function setDateAndTimes() {
-  const currentDate = format(new Date(), "yyyy-MM-dd");
+  const currentDateAndTime = new Date();
+  const formattedCurrentDate = format(currentDateAndTime, "yyyy-MM-dd");
 
-  const currentTime = format(new Date(), "HH:mm");
-  const endTime = format(add(new Date(), { minutes: 30 }), "HH:mm");
+  const currentTime = format(currentDateAndTime, "HH:mm");
+  const endTime = format(add(currentDateAndTime, { minutes: 30 }), "HH:mm");
 
-  return { currentDate, endTime, currentTime };
+  return { formattedCurrentDate, endTime, currentTime };
 }
 
-export default function CreateAppointment({ profileId }) {
+export default function CreateAppointment({
+  profileId,
+  calendarSelectedJsDateTimeString,
+}) {
   const { data } = useFetchData(
     `/appointmentTypes/viewAll${profileId}`,
     "appTypes"
   );
 
-  const { currentDate, currentTime, endTime } = setDateAndTimes();
+  const { formattedCurrentDate, currentTime, endTime } = setDateAndTimes();
 
   const navigate = useNavigate();
   const [appointment, setAppointment] = useState({
-    appointment_date: currentDate,
+    appointment_date: calendarSelectedJsDateTimeString
+      ? format(calendarSelectedJsDateTimeString, "yyyy-MM-dd")
+      : formattedCurrentDate,
+    start_time: calendarSelectedJsDateTimeString
+      ? format(calendarSelectedJsDateTimeString, "HH:mm")
+      : currentTime,
+    end_time: calendarSelectedJsDateTimeString
+      ? format(set(calendarSelectedJsDateTimeString, { minutes: 30 }), "HH:mm")
+      : null,
   });
 
   const [showPatientPicker, setShowPatientPicker] = useState(false);
@@ -39,17 +51,39 @@ export default function CreateAppointment({ profileId }) {
 
       [name]: value,
     }));
-    if (name === "appointment_type_id") {
-      setAppointment((prev) => ({
-        ...prev,
-        appointment_type_id: parseInt(value),
-      }));
-    }
 
     if (name === "start_time" || name === "end_time") {
       setAppointment((prev) => ({
         ...prev,
-        [name]: value + ":00",
+        [name]: value,
+      }));
+    }
+  }
+
+  useEffect(() => {
+    if (data && data.length > 0) {
+      setAppointment((prev) => ({
+        ...prev,
+        appointment_type_id: data[0].id,
+      }));
+    }
+  }, [data]);
+
+  function handleAppointmentTypeChange(appointmentTypeId) {
+    const selectedAppointmentType = data.find(
+      (element) => element.id == appointmentTypeId
+    );
+
+    if (selectedAppointmentType) {
+      setAppointment((prev) => ({
+        ...prev,
+        appointment_type_id: selectedAppointmentType.id,
+        end_time: format(
+          add(parse(prev.start_time, "HH:mm", prev.appointment_date), {
+            minutes: selectedAppointmentType?.duration || 0,
+          }),
+          "HH:mm"
+        ),
       }));
     }
   }
@@ -76,17 +110,21 @@ export default function CreateAppointment({ profileId }) {
           {data ? (
             <select
               required={true}
-              onChange={handleChange}
+              onChange={(event) =>
+                handleAppointmentTypeChange(parseInt(event.target.value))
+              }
               name="appointment_type_id"
               id="apptype"
             >
-              {data?.map((appType) => {
-                return (
-                  <option key={appType?.id} value={parseInt(+appType?.id)}>
-                    {appType?.appointment_name}
-                  </option>
-                );
-              })}
+              {data
+                ?.sort((a, b) => a.id - b.id)
+                .map((appType) => {
+                  return (
+                    <option key={appType?.id} value={appType.id}>
+                      {appType?.appointment_name}
+                    </option>
+                  );
+                })}
             </select>
           ) : (
             <div onClick={() => navigate("createAppointmentType")}>
@@ -97,7 +135,7 @@ export default function CreateAppointment({ profileId }) {
           <input
             onChange={handleChange}
             type="date"
-            value={appointment?.appointment_date ?? currentDate}
+            value={appointment?.appointment_date}
             name="appointment_date"
           />
 
@@ -110,7 +148,7 @@ export default function CreateAppointment({ profileId }) {
                 type="time"
                 name="start_time"
                 id="startTime"
-                value={currentTime}
+                value={appointment.start_time}
               />
             </label>
             <label htmlFor="endTime">
@@ -120,7 +158,7 @@ export default function CreateAppointment({ profileId }) {
                 type="time"
                 name="end_time"
                 id="endTime"
-                value={appointment?.end_time ?? endTime}
+                value={appointment.end_time}
               />
             </label>
           </div>
