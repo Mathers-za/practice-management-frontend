@@ -25,7 +25,8 @@ import PastDueInvoices from "./components/Pages/financialsViewPortal/PastDueInvo
 import PaymentsList from "./components/Pages/financialsViewPortal/paymentsList/PaymentsList";
 import EmailCustomizationPage from "./components/Pages/email customizations/email customization page/EmailCustomizationPage";
 import MainCalendar from "./components/Pages/Main Calendar/MainCalendar";
-import MyCustomButton from "./tailWindSandbox/styleComponents";
+
+import ComponentView from "./tailWindSandbox/styleComponents";
 
 const queryClient = new QueryClient();
 
@@ -173,7 +174,7 @@ function App() {
               element={<MainCalendar profileId={profileId} />}
             />
 
-            <Route path="componentStyling" element={<MyCustomButton />} />
+            <Route path="componentStyling" element={<ComponentView />} />
           </Route>
         </Routes>
       </QueryClientProvider>

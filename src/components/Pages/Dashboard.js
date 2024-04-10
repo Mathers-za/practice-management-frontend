@@ -3,6 +3,8 @@ import defaultData from "../../DefaultData/defaultData";
 import SideBar from "../SideBar/SideBar";
 import { Outlet } from "react-router-dom";
 import { useFetchData, usePostData } from "../../CustomHooks/serverStateHooks";
+import MainMenuSideBar from "../mainMenuSideBar/MainMenuSideBar";
+import MainMenuTopBar from "../MainMenuTopBar/MainMenuTopBar";
 
 export default function DashBoard({ profileIdStateSetter }) {
   const { data, httpStatus } = useFetchData(
@@ -46,8 +48,15 @@ export default function DashBoard({ profileIdStateSetter }) {
 
   return (
     <>
-      <SideBar />
-      <Outlet />
+      <div>
+        <div className=" left-0 top-0 min-w-full ">
+          <MainMenuTopBar />
+        </div>
+        <div className=" flex gap-10 left-0 top-0 bottom-0 max-h-full">
+          <MainMenuSideBar />
+          <Outlet />
+        </div>
+      </div>
     </>
   );
 }
