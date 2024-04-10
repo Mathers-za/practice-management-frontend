@@ -35,9 +35,6 @@ tr {
   gap: 10px; 
 }
 
-button {
-  width: 30%;
-}
 
 .buttonGrouping {
   display: flex;
