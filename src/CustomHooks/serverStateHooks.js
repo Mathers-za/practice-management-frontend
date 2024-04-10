@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 
 const useFetchData = (endpoint = "", queryKey, paramsData = "") => {
+  //endpoint:string, querykey: string or an array with queryString and uniqueId, [aramsData:object of key value pairs you want to pass]
   const [httpStatus, setHttpStatus] = useState();
   const { data, isSuccess, isError, error, isLoading, isRefetching, refetch } =
     useQuery({

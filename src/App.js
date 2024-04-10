@@ -24,6 +24,8 @@ import InvoiceProgressPage from "./components/Pages/financialsViewPortal/invoice
 import PastDueInvoices from "./components/Pages/financialsViewPortal/PastDueInvoices";
 import PaymentsList from "./components/Pages/financialsViewPortal/paymentsList/PaymentsList";
 import EmailCustomizationPage from "./components/Pages/email customizations/email customization page/EmailCustomizationPage";
+import MainCalendar from "./components/Pages/Main Calendar/MainCalendar";
+import MyCustomButton from "./tailWindSandbox/styleComponents";
 
 const queryClient = new QueryClient();
 
@@ -165,6 +167,13 @@ function App() {
               path="paymentsTracker"
               element={<PaymentsList profileId={profileId} />}
             />
+
+            <Route
+              path="calendar"
+              element={<MainCalendar profileId={profileId} />}
+            />
+
+            <Route path="componentStyling" element={<MyCustomButton />} />
           </Route>
         </Routes>
       </QueryClientProvider>

@@ -46,6 +46,13 @@ export default function SideBar() {
         <li>
           <Link to="emailNotifications">email Notification Customization</Link>
         </li>
+        <li>
+          <Link to="calendar">Calendar</Link>
+        </li>
+
+        <li>
+          <Link to="componentStyling">Custom Component styling</Link>
+        </li>
       </ul>
     </>
   );
