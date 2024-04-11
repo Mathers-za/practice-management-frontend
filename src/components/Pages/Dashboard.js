@@ -48,12 +48,14 @@ export default function DashBoard({ profileIdStateSetter }) {
 
   return (
     <>
-      <div>
-        <div className=" left-0 top-0 min-w-full ">
+      <div className="min-h-screen  grid grid-cols-12 grid-rows-12 min-w-full  ">
+        <div className="col-start-3 col-end-13 row-start-1 row-end-2 sticky top-0 left-0 right-0 z-10 ">
           <MainMenuTopBar />
         </div>
-        <div className=" flex gap-10 left-0 top-0 bottom-0 max-h-full">
+        <div className="col-start-1 col-end-3 row-start-1 row-end-13   ">
           <MainMenuSideBar />
+        </div>
+        <div className="col-start-3 col-end-13 row-start-2 row-end-13 p-2  ">
           <Outlet />
         </div>
       </div>

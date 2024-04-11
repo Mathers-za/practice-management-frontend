@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 export default function MainMenuSideBar({ itemsArray }) {
   return (
     <>
-      <div className="flex flex-col items-start px-5 max-w-fit bg-cyan-400 min-h-[100dvh] ">
+      <div className="flex flex-col items-start px-5 max-w-full bg-cyan-400 min-h-screen sticky left-0 top-0 bottom-0   ">
         <ul className="list-none flex flex-col gap-2  ">
           <li>
             {" "}

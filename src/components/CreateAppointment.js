@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { format, add, set, parse } from "date-fns";
 import PatientPicker from "./Pages/PatientPickerPage";
 import { checkAndSetIcds } from "../apiRequests/apiRequests";
+import GenericTopBar from "./miscellaneous components/GenericTopBar";
 
 function setDateAndTimes() {
   const currentDateAndTime = new Date();
@@ -101,12 +102,15 @@ export default function CreateAppointment({
     <>
       {!showPatientPicker ? (
         <form
+          className="z-10 fixed left-0 top-0 min-h-screen min-w-full bg-white"
           onSubmit={async (e) => {
             e.preventDefault();
             const result = await createMutation.mutateAsync(appointment);
             await checkAndSetIcds(result.id, result.appointment_type_id);
           }}
         >
+          <GenericTopBar label="Create Appointment" />
+
           {data ? (
             <select
               required={true}
