@@ -3,6 +3,7 @@ import SubmitButton from "../components/miscellaneous components/SubmitButton";
 import Input from "../components/miscellaneous components/DisplayTextInput";
 import GenericTopBar from "../components/miscellaneous components/GenericTopBar";
 import DivSvgDisplayCombo from "../components/miscellaneous components/DivSvgLabelCombo";
+import Experiment from "../components/miscellaneous components/Experiment";
 
 export default function ComponentView() {
   return (
@@ -15,11 +16,7 @@ export default function ComponentView() {
         <Input type="text" labelText="Warren" />
 
         <GenericTopBar label="Warren" onclick={() => alert("Hello dad")} />
-        <DivSvgDisplayCombo
-          displayText={<div> Hello</div>} //still busy with this. where you left off
-          svgSrc="url"
-          onclick={() => console.log("hello")}
-        />
+        <DivSvgDisplayCombo />
       </div>
     </>
   );
