@@ -25,6 +25,8 @@ import PastDueInvoices from "./components/Pages/financialsViewPortal/PastDueInvo
 import PaymentsList from "./components/Pages/financialsViewPortal/paymentsList/PaymentsList";
 import EmailCustomizationPage from "./components/Pages/email customizations/email customization page/EmailCustomizationPage";
 import MainCalendar from "./components/Pages/Main Calendar/MainCalendar";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
 
 import ComponentView from "./tailWindSandbox/styleComponents";
 
@@ -65,119 +67,124 @@ function App() {
 
   return (
     <>
-      <QueryClientProvider client={queryClient}>
-        <Routes>
-          <Route path="/entry" element={<Entry />} />
-          <Route
-            path="/"
-            element={<DashBoard profileIdStateSetter={setProfileIdProp} />}
-          >
-            <Route path="profile" element={<Profile profileId={profileId} />} />
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <QueryClientProvider client={queryClient}>
+          <Routes>
+            <Route path="/entry" element={<Entry />} />
             <Route
-              path="practice"
-              element={<PracticeDetails profileId={profileId} />}
-            />
+              path="/"
+              element={<DashBoard profileIdStateSetter={setProfileIdProp} />}
+            >
+              <Route
+                path="profile"
+                element={<Profile profileId={profileId} />}
+              />
+              <Route
+                path="practice"
+                element={<PracticeDetails profileId={profileId} />}
+              />
 
-            <Route
-              path="patient/search"
-              element={
-                <PatientList
-                  profileId={profileId}
-                  setPatientId={setPatientIdProp}
+              <Route
+                path="patient/search"
+                element={
+                  <PatientList
+                    profileId={profileId}
+                    setPatientId={setPatientIdProp}
+                  />
+                }
+              />
+
+              <Route
+                path="patientCreate"
+                element={<CreatePatient profileId={profileId} />}
+              />
+
+              <Route
+                path="createAppointment"
+                element={<CreateAppointment profileId={profileId} />}
+              />
+
+              <Route path="patientPicker" element={<PatientPicker />} />
+              <Route
+                path="patientPortal"
+                element={
+                  <PatientPortal patientId={patientId} profileId={profileId} />
+                }
+              >
+                <Route
+                  path="treatmentNotes"
+                  element={<PatientTreatmentNotesList patientId={patientId} />}
                 />
-              }
-            />
 
-            <Route
-              path="patientCreate"
-              element={<CreatePatient profileId={profileId} />}
-            />
+                <Route
+                  path="editTreatmentNote/:id"
+                  element={<EditCreateTreatmentNote patientId={patientId} />}
+                />
+                <Route
+                  path="createTreatmentNote"
+                  element={<EditCreateTreatmentNote patientId={patientId} />}
+                />
 
-            <Route
-              path="createAppointment"
-              element={<CreateAppointment profileId={profileId} />}
-            />
-
-            <Route path="patientPicker" element={<PatientPicker />} />
-            <Route
-              path="patientPortal"
-              element={
-                <PatientPortal patientId={patientId} profileId={profileId} />
-              }
-            >
+                <Route index element={<Patient patientId={patientId} />} />
+                <Route
+                  path="medicalAid"
+                  element={<MedicalAid patientId={patientId} />}
+                />
+              </Route>
               <Route
-                path="treatmentNotes"
-                element={<PatientTreatmentNotesList patientId={patientId} />}
+                path="appointmentTypePortal"
+                element={<AppointmentTypePortal profileId={profileId} />}
+              >
+                <Route
+                  path="createAppointmentType"
+                  element={<AppTypeCreation profileId={profileId} />}
+                />
+
+                <Route
+                  index
+                  element={<AppointmentTypeList profileId={profileId} />}
+                />
+
+                <Route path="view/:id" element={<AppTypeCreation />} />
+              </Route>
+
+              <Route
+                path="appointmentPortal"
+                element={<AppointmentPortal profileId={profileId} />}
+              />
+
+              <Route path="invoicePortal" element={<InvoicePortal />} />
+
+              <Route
+                path="invoiceProgress"
+                element={<InvoiceProgressPage profileId={profileId} />}
               />
 
               <Route
-                path="editTreatmentNote/:id"
-                element={<EditCreateTreatmentNote patientId={patientId} />}
-              />
-              <Route
-                path="createTreatmentNote"
-                element={<EditCreateTreatmentNote patientId={patientId} />}
+                path="invoicesPastDue"
+                element={<PastDueInvoices profileId={profileId} />}
               />
 
-              <Route index element={<Patient patientId={patientId} />} />
               <Route
-                path="medicalAid"
-                element={<MedicalAid patientId={patientId} />}
+                path="emailNotifications"
+                element={<EmailCustomizationPage profileId={profileId} />}
               />
+
+              <Route
+                path="paymentsTracker"
+                element={<PaymentsList profileId={profileId} />}
+              />
+
+              <Route
+                path="calendar"
+                element={<MainCalendar profileId={profileId} />}
+              />
+
+              <Route path="componentStyling" element={<ComponentView />} />
             </Route>
-            <Route
-              path="appointmentTypePortal"
-              element={<AppointmentTypePortal profileId={profileId} />}
-            >
-              <Route
-                path="createAppointmentType"
-                element={<AppTypeCreation profileId={profileId} />}
-              />
-
-              <Route
-                index
-                element={<AppointmentTypeList profileId={profileId} />}
-              />
-
-              <Route path="view/:id" element={<AppTypeCreation />} />
-            </Route>
-
-            <Route
-              path="appointmentPortal"
-              element={<AppointmentPortal profileId={profileId} />}
-            />
-
-            <Route path="invoicePortal" element={<InvoicePortal />} />
-
-            <Route
-              path="invoiceProgress"
-              element={<InvoiceProgressPage profileId={profileId} />}
-            />
-
-            <Route
-              path="invoicesPastDue"
-              element={<PastDueInvoices profileId={profileId} />}
-            />
-
-            <Route
-              path="emailNotifications"
-              element={<EmailCustomizationPage profileId={profileId} />}
-            />
-
-            <Route
-              path="paymentsTracker"
-              element={<PaymentsList profileId={profileId} />}
-            />
-
-            <Route
-              path="calendar"
-              element={<MainCalendar profileId={profileId} />}
-            />
-
-            <Route path="componentStyling" element={<ComponentView />} />
-          </Route>
-        </Routes>
-      </QueryClientProvider>
+          </Routes>
+        </QueryClientProvider>
+      </LocalizationProvider>
     </>
   );
 }

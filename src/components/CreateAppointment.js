@@ -5,6 +5,11 @@ import { format, add, set, parse } from "date-fns";
 import PatientPicker from "./Pages/PatientPickerPage";
 import { checkAndSetIcds } from "../apiRequests/apiRequests";
 import GenericTopBar from "./miscellaneous components/GenericTopBar";
+import DivSvgDisplayCombo from "./miscellaneous components/DivSvgLabelCombo";
+import TimestartAndEndDisplay from "./miscellaneous components/TimeStartAndEndDisplay";
+import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
+import AppointmentTypePicker from "./miscellaneous components/AppointmentTypePicker";
+import { StaticTimePicker } from "@mui/x-date-pickers/StaticTimePicker";
 
 function setDateAndTimes() {
   const currentDateAndTime = new Date();
@@ -24,8 +29,10 @@ export default function CreateAppointment({
     `/appointmentTypes/viewAll${profileId}`,
     "appTypes"
   );
+  const [showStartTimePicker, setShowStartTimePicker] = useState(false);
 
   const { formattedCurrentDate, currentTime, endTime } = setDateAndTimes();
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const navigate = useNavigate();
   const [appointment, setAppointment] = useState({
@@ -39,8 +46,11 @@ export default function CreateAppointment({
       ? format(set(calendarSelectedJsDateTimeString, { minutes: 30 }), "HH:mm")
       : null,
   });
-
+  const [showAppointmentTypeIcker, setShowAppointmentTypePicker] =
+    useState(false);
+  const [appointmentTypeDetails, setAppointmentTypeDetails] = useState();
   const [showPatientPicker, setShowPatientPicker] = useState(false);
+  const [showEndTimePicker, setShowEndTimePicker] = useState(false);
 
   const { createMutation } = usePostData("/appointments/createAppointment");
 
@@ -89,6 +99,13 @@ export default function CreateAppointment({
     }
   }
 
+  useEffect(() => {
+    setAppointment((prev) => ({
+      ...prev,
+      appointment_type_id: appointmentTypeDetails.id,
+    }));
+  }, [appointmentTypeDetails]);
+
   function handlePatientPickerOnclick(id, patientFirstName, patientLastName) {
     setAppointment((prev) => ({
       ...prev,
@@ -96,6 +113,13 @@ export default function CreateAppointment({
       patientFullName: patientFirstName + " " + patientLastName,
     }));
     setShowPatientPicker(false);
+  }
+
+  function handleAppointmentTypeSelect(appTypeData) {
+    setAppointmentTypeDetails((prev) => ({
+      ...prev,
+      appoitnment_type_id: appTypeData.id,
+    }));
   }
 
   return (
@@ -110,7 +134,6 @@ export default function CreateAppointment({
           }}
         >
           <GenericTopBar label="Create Appointment" />
-
           {data ? (
             <select
               required={true}
@@ -135,15 +158,39 @@ export default function CreateAppointment({
               No appointment types to display. Click here to create.
             </div>
           )}
-
           <input
             onChange={handleChange}
             type="date"
             value={appointment?.appointment_date}
             name="appointment_date"
           />
-
+          <DivSvgDisplayCombo
+            displayText={
+              <div>
+                {" "}
+                <p>{format(appointment.appointment_date, "eee dd MMM")}</p>{" "}
+                <p className="text-sm text-slate-400">
+                  Click to change Selected day
+                </p>{" "}
+              </div>
+            }
+            onclick={() => setShowDatePicker(!showDatePicker)}
+          />
+          {showDatePicker && (
+            <div className="z-10 flex items-center justify-center fixed left-0 top-0 min-w-full min-h-screen bg-opacity-50 bg-gray-400">
+              <DateCalendar
+                value={appointment?.appointment_date}
+                onChange={(value) =>
+                  setAppointment((prev) => ({
+                    ...prev,
+                    appointment_date: value,
+                  }))
+                }
+              />
+            </div>
+          )}
           <div>
+            /*{" "}
             <label htmlFor="startTime">
               Start Time
               <input
@@ -153,7 +200,69 @@ export default function CreateAppointment({
                 name="start_time"
                 id="startTime"
                 value={appointment.start_time}
+              />{" "}
+              */
+              <DivSvgDisplayCombo
+                displayText={
+                  <TimestartAndEndDisplay
+                    endTimeValue={appointment.end_time}
+                    startTimeValue={appointment.start_time}
+                    onclickStartTime={() =>
+                      setShowStartTimePicker(!showStartTimePicker)
+                    }
+                    onclickEndTime={() =>
+                      setShowEndTimePicker(!showEndTimePicker)
+                    }
+                  />
+                }
               />
+              {showStartTimePicker && (
+                <div className="fixed left-0 top-0 min-w-full min-h-screen bg-slate-400 bg-opacity-50 flex items-center justify-center">
+                  <div className="w-1/3 h-fit ">
+                    <StaticTimePicker
+                      value={appointment?.start_time || new Date()}
+                      onAccept={(value) => {
+                        setAppointment((prev) => ({
+                          ...prev,
+                          start_time: value,
+                        }));
+                        setShowStartTimePicker(!showStartTimePicker);
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+              {showEndTimePicker && (
+                <div className="fixed left-0 top-0 min-w-full min-h-screen bg-slate-400 bg-opacity-50 flex items-center justify-center">
+                  <div className="w-1/3 h-fit ">
+                    <StaticTimePicker
+                      value={appointment?.end_time || new Date()}
+                      onAccept={(value) => {
+                        setAppointment((prev) => ({
+                          ...prev,
+                          end_time: value,
+                        }));
+                        setShowEndTimePicker(!showEndTimePicker);
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+              <DivSvgDisplayCombo
+                displayText={appointmentTypeDetails?.name || "Appointment Type"}
+                onclick={() =>
+                  setShowAppointmentTypePicker(!showAppointmentTypeIcker)
+                }
+              />
+              {showAppointmentTypeIcker && (
+                <AppointmentTypePicker
+                  hideComponent={() =>
+                    setShowAppointmentTypePicker(!showAppointmentTypeIcker)
+                  }
+                  profileId={profileId}
+                  onclick={handleAppointmentTypeChange}
+                />
+              )}
             </label>
             <label htmlFor="endTime">
               End time{" "}
@@ -170,7 +279,6 @@ export default function CreateAppointment({
           <div onClick={() => setShowPatientPicker(true)}>
             {appointment?.patientFullName ?? "Select Patient"}
           </div>
-
           <button
             type="onSubmit"
             disabled={Object.keys(appointment).length === 0}

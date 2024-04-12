@@ -3,7 +3,9 @@ import SubmitButton from "../components/miscellaneous components/SubmitButton";
 import Input from "../components/miscellaneous components/DisplayTextInput";
 import GenericTopBar from "../components/miscellaneous components/GenericTopBar";
 import DivSvgDisplayCombo from "../components/miscellaneous components/DivSvgLabelCombo";
-import Experiment from "../components/miscellaneous components/Experiment";
+import TimestartAndEndDisplay from "../components/miscellaneous components/TimeStartAndEndDisplay";
+import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
+import { StaticTimePicker } from "@mui/x-date-pickers/StaticTimePicker";
 
 export default function ComponentView() {
   return (
@@ -17,6 +19,14 @@ export default function ComponentView() {
 
         <GenericTopBar label="Warren" onclick={() => alert("Hello dad")} />
         <DivSvgDisplayCombo />
+        <TimestartAndEndDisplay />
+        <DateCalendar
+          defaultValue={new Date()}
+          views={["year", "month", "day"]}
+        />
+        <div className="min-w-full min-h-full  justify-center flex items-center">
+          <StaticTimePicker />
+        </div>
       </div>
     </>
   );
