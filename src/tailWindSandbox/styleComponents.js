@@ -6,6 +6,8 @@ import DivSvgDisplayCombo from "../components/miscellaneous components/DivSvgLab
 import TimestartAndEndDisplay from "../components/miscellaneous components/TimeStartAndEndDisplay";
 import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
 import { StaticTimePicker } from "@mui/x-date-pickers/StaticTimePicker";
+import { TimeClock } from "@mui/x-date-pickers/TimeClock";
+import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
 
 export default function ComponentView() {
   return (
@@ -25,7 +27,13 @@ export default function ComponentView() {
           views={["year", "month", "day"]}
         />
         <div className="min-w-full min-h-full  justify-center flex items-center">
-          <StaticTimePicker />
+          <StaticTimePicker
+            ampm={false}
+            slotProps={{
+              actionBar: { actions: ["cancel", "clear", "today", "accept"] },
+            }}
+          />
+          <StaticDatePicker />
         </div>
       </div>
     </>

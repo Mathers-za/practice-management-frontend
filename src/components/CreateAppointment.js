@@ -10,6 +10,7 @@ import TimestartAndEndDisplay from "./miscellaneous components/TimeStartAndEndDi
 import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
 import AppointmentTypePicker from "./miscellaneous components/AppointmentTypePicker";
 import { StaticTimePicker } from "@mui/x-date-pickers/StaticTimePicker";
+import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
 
 function setDateAndTimes() {
   const currentDateAndTime = new Date();
@@ -86,15 +87,20 @@ export default function CreateAppointment({
             onclick={() => setShowDatePicker(!showDatePicker)}
           />
           {showDatePicker && (
-            <div className="z-10 flex items-center justify-center fixed left-0 top-0 min-w-full min-h-screen bg-opacity-50 bg-gray-400">
-              <DateCalendar
-                value={appointment?.appointment_date}
-                onChange={(value) =>
+            <div className="fixed left-0 top-0 min-w-full h-screen z-10 bg-slate-300 bg-opacity-50 flex items-center justify-center ">
+              <StaticDatePicker
+                value={appointment?.appointment_date || new Date()}
+                onAccept={(value) => {
                   setAppointment((prev) => ({
                     ...prev,
                     appointment_date: value,
-                  }))
-                }
+                  }));
+                  setShowDatePicker(!showDatePicker);
+                }}
+                autoFocus={true}
+                slotProps={{
+                  actionBar: { actions: ["cancel", "today", "accept"] },
+                }}
               />
             </div>
           )}
@@ -117,6 +123,16 @@ export default function CreateAppointment({
               <div className="fixed left-0 top-0 min-w-full min-h-screen bg-slate-400 bg-opacity-50 flex items-center justify-center">
                 <div className="w-1/3 h-fit ">
                   <StaticTimePicker
+                    ampm={false}
+                    slotProps={{
+                      actionBar: {
+                        actions: ["cancel", "accept"],
+                      },
+                      layout: {
+                        onCancel: () =>
+                          setShowStartTimePicker(!showStartTimePicker),
+                      },
+                    }}
                     value={appointment?.start_time || new Date()}
                     onAccept={(value) => {
                       alert(value);
