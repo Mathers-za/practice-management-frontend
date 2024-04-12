@@ -3,12 +3,13 @@ import { Link } from "react-router-dom";
 export default function MainMenuSideBar({ itemsArray }) {
   return (
     <>
-      <div className="flex flex-col items-start px-5 max-w-full bg-cyan-400 min-h-screen sticky left-0 top-0 bottom-0   ">
-        <ul className="list-none flex flex-col gap-2  ">
-          <li>
-            {" "}
-            <Link to="profile">Profile</Link>{" "}
-          </li>
+      <div className=" px-5 max-w-full bg-cyan-400 min-h-screen sticky left-0 top-0 bottom-0   ">
+        <ul className="list-none flex flex-col grow ">
+          <Link to="profile">
+            <li className="hover:bg-gray-500 hover:text-white hover:cursor-pointer">
+              Profile
+            </li>
+          </Link>
           <li>
             {" "}
             <Link to="practice">Practice</Link>{" "}

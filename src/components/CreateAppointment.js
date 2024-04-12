@@ -25,10 +25,6 @@ export default function CreateAppointment({
   profileId,
   calendarSelectedJsDateTimeString,
 }) {
-  const { data } = useFetchData(
-    `/appointmentTypes/viewAll${profileId}`,
-    "appTypes"
-  );
   const [showStartTimePicker, setShowStartTimePicker] = useState(false);
 
   const { formattedCurrentDate, currentTime, endTime } = setDateAndTimes();
@@ -39,12 +35,6 @@ export default function CreateAppointment({
     appointment_date: calendarSelectedJsDateTimeString
       ? format(calendarSelectedJsDateTimeString, "yyyy-MM-dd")
       : formattedCurrentDate,
-    start_time: calendarSelectedJsDateTimeString
-      ? format(calendarSelectedJsDateTimeString, "HH:mm")
-      : currentTime,
-    end_time: calendarSelectedJsDateTimeString
-      ? format(set(calendarSelectedJsDateTimeString, { minutes: 30 }), "HH:mm")
-      : null,
   });
   const [showAppointmentTypeIcker, setShowAppointmentTypePicker] =
     useState(false);
@@ -53,58 +43,6 @@ export default function CreateAppointment({
   const [showEndTimePicker, setShowEndTimePicker] = useState(false);
 
   const { createMutation } = usePostData("/appointments/createAppointment");
-
-  function handleChange(e) {
-    const { name, value } = e.target;
-
-    setAppointment((prev) => ({
-      ...prev,
-
-      [name]: value,
-    }));
-
-    if (name === "start_time" || name === "end_time") {
-      setAppointment((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    }
-  }
-
-  useEffect(() => {
-    if (data && data.length > 0) {
-      setAppointment((prev) => ({
-        ...prev,
-        appointment_type_id: data[0].id,
-      }));
-    }
-  }, [data]);
-
-  function handleAppointmentTypeChange(appointmentTypeId) {
-    const selectedAppointmentType = data.find(
-      (element) => element.id == appointmentTypeId
-    );
-
-    if (selectedAppointmentType) {
-      setAppointment((prev) => ({
-        ...prev,
-        appointment_type_id: selectedAppointmentType.id,
-        end_time: format(
-          add(parse(prev.start_time, "HH:mm", prev.appointment_date), {
-            minutes: selectedAppointmentType?.duration || 0,
-          }),
-          "HH:mm"
-        ),
-      }));
-    }
-  }
-
-  useEffect(() => {
-    setAppointment((prev) => ({
-      ...prev,
-      appointment_type_id: appointmentTypeDetails.id,
-    }));
-  }, [appointmentTypeDetails]);
 
   function handlePatientPickerOnclick(id, patientFirstName, patientLastName) {
     setAppointment((prev) => ({
@@ -126,7 +64,7 @@ export default function CreateAppointment({
     <>
       {!showPatientPicker ? (
         <form
-          className="z-10 fixed left-0 top-0 min-h-screen min-w-full bg-white"
+          className=""
           onSubmit={async (e) => {
             e.preventDefault();
             const result = await createMutation.mutateAsync(appointment);
@@ -134,36 +72,7 @@ export default function CreateAppointment({
           }}
         >
           <GenericTopBar label="Create Appointment" />
-          {data ? (
-            <select
-              required={true}
-              onChange={(event) =>
-                handleAppointmentTypeChange(parseInt(event.target.value))
-              }
-              name="appointment_type_id"
-              id="apptype"
-            >
-              {data
-                ?.sort((a, b) => a.id - b.id)
-                .map((appType) => {
-                  return (
-                    <option key={appType?.id} value={appType.id}>
-                      {appType?.appointment_name}
-                    </option>
-                  );
-                })}
-            </select>
-          ) : (
-            <div onClick={() => navigate("createAppointmentType")}>
-              No appointment types to display. Click here to create.
-            </div>
-          )}
-          <input
-            onChange={handleChange}
-            type="date"
-            value={appointment?.appointment_date}
-            name="appointment_date"
-          />
+
           <DivSvgDisplayCombo
             displayText={
               <div>
@@ -190,90 +99,69 @@ export default function CreateAppointment({
             </div>
           )}
           <div>
-            /*{" "}
-            <label htmlFor="startTime">
-              Start Time
-              <input
-                required
-                onChange={handleChange}
-                type="time"
-                name="start_time"
-                id="startTime"
-                value={appointment.start_time}
-              />{" "}
-              */
-              <DivSvgDisplayCombo
-                displayText={
-                  <TimestartAndEndDisplay
-                    endTimeValue={appointment.end_time}
-                    startTimeValue={appointment.start_time}
-                    onclickStartTime={() =>
-                      setShowStartTimePicker(!showStartTimePicker)
-                    }
-                    onclickEndTime={() =>
-                      setShowEndTimePicker(!showEndTimePicker)
-                    }
+            <DivSvgDisplayCombo
+              displayText={
+                <TimestartAndEndDisplay
+                  endTimeValue={appointment.end_time}
+                  startTimeValue={appointment.start_time}
+                  onclickStartTime={() =>
+                    setShowStartTimePicker(!showStartTimePicker)
+                  }
+                  onclickEndTime={() =>
+                    setShowEndTimePicker(!showEndTimePicker)
+                  }
+                />
+              }
+            />
+            {showStartTimePicker && (
+              <div className="fixed left-0 top-0 min-w-full min-h-screen bg-slate-400 bg-opacity-50 flex items-center justify-center">
+                <div className="w-1/3 h-fit ">
+                  <StaticTimePicker
+                    value={appointment?.start_time || new Date()}
+                    onAccept={(value) => {
+                      alert(value);
+                      setAppointment((prev) => ({
+                        ...prev,
+                        start_time: format(value, "HH:mm"),
+                      }));
+                      setShowStartTimePicker(!showStartTimePicker);
+                    }}
                   />
-                }
-              />
-              {showStartTimePicker && (
-                <div className="fixed left-0 top-0 min-w-full min-h-screen bg-slate-400 bg-opacity-50 flex items-center justify-center">
-                  <div className="w-1/3 h-fit ">
-                    <StaticTimePicker
-                      value={appointment?.start_time || new Date()}
-                      onAccept={(value) => {
-                        setAppointment((prev) => ({
-                          ...prev,
-                          start_time: value,
-                        }));
-                        setShowStartTimePicker(!showStartTimePicker);
-                      }}
-                    />
-                  </div>
                 </div>
-              )}
-              {showEndTimePicker && (
-                <div className="fixed left-0 top-0 min-w-full min-h-screen bg-slate-400 bg-opacity-50 flex items-center justify-center">
-                  <div className="w-1/3 h-fit ">
-                    <StaticTimePicker
-                      value={appointment?.end_time || new Date()}
-                      onAccept={(value) => {
-                        setAppointment((prev) => ({
-                          ...prev,
-                          end_time: value,
-                        }));
-                        setShowEndTimePicker(!showEndTimePicker);
-                      }}
-                    />
-                  </div>
+              </div>
+            )}
+            {showEndTimePicker && (
+              <div className="fixed left-0 top-0 min-w-full min-h-screen bg-slate-400 bg-opacity-50 flex items-center justify-center">
+                <div className="w-1/3 h-fit ">
+                  <StaticTimePicker
+                    value={appointment?.end_time || new Date()}
+                    onAccept={(value) => {
+                      alert(value);
+                      setAppointment((prev) => ({
+                        ...prev,
+                        end_time: format(value, "HH:mm"),
+                      }));
+                      setShowEndTimePicker(!showEndTimePicker);
+                    }}
+                  />
                 </div>
-              )}
-              <DivSvgDisplayCombo
-                displayText={appointmentTypeDetails?.name || "Appointment Type"}
-                onclick={() =>
+              </div>
+            )}
+            <DivSvgDisplayCombo
+              displayText={appointmentTypeDetails?.name || "Appointment Type"}
+              onclick={() =>
+                setShowAppointmentTypePicker(!showAppointmentTypeIcker)
+              }
+            />
+            {showAppointmentTypeIcker && (
+              <AppointmentTypePicker
+                hideComponent={() =>
                   setShowAppointmentTypePicker(!showAppointmentTypeIcker)
                 }
+                profileId={profileId}
+                onclick={handleAppointmentTypeSelect}
               />
-              {showAppointmentTypeIcker && (
-                <AppointmentTypePicker
-                  hideComponent={() =>
-                    setShowAppointmentTypePicker(!showAppointmentTypeIcker)
-                  }
-                  profileId={profileId}
-                  onclick={handleAppointmentTypeChange}
-                />
-              )}
-            </label>
-            <label htmlFor="endTime">
-              End time{" "}
-              <input
-                onChange={handleChange}
-                type="time"
-                name="end_time"
-                id="endTime"
-                value={appointment.end_time}
-              />
-            </label>
+            )}
           </div>
 
           <div onClick={() => setShowPatientPicker(true)}>
