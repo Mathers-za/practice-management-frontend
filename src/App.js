@@ -27,6 +27,11 @@ import EmailCustomizationPage from "./components/Pages/email customizations/emai
 import MainCalendar from "./components/Pages/Main Calendar/MainCalendar";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
+import { library } from "@fortawesome/fontawesome-svg-core";
+
+import { fab } from "@fortawesome/free-brands-svg-icons";
+import { fas } from "@fortawesome/free-solid-svg-icons";
+import { far } from "@fortawesome/free-regular-svg-icons";
 
 import ComponentView from "./tailWindSandbox/styleComponents";
 
@@ -188,5 +193,6 @@ function App() {
     </>
   );
 }
+library.add(fab, fas, far);
 
 export default App;

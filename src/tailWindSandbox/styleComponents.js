@@ -9,6 +9,7 @@ import { StaticTimePicker } from "@mui/x-date-pickers/StaticTimePicker";
 
 import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
 import FullWithButton from "../components/miscellaneous components/FullWidthButton";
+import PatientPicker from "../components/miscellaneous components/PatientPicker";
 
 export default function ComponentView() {
   return (
@@ -27,7 +28,7 @@ export default function ComponentView() {
           defaultValue={new Date()}
           views={["year", "month", "day"]}
         />
-        <div className="min-w-full min-h-full  justify-center flex items-center">
+        <div className="min-w-full min-h-full  justify-center flex   flex-col items-center gap-5 ">
           <StaticTimePicker
             ampm={false}
             slotProps={{
@@ -39,6 +40,8 @@ export default function ComponentView() {
             contentText={"Hey there "}
             onclick={() => alert("hi")}
           />
+
+          <PatientPicker />
         </div>
       </div>
     </>

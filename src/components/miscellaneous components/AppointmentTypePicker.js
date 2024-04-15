@@ -1,5 +1,6 @@
 import { useFetchData } from "../../CustomHooks/serverStateHooks";
 import GenericTopBar from "./GenericTopBar";
+import SubmitButton from "./SubmitButton";
 
 export default function AppointmentTypePicker({
   profileId,
@@ -13,28 +14,34 @@ export default function AppointmentTypePicker({
 
   return (
     <>
-      <div className="fixed left-0 top-0 min-w-full min-h-screen bg-slate-400 bg-opacity-50 z-10">
+      <div className=" w-3/5 min-h-[30em] bg-blue-600 relative ">
         <GenericTopBar
           label="Select an appointment type"
           onclick={hideComponent}
         />
-        <div className="w-2/5 border border-black rounded-sm relative h-2/5 ">
-          <div className=" absolute right-0 top-0 p-2 rounded-full bg-sky-400 text-white hover:bg-sky-300 cursor-pointer">
-            add
+        <div className="flex justify-center">
+          <div className="w-11/12 h-80 border-black rounded-sm shadow- shadow-current relative bg-slate-200 flex  mt-3 ">
+            <div className=" absolute right-[-10px]  p-2 top-[-10px]   rounded-full select-none bg-sky-400 text-center text-white hover:bg-sky-300 cursor-pointer">
+              Add
+            </div>
+            {appointTypeData && appointTypeData.length > 0
+              ? appointTypeData.map((appType) => {
+                  <div
+                    key={appType.id}
+                    onClick={() => onclick(appType)}
+                    className="border-b border-slate-400 p-2   "
+                  >
+                    {appType.name}
+                  </div>;
+                })
+              : " No content to display. Please create an appoitnment Type"}
           </div>
-          {appointTypeData && appointTypeData.length > 0 ? (
-            appointTypeData.map((appType) => {
-              <div
-                onClick={() => onclick(appType)}
-                className="border-b border-slate-400 p-1"
-              >
-                {appType.name}
-              </div>;
-            })
-          ) : (
-            <div>No content to display. Please create an appoitnment Type</div>
-          )}
         </div>
+        <SubmitButton
+          text="Cancel"
+          className=" absolute bottom-0 left-0 z-10"
+          onclick={() => hideComponent()}
+        />
       </div>
     </>
   );
