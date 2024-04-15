@@ -222,7 +222,7 @@ export default function CreateAppointment({
           onclick={() => setShowPatientPicker(!showPatientPicker)}
         />
         {showPatientPicker && (
-          <div className="fixed top-0 left-0 min-w-full min-h-screen bg-white z-10 ">
+          <div className="fixed top-0 left-0 min-w-full min-h-full max-h-fit bg-white z-10 overflow-y-scroll ">
             <PatientPicker
               profileId={profileId}
               hideComponent={() => setShowPatientPicker(!showPatientPicker)}
