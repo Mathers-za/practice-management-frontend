@@ -11,6 +11,7 @@ import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
 import AppointmentTypePicker from "./miscellaneous components/AppointmentTypePicker";
 import { StaticTimePicker } from "@mui/x-date-pickers/StaticTimePicker";
 import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
+import FullWithButton from "./miscellaneous components/FullWidthButton";
 
 function setDateAndTimes() {
   const currentDateAndTime = new Date();
@@ -196,6 +197,16 @@ export default function CreateAppointment({
           profileId={profileId}
         />
       )}
+
+      <DivSvgDisplayCombo
+        displayText="Pick a patient"
+        onclick={() => alert("yo")}
+      />
+      <FullWithButton
+        contentText="Confirm and Create Appointment"
+        onclick={() => alert("hi")}
+        disabled={Object.keys(appointment).length < 5}
+      />
     </>
   );
 }

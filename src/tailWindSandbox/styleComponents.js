@@ -6,8 +6,9 @@ import DivSvgDisplayCombo from "../components/miscellaneous components/DivSvgLab
 import TimestartAndEndDisplay from "../components/miscellaneous components/TimeStartAndEndDisplay";
 import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
 import { StaticTimePicker } from "@mui/x-date-pickers/StaticTimePicker";
-import { TimeClock } from "@mui/x-date-pickers/TimeClock";
+
 import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
+import FullWithButton from "../components/miscellaneous components/FullWidthButton";
 
 export default function ComponentView() {
   return (
@@ -34,6 +35,10 @@ export default function ComponentView() {
             }}
           />
           <StaticDatePicker />
+          <FullWithButton
+            contentText={"Hey there "}
+            onclick={() => alert("hi")}
+          />
         </div>
       </div>
     </>
