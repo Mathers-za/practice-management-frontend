@@ -14,6 +14,8 @@ import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
 import FullWithButton from "./miscellaneous components/FullWidthButton";
 import PatientPicker from "./miscellaneous components/PatientPicker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useAppointmentDataFromCreateAppointment } from "../zustandStore/store";
+import AppointmentNotificationSettings from "./miscellaneous components/AppointmentNotificationSettings";
 
 function setDateAndTimes() {
   const currentDateAndTime = new Date();
@@ -29,11 +31,21 @@ export default function CreateAppointment({
   profileId,
   calendarSelectedJsDateTimeString,
 }) {
+  const [showNotificationSettings, setShowNotificationSettings] =
+    useState(false);
   const [showStartTimePicker, setShowStartTimePicker] = useState(false);
   const [showPatientPicker, setShowPatientPicker] = useState(false);
   const { formattedCurrentDate, currentTime, endTime } = setDateAndTimes();
   const [showDatePicker, setShowDatePicker] = useState(false);
-
+  const setGlobalPatientData = useAppointmentDataFromCreateAppointment(
+    (state) => state.setPatientData
+  );
+  const setGlobalAppointmentTypeData = useAppointmentDataFromCreateAppointment(
+    (state) => state.setappointmentData
+  );
+  const setGlobalAppointmentData = useAppointmentDataFromCreateAppointment(
+    (state) => state.setAppointmentData
+  );
   const navigate = useNavigate();
   const [appointment, setAppointment] = useState({
     appointment_date: calendarSelectedJsDateTimeString
@@ -42,37 +54,56 @@ export default function CreateAppointment({
   });
   const [showAppointmentTypeIcker, setShowAppointmentTypePicker] =
     useState(false);
-  const [appointmentTypeDetails, setAppointmentTypeDetails] = useState();
 
   const [showEndTimePicker, setShowEndTimePicker] = useState(false);
+  const [appointmentSelectionDisplay, setAppointmentTypeSelectionDisplay] =
+    useState("");
 
   const { createMutation } = usePostData("/appointments/createAppointment");
-  const [patientName, setPatientName] = useState("");
+  const [patientSelectionDisplay, setPatientSelectionDisplay] = useState("");
 
   function handleAppointmentTypeSelect(appTypeData) {
-    setAppointmentTypeDetails((prev) => ({
+    setAppointment((prev) => ({
       ...prev,
-      appoitnment_type_id: appTypeData.id,
+      appointment_type_id: appTypeData.id,
     }));
+
+    setAppointmentTypeSelectionDisplay(
+      <div>
+        <p>{appTypeData?.appointment_name || ""}</p>{" "}
+        <p className="text-slate-600 text-sm">
+          {appTypeData.duration} mins. {appTypeData?.price || ""}
+        </p>
+      </div>
+    );
+    setShowAppointmentTypePicker(!showAppointmentTypeIcker);
+    setGlobalAppointmentTypeData(appTypeData);
   }
 
   function handlePatientPicker(patientData) {
     const fullName =
       (patientData?.first_name || "") + " " + (patientData?.last_name || "");
-    setPatientName(fullName);
+    setPatientSelectionDisplay(fullName);
     setAppointment((prev) => ({ ...prev, patient_id: patientData.id }));
+    setShowPatientPicker(!showPatientPicker);
+    setGlobalPatientData(patientData);
+  }
+  async function handleSubmission(sendConfirmation, sendReminder) {
+    if (sendReminder) {
+      setAppointment((prev) => ({ prev, send_reminder: true }));
+    }
+
+    if (sendConfirmation) {
+      //api call
+    }
+    //TODO - integrate the notifications fucntionality
+    const result = await createMutation.mutateAsync(appointment);
+    await checkAndSetIcds(result.id, result.appointment_type_id);
   }
 
   return (
     <>
-      <form
-        className="relative min-h-full border shadow-md shadow-slate-300 "
-        onSubmit={async (e) => {
-          e.preventDefault();
-          const result = await createMutation.mutateAsync(appointment);
-          await checkAndSetIcds(result.id, result.appointment_type_id);
-        }}
-      >
+      <div className="relative min-h-full border shadow-md shadow-slate-300">
         <GenericTopBar label="Create Appointment" />
 
         <DivSvgDisplayCombo
@@ -145,9 +176,12 @@ export default function CreateAppointment({
                         setShowStartTimePicker(!showStartTimePicker),
                     },
                   }}
-                  value={appointment?.start_time || new Date()}
+                  value={
+                    appointment?.start_time
+                      ? new Date(appointment.start_time)
+                      : new Date()
+                  }
                   onAccept={(value) => {
-                    alert(value);
                     setAppointment((prev) => ({
                       ...prev,
                       start_time: format(value, "HH:mm"),
@@ -162,14 +196,24 @@ export default function CreateAppointment({
             <div className="fixed left-0 top-0 min-w-full min-h-screen bg-slate-400 bg-opacity-50 flex items-center justify-center">
               <div className="w-1/3 h-fit ">
                 <StaticTimePicker
-                  value={appointment?.end_time || new Date()}
+                  value={
+                    appointment?.end_time
+                      ? new Date(appointment.end_time)
+                      : new Date()
+                  }
                   onAccept={(value) => {
-                    alert(value);
                     setAppointment((prev) => ({
                       ...prev,
                       end_time: format(value, "HH:mm"),
                     }));
                     setShowEndTimePicker(!showEndTimePicker);
+                  }}
+                  defaultValue={new Date()}
+                  slotProps={{
+                    actionBar: { actions: ["cancel", "accept"] },
+                    layout: {
+                      onCancel: () => setShowEndTimePicker(!showEndTimePicker),
+                    },
                   }}
                 />
               </div>
@@ -183,13 +227,15 @@ export default function CreateAppointment({
                 style={{ color: "#055bf0", marginRight: "30px" }}
               />
             }
-            displayText={appointmentTypeDetails?.name || "Appointment Type"}
+            displayText={
+              appointmentSelectionDisplay || "Select an Apppointment Type"
+            }
             onclick={() =>
               setShowAppointmentTypePicker(!showAppointmentTypeIcker)
             }
           />
           {showAppointmentTypeIcker && (
-            <div className="  fixed left-0 top-0 bg-slate-100 bg-opacity-30 min-w-full min-h-screen z-10 flex  justify-center items-center">
+            <div className="  fixed left-0 top-0 bg-black bg-opacity-40 bg-opacity-30 min-w-full min-h-screen z-10 flex  justify-center items-center">
               <AppointmentTypePicker
                 hideComponent={() =>
                   setShowAppointmentTypePicker(!showAppointmentTypeIcker)
@@ -210,9 +256,9 @@ export default function CreateAppointment({
             />
           }
           displayText={
-            patientName ? (
+            patientSelectionDisplay ? (
               <div>
-                <p>{patientName}</p>
+                <p>{patientSelectionDisplay}</p>
                 <p className="text-sm text-slate-700">Click to change</p>
               </div>
             ) : (
@@ -233,11 +279,18 @@ export default function CreateAppointment({
         <div className="absolute bottom-0 left-0 w-full mb-1">
           <FullWithButton
             contentText="Confirm and Create Appointment"
-            onclick={() => alert("hi")}
+            onclick={() => {
+              setGlobalAppointmentData(appointment);
+            }}
             disabled={Object.keys(appointment).length < 5}
           />
         </div>
-      </form>
+        {showNotificationSettings && (
+          <div className="fixed left-0 top-0 w-full min-h-screen bg-black bg-opacity-50">
+            <AppointmentNotificationSettings onSubmit={handleSubmission} />
+          </div>
+        )}
+      </div>
     </>
   );
 }

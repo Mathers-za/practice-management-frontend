@@ -5,12 +5,17 @@ import { Outlet } from "react-router-dom";
 import { useFetchData, usePostData } from "../../CustomHooks/serverStateHooks";
 import MainMenuSideBar from "../mainMenuSideBar/MainMenuSideBar";
 import MainMenuTopBar from "../MainMenuTopBar/MainMenuTopBar";
+import { useAppointmentDataFromCreateAppointment } from "../../zustandStore/store";
 
 export default function DashBoard({ profileIdStateSetter }) {
+  const setGlobalProfileData = useAppointmentDataFromCreateAppointment(
+    (state) => state.setProfileData
+  );
   const { data, httpStatus } = useFetchData(
     `/profile/view`,
     "profileDataDashboard"
   );
+
   const { createMutation: profileMutation } = usePostData(
     `/profile/createProfile`
   );
@@ -43,6 +48,7 @@ export default function DashBoard({ profileIdStateSetter }) {
 
     if (httpStatus === 200) {
       profileIdStateSetter(data.id);
+      setGlobalProfileData(data);
     }
   }, [data, httpStatus]);
 

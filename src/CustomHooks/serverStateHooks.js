@@ -32,6 +32,7 @@ const useFetchData = (endpoint = "", queryKey, paramsData = "") => {
     isLoading,
     httpStatus,
     isRefetching,
+
     refetch,
   };
 };
@@ -103,9 +104,10 @@ const useDeleteData = (endpoint = "", queryKey = undefined) => {
     },
 
     {
-      onSettled: () => {
-        console.log("deletion was a success");
-        queryKey && queryClient.invalidateQueries(queryKey);
+      onSuccess: (data, error, variables, context) => {
+        if (context.status === "success") {
+          queryKey && queryClient.invalidateQueries(queryKey);
+        }
       },
     }
   );

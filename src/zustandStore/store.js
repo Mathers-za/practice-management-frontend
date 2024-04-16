@@ -98,3 +98,15 @@ export {
   useInvoiceListDropDown,
   useFlags,
 };
+
+export const useAppointmentDataFromCreateAppointment = create((set) => ({
+  patientData: {},
+  appointmentTypeData: {},
+  appointmentData: {},
+  profileData: {},
+  setPatientData: (patientDataObj) => set({ patientData: patientDataObj }),
+  setAppointmentTypeData: (apptypeDataObj) =>
+    set({ appointmentTypeData: apptypeDataObj }),
+  setAppointmentData: (appointmentDataObj) => set({ appointmentDataObj }),
+  setProfileData: (profileDataObj) => set({ profileData: profileDataObj }),
+}));

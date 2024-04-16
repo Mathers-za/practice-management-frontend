@@ -72,7 +72,8 @@ export default function PatientPicker({ profileId, hideComponent, onclick }) {
               onClick={() => setShowLength((prev) => prev + 10)}
               className="text-center text-lg hover:bg-slate-200"
             >
-              Load More
+              Load More //FIXME async problem with this. fix with useref and
+              force render
             </div>
           ) : null}
         </div>

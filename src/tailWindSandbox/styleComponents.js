@@ -10,8 +10,12 @@ import { StaticTimePicker } from "@mui/x-date-pickers/StaticTimePicker";
 import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
 import FullWithButton from "../components/miscellaneous components/FullWidthButton";
 import PatientPicker from "../components/miscellaneous components/PatientPicker";
+import { useAppointmentDataFromCreateAppointment } from "../zustandStore/store";
 
 export default function ComponentView() {
+  const globalProfileData = useAppointmentDataFromCreateAppointment(
+    (state) => state.profileData
+  );
   return (
     <>
       <div className="flex flex-col gap-3">
@@ -41,7 +45,7 @@ export default function ComponentView() {
             onclick={() => alert("hi")}
           />
 
-          <PatientPicker />
+          <div>{globalProfileData.first_name}</div>
         </div>
       </div>
     </>
