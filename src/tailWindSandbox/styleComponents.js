@@ -6,9 +6,8 @@ import GenericTopBar from "../components/miscellaneous components/GenericTopBar"
 import FullWithButton from "../components/miscellaneous components/FullWidthButton";
 
 import { useAppointmentDataFromCreateAppointment } from "../zustandStore/store";
-import AppointmentNotificationSettings from "../components/miscellaneous components/AppointmentNotificationSettings";
-import InputRequirements from "../components/miscellaneous components/InputRequirementsInfo";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+import TailWindLogin from "../components/miscellaneous components/TailWindLogin";
 
 export default function ComponentView() {
   const globalProfileData = useAppointmentDataFromCreateAppointment(
@@ -33,6 +32,7 @@ export default function ComponentView() {
 
           <div>{globalProfileData.first_name}</div>
         </div>
+        <TailWindLogin />
       </div>
     </>
   );

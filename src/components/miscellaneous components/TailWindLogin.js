@@ -26,15 +26,19 @@ function validateEmail(email) {
   }
 }
 
-export default function TailWindLogin({ hideComponent }) {
+export default function TailWindLogin() {
   const navigate = useNavigate();
-
+  const [registered, setRegistered] = useState(true);
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
   });
 
   const [validationErrorMessages, setValidationErrorMessages] = useState([]);
+
+  function handleClick() {
+    setRegistered(false);
+  }
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -116,6 +120,14 @@ export default function TailWindLogin({ hideComponent }) {
                 >
                   Password
                 </label>
+                <div className="text-sm">
+                  <a
+                    href="#"
+                    className="font-semibold text-indigo-600 hover:text-indigo-500"
+                  >
+                    Forgot password?
+                  </a>
+                </div>
               </div>
               <div className="mt-2">
                 <input
@@ -142,10 +154,7 @@ export default function TailWindLogin({ hideComponent }) {
 
           <p className="mt-10 text-center text-sm text-gray-500 flex items-center justify-center">
             Dont have an account?
-            <div
-              onClick={() => hideComponent()}
-              className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500 ml-1"
-            >
+            <div className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500 ml-1">
               Click here to register
             </div>
           </p>
