@@ -17,6 +17,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useAppointmentDataFromCreateAppointment } from "../zustandStore/store";
 import AppointmentNotificationSettings from "./miscellaneous components/AppointmentNotificationSettings";
 
+function checkForSelectedKeys(ArrayOfkeys, dataobj) {
+  return ArrayOfkeys.every((key) => dataobj.hasOwnProperty(key));
+}
+
 function setDateAndTimes() {
   const currentDateAndTime = new Date();
   const formattedCurrentDate = format(currentDateAndTime, "yyyy-MM-dd");
@@ -41,7 +45,7 @@ export default function CreateAppointment({
     (state) => state.setPatientData
   );
   const setGlobalAppointmentTypeData = useAppointmentDataFromCreateAppointment(
-    (state) => state.setappointmentData
+    (state) => state.setAppointmentTypeData
   );
   const setGlobalAppointmentData = useAppointmentDataFromCreateAppointment(
     (state) => state.setAppointmentData
@@ -51,14 +55,19 @@ export default function CreateAppointment({
     appointment_date: calendarSelectedJsDateTimeString
       ? format(calendarSelectedJsDateTimeString, "yyyy-MM-dd")
       : formattedCurrentDate,
+    send_reminder: false,
+    sent_confirmation: false,
   });
+
   const [showAppointmentTypeIcker, setShowAppointmentTypePicker] =
     useState(false);
 
   const [showEndTimePicker, setShowEndTimePicker] = useState(false);
   const [appointmentSelectionDisplay, setAppointmentTypeSelectionDisplay] =
     useState("");
-
+  const { createMutation: emailNotificationMutation } = usePostData(
+    `/emailNotifications/sendConfirmationEmail`
+  );
   const { createMutation } = usePostData("/appointments/createAppointment");
   const [patientSelectionDisplay, setPatientSelectionDisplay] = useState("");
 
@@ -88,17 +97,46 @@ export default function CreateAppointment({
     setShowPatientPicker(!showPatientPicker);
     setGlobalPatientData(patientData);
   }
-  async function handleSubmission(sendConfirmation, sendReminder) {
-    if (sendReminder) {
-      setAppointment((prev) => ({ prev, send_reminder: true }));
-    }
 
-    if (sendConfirmation) {
-      //api call
+  function handleEmailNotificationChanges(event) {
+    const { name } = event.target;
+
+    name === "sent_confirmation" &&
+      setAppointment((prev) => ({
+        ...prev,
+        sent_confirmation: !appointment.sent_confirmation,
+      }));
+    name === "send_reminder" &&
+      setAppointment((prev) => ({
+        ...prev,
+        send_reminder: !appointment.send_reminder,
+      }));
+  }
+
+  useEffect(() => {
+    setGlobalAppointmentData(appointment);
+  }, [appointment]);
+
+  async function handleSubmission() {
+    try {
+      const result = await createMutation.mutateAsync(appointment);
+      await checkAndSetIcds(result.id, result.appointment_type_id);
+      if (result.sent_confirmation) {
+        emailNotificationMutation.mutate({
+          profileId: profileId,
+          appointmentId: result.id,
+          patientId: result.patient_id,
+        });
+      }
+    } catch (error) {
+      setAppointment({
+        appointment_date: calendarSelectedJsDateTimeString
+          ? format(calendarSelectedJsDateTimeString, "yyyy-MM-dd")
+          : formattedCurrentDate,
+        send_reminder: false,
+        sent_confirmation: false,
+      });
     }
-    //TODO - integrate the notifications fucntionality
-    const result = await createMutation.mutateAsync(appointment);
-    await checkAndSetIcds(result.id, result.appointment_type_id);
   }
 
   return (
@@ -127,11 +165,11 @@ export default function CreateAppointment({
         {showDatePicker && (
           <div className="fixed left-0 top-0 min-w-full h-screen z-10 bg-slate-300 bg-opacity-50 flex items-center justify-center ">
             <StaticDatePicker
-              value={appointment?.appointment_date || new Date()}
+              value={new Date(appointment.appointment_date) || new Date()}
               onAccept={(value) => {
                 setAppointment((prev) => ({
                   ...prev,
-                  appointment_date: value,
+                  appointment_date: format(new Date(value), "yyyy-MM-dd"),
                 }));
                 setShowDatePicker(!showDatePicker);
               }}
@@ -184,7 +222,7 @@ export default function CreateAppointment({
                   onAccept={(value) => {
                     setAppointment((prev) => ({
                       ...prev,
-                      start_time: format(value, "HH:mm"),
+                      start_time: format(new Date(value), "HH:mm"),
                     }));
                     setShowStartTimePicker(!showStartTimePicker);
                   }}
@@ -204,7 +242,7 @@ export default function CreateAppointment({
                   onAccept={(value) => {
                     setAppointment((prev) => ({
                       ...prev,
-                      end_time: format(value, "HH:mm"),
+                      end_time: format(new Date(value), "HH:mm"),
                     }));
                     setShowEndTimePicker(!showEndTimePicker);
                   }}
@@ -235,7 +273,7 @@ export default function CreateAppointment({
             }
           />
           {showAppointmentTypeIcker && (
-            <div className="  fixed left-0 top-0 bg-black bg-opacity-40 bg-opacity-30 min-w-full min-h-screen z-10 flex  justify-center items-center">
+            <div className="  fixed left-0 top-0 bg-black bg-opacity-40  min-w-full min-h-screen z-10 flex  justify-center items-center">
               <AppointmentTypePicker
                 hideComponent={() =>
                   setShowAppointmentTypePicker(!showAppointmentTypeIcker)
@@ -276,18 +314,36 @@ export default function CreateAppointment({
             />
           </div>
         )}
+
         <div className="absolute bottom-0 left-0 w-full mb-1">
           <FullWithButton
             contentText="Confirm and Create Appointment"
             onclick={() => {
-              setGlobalAppointmentData(appointment);
+              setShowNotificationSettings(true);
             }}
-            disabled={Object.keys(appointment).length < 5}
+            disabled={
+              !checkForSelectedKeys(
+                [
+                  "appointment_date",
+                  "start_time",
+                  "end_time",
+                  "patient_id",
+                  "appointment_type_id",
+                ],
+                appointment
+              )
+            }
           />
         </div>
         {showNotificationSettings && (
-          <div className="fixed left-0 top-0 w-full min-h-screen bg-black bg-opacity-50">
-            <AppointmentNotificationSettings onSubmit={handleSubmission} />
+          <div className="fixed left-0 top-0 w-full min-h-screen flex justify-center items-center bg-black bg-opacity-50 z-10 ">
+            <AppointmentNotificationSettings
+              onchange={handleEmailNotificationChanges}
+              onsubmit={handleSubmission}
+              onExit={() =>
+                setShowNotificationSettings(!showNotificationSettings)
+              }
+            />
           </div>
         )}
       </div>

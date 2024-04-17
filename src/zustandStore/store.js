@@ -107,6 +107,7 @@ export const useAppointmentDataFromCreateAppointment = create((set) => ({
   setPatientData: (patientDataObj) => set({ patientData: patientDataObj }),
   setAppointmentTypeData: (apptypeDataObj) =>
     set({ appointmentTypeData: apptypeDataObj }),
-  setAppointmentData: (appointmentDataObj) => set({ appointmentDataObj }),
+  setAppointmentData: (appointmentDataObj) =>
+    set({ appointmentData: appointmentDataObj }),
   setProfileData: (profileDataObj) => set({ profileData: profileDataObj }),
 }));
