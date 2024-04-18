@@ -42,3 +42,68 @@ export function validateRegistrationPassword(password, passwordConfirm) {
 
   return errorMessages;
 }
+
+export class Validations {
+  constructor(value) {
+    this.value = value;
+    this.errorArray = [];
+    this.error = {
+      isError: this.errorArray.length > 0 ? true : false,
+      errorMessageArray: this.errorArray,
+    };
+  }
+
+  min(number) {
+    if (this.value.length < number) {
+      this.errorArray.push(`A minimum of ${number} characters are required`);
+
+      return this.error;
+    }
+  }
+
+  max(number) {
+    if (this.value.length > number) {
+      this.errorArray.push(`A maximum of ${number} of characters are required`);
+      return this.error;
+    } else return this;
+  }
+
+  type(type) {
+    if (typeof this.value !== type) {
+      this.errorArray.push(`Not a valid format`);
+      return this.error;
+    }
+    return this;
+  }
+
+  email() {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(this.value)) {
+      this.errorArray.push("Invalid Email");
+      return this.error;
+    }
+    return this;
+  }
+
+  password() {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}$/;
+    if (!passwordRegex.test(this.value)) {
+      this.errorArray.push(
+        "Password must contain at least one lowercase letter, one uppercase letter, one symbol, and be at least 8 characters long"
+      );
+      return this.error;
+    }
+    return true;
+  }
+
+  passwordConfirm(referencePassword, passwordToCompare) {
+    if (passwordToCompare !== referencePassword) {
+      this.errorArray.push("Passwords do not match");
+
+      return this.error;
+    }
+    return this;
+  }
+
+  required() {}
+}

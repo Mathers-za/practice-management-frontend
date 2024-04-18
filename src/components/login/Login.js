@@ -1,38 +1,21 @@
 import React, { useState } from "react";
+import { loginFormSchema } from "../../form validation Schemas/validationSchemas";
 
 import Register from "../register/Register";
 
 import axiosRequest from "../../apiRequests/apiRequests";
 import { useNavigate } from "react-router-dom";
+import DisplaySingleError from "../miscellaneous components/WarningMessage";
 
-function validateEmail(email) {
-  const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  const errorMessages = [];
-
-  if (!email) {
-    errorMessages.push("Email required");
-  } else {
-    const trimmedEmail = email.trim();
-
-    if (!emailPattern.test(trimmedEmail)) {
-      errorMessages.push("Please provide a valid email address");
-    }
-  }
-
-  if (errorMessages.length > 0) {
-    return { isValid: false, errorMessages: errorMessages };
-  } else {
-    return { isValid: true };
-  }
-}
-
-export default function TailWindLogin({ hideComponent }) {
+export default function LoginForm({ hideComponent }) {
   const navigate = useNavigate();
 
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
   });
+  const [isError, setIsError] = useState(false);
+  const [errors, setErrors] = useState([]);
 
   const [validationErrorMessages, setValidationErrorMessages] = useState([]);
 
@@ -44,33 +27,24 @@ export default function TailWindLogin({ hideComponent }) {
 
   async function handleSubmit(event) {
     event.preventDefault();
-    setValidationErrorMessages([]);
-    const verification = validateEmail(loginData.email);
-
-    if (!verification.isValid) {
-      setValidationErrorMessages(verification.errorMessages);
-    } else {
-      try {
-        const response = await axiosRequest("post", "/users/login", loginData);
-
-        if (response.status === 200) {
-          console.log("successfully logged in");
-          navigate("/", { replace: true });
-        }
-      } catch (error) {
-        console.log(error);
-        if (error.response.status === 401) {
-          setValidationErrorMessages((prev) => [
-            ...prev,
-            "Email or password is incorrect",
-          ]);
-        } else {
-          setValidationErrorMessages([
-            "Unexpected Error: Please try again later",
-          ]);
-        }
-      }
+    console.log("made it into handlesubmit");
+    try {
+      const result = await loginFormSchema.validate(loginData, {
+        abortEarly: false,
+      });
+      setIsError(false);
+      console.log(result);
+    } catch (error) {
+      console.error(error.errors);
+      setIsError(true);
+      setErrors(error.errors);
     }
+
+    // const response = await axiosRequest("post", "/users/login", loginData);
+
+    /* if (response.status === 200) {
+          console.log("successfully logged in");
+          navigate("/", { replace: true });*/
   }
   return (
     <>
@@ -87,7 +61,11 @@ export default function TailWindLogin({ hideComponent }) {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <form
+            noValidate={false}
+            className="space-y-6"
+            onSubmit={handleSubmit}
+          >
             <div>
               <label
                 htmlFor="email"
@@ -102,7 +80,6 @@ export default function TailWindLogin({ hideComponent }) {
                   name="email"
                   type="email"
                   autoComplete="email"
-                  required
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
@@ -124,7 +101,6 @@ export default function TailWindLogin({ hideComponent }) {
                   name="password"
                   type="password"
                   autoComplete="current-password"
-                  required
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
@@ -132,7 +108,7 @@ export default function TailWindLogin({ hideComponent }) {
 
             <div>
               <button
-                type="submit"
+                type="onsubmit"
                 className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 Sign in
@@ -149,6 +125,10 @@ export default function TailWindLogin({ hideComponent }) {
               Click here to register
             </div>
           </p>
+          <div className="mt-3">
+            {" "}
+            {isError && <DisplaySingleError myError={errors} />}
+          </div>
         </div>
       </div>
     </>

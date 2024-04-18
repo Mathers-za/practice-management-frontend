@@ -4,7 +4,6 @@ import {
   validateRegistrationPassword,
 } from "../../utiltyFunctions/validationFunctions.js";
 
-import Login from "../login/Login";
 import axiosRequest from "../../apiRequests/apiRequests.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -112,7 +111,7 @@ export default function Register({ hidecomponent }) {
                   id="password"
                   name="password"
                   type="password"
-                  autoComplete="current-password"
+                  autoComplete="current_password"
                   required
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
@@ -121,7 +120,7 @@ export default function Register({ hidecomponent }) {
             <div>
               <div className="flex items-center justify-between">
                 <label
-                  htmlFor="password"
+                  htmlFor="password_confirm"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
                   Confirm Password
@@ -130,10 +129,9 @@ export default function Register({ hidecomponent }) {
               <div className="mt-2">
                 <input
                   onChange={handleChange}
-                  id="password"
-                  name="password"
+                  id="password_confirm"
+                  name="password_confirm"
                   type="password"
-                  autoComplete="current-password"
                   required
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
