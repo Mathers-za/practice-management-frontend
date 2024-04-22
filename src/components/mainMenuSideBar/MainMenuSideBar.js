@@ -3,61 +3,86 @@ import { Link } from "react-router-dom";
 export default function MainMenuSideBar({ itemsArray }) {
   return (
     <>
-      <div className=" px-5 max-w-full bg-cyan-400 min-h-screen sticky left-0 top-0 bottom-0   ">
-        <ul className="list-none flex flex-col grow ">
-          <Link to="profile">
-            <li className="hover:bg-gray-500 hover:text-white hover:cursor-pointer">
-              Profile
-            </li>
-          </Link>
-          <li>
-            {" "}
-            <Link to="practice">Practice</Link>{" "}
-          </li>
-          <li>
-            {" "}
-            <Link to="patient/search">Patient List</Link>{" "}
-          </li>
-
-          <li>
-            <Link to="patientCreate">Create Patient</Link>
-          </li>
-
-          <li>
-            <Link to="createAppointment">Create appointment</Link>
-          </li>
-          <li>
-            <Link to="appointmentTypePortal">Appointment Type Portal</Link>
-          </li>
-          <li>
-            <Link to="appointmentPortal">View Appointments</Link>
-          </li>
-
-          <li>
-            <Link to="invoiceProgress"> Invoice Progress </Link>
-          </li>
-
-          <li>
-            <Link to="invoicesPastDue">Invoices Past Due</Link>
-          </li>
-
-          <li>
-            <Link to="paymentsTracker">Payments Tracker</Link>
-          </li>
-
-          <li>
-            <Link to="emailNotifications">
-              email Notification Customization
-            </Link>
-          </li>
-          <li>
-            <Link to="calendar">Calendar</Link>
-          </li>
-
-          <li>
-            <Link to="componentStyling">Custom Component styling</Link>
-          </li>
-        </ul>
+      <div className="min-w-full bg-cyan-400 min-h-screen  sticky left-0 top-0 bottom-0 flex flex-col flex-wrap justify-center   ">
+        <Link
+          className="grow  flex items-center pl-3  hover:bg-slate-400"
+          to="profile"
+        >
+          Profile
+        </Link>{" "}
+        <Link
+          className="flex-auto flex items-center  pl-3  hover:bg-slate-400"
+          to="practice"
+        >
+          Practice
+        </Link>{" "}
+        <Link
+          className="flex-auto min-w-full flex items-center   pl-3  hover:bg-slate-400 box-border "
+          to="patient/search"
+        >
+          Patient List
+        </Link>{" "}
+        <Link
+          className="flex-auto min-w-full flex items-center  pl-3  hover:bg-slate-400"
+          to="patientCreate"
+        >
+          Create Patient
+        </Link>
+        <Link
+          className="flex-auto min-w-full flex items-center   pl-3  hover:bg-slate-400"
+          to="createAppointment"
+        >
+          Create appointment
+        </Link>
+        <Link
+          className="flex-auto min-w-full flex items-center   pl-3  hover:bg-slate-400"
+          to="appointmentTypePortal"
+        >
+          Appointment Type Portal
+        </Link>
+        <Link
+          className="flex-auto min-w-full flex items-center   pl-3  hover:bg-slate-400"
+          to="appointmentPortal"
+        >
+          View Appointments
+        </Link>
+        <Link
+          className="flex-auto min-w-full  flex items-center  pl-3  hover:bg-slate-400"
+          to="invoiceProgress"
+        >
+          {" "}
+          Invoice Progress{" "}
+        </Link>
+        <Link
+          className="flex-auto min-w-full  flex items-center  pl-3  hover:bg-slate-400"
+          to="invoicesPastDue"
+        >
+          Invoices Past Due
+        </Link>
+        <Link
+          className="flex-auto min-w-full  flex items-center  pl-3  hover:bg-slate-400"
+          to="paymentsTracker"
+        >
+          Payments Tracker
+        </Link>
+        <Link
+          className="flex-auto min-w-full flex items-center   pl-3  hover:bg-slate-400"
+          to="emailNotifications"
+        >
+          email Notification Customization
+        </Link>
+        <Link
+          className="flex-auto min-w-full flex items-center   pl-3  hover:bg-slate-400"
+          to="calendar"
+        >
+          Calendar
+        </Link>
+        <Link
+          className="flex-auto min-w-full  flex items-center  pl-3  hover:bg-slate-400"
+          to="componentStyling"
+        >
+          Custom Component styling
+        </Link>
       </div>
     </>
   );

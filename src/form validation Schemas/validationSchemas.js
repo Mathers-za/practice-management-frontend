@@ -1,17 +1,42 @@
 import { object, ref, string } from "yup";
+import axiosRequest from "../apiRequests/apiRequests";
 
 export const loginFormSchema = object({
   email: string("Invalid format")
     .email("Invalid Email")
     .required("Email required"),
-  password: string("invalid format")
-    .required("password required")
-    .min(8, "Password must be a minimum of 8 characters")
-    .matches(/[^a-zA-Z0-9]+/, "Password must contain atleast one symbol")
+  password: string("invalid format").required("password required"),
+});
+
+export const RegisterFormSchema = object({
+  email: string("Invalid format")
+    .email("Invalid email")
+    .required("Email required")
+    .test("email", "Email Address already exists", async (value, context) => {
+      try {
+        const response = await axiosRequest(
+          "post",
+          "/users/checkEmailExistence",
+          {
+            email: value,
+          }
+        );
+        console.log("the reponse in test is " + response.status);
+        if (response.status === 200) {
+          return true;
+        }
+      } catch (error) {
+        return false;
+      }
+    }),
+  password: string("Invalid format")
     .matches(/[A-Z]+/, "Password must contain atleast one uppercase letter")
-    .matches(/[a-z]+/, "Password must contain atleast one lowercase letter"),
-  password_confirm: string("Invalid format").oneOf(
-    [ref("password")],
-    "Passwords must match"
-  ),
+    .matches(/[a-z]+/, "Password must contain atleast one lowercase letter")
+    .matches(/[^a-zA-Z0-9]+/, "Password must contain atleast one symbol")
+    .min(8, "Password must contain a minimum of 8 characters")
+    .required("Password required"),
+
+  password_confirm: string("Invalid format")
+    .oneOf([ref("password")], "Confirmation password does not match password")
+    .required("Required"),
 });

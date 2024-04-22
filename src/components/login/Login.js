@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { loginFormSchema } from "../../form validation Schemas/validationSchemas";
 
-import Register from "../register/Register";
-
 import axiosRequest from "../../apiRequests/apiRequests";
 import { useNavigate } from "react-router-dom";
 import DisplaySingleError from "../miscellaneous components/WarningMessage";
@@ -10,42 +8,52 @@ import DisplaySingleError from "../miscellaneous components/WarningMessage";
 export default function LoginForm({ hideComponent }) {
   const navigate = useNavigate();
 
-  const [loginData, setLoginData] = useState({
-    email: "",
-    password: "",
-  });
-  const [isError, setIsError] = useState(false);
-  const [errors, setErrors] = useState([]);
+  const [loginData, setLoginData] = useState({});
 
-  const [validationErrorMessages, setValidationErrorMessages] = useState([]);
+  const [errors, setErrors] = useState({});
+  const [failedLoginError, setFailedLoginError] = useState();
 
   function handleChange(event) {
+    setErrors({});
+    setFailedLoginError();
     const { name, value } = event.target;
 
     setLoginData((prev) => ({ ...prev, [name]: value }));
+    setErrors({});
   }
 
   async function handleSubmit(event) {
     event.preventDefault();
-    console.log("made it into handlesubmit");
+
     try {
-      const result = await loginFormSchema.validate(loginData, {
+      await loginFormSchema.validate(loginData, {
         abortEarly: false,
       });
-      setIsError(false);
-      console.log(result);
-    } catch (error) {
-      console.error(error.errors);
-      setIsError(true);
-      setErrors(error.errors);
-    }
 
-    // const response = await axiosRequest("post", "/users/login", loginData);
+      try {
+        const response = await axiosRequest("post", "/users/login", loginData);
 
-    /* if (response.status === 200) {
+        if (response.status === 200) {
           console.log("successfully logged in");
-          navigate("/", { replace: true });*/
+          navigate("/", { replace: true });
+        }
+      } catch (error) {
+        if (error.response.status === 401) {
+          setFailedLoginError(
+            "Email Or password is incorrect. Please try again."
+          );
+        }
+      }
+    } catch (error) {
+      error.inner.forEach((err) =>
+        setErrors((prev) => ({
+          ...prev,
+          [err.path]: err.message,
+        }))
+      );
+    }
   }
+
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -80,8 +88,15 @@ export default function LoginForm({ hideComponent }) {
                   name="email"
                   type="email"
                   autoComplete="email"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className={
+                    errors.email
+                      ? "block w-full rounded-md  border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-red-500 "
+                      : "block w-full rounded-md  border-0 py-1.5  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  }
                 />
+                {errors?.email && (
+                  <p className="text-sm text-red-500">{errors.email} </p>
+                )}
               </div>
             </div>
 
@@ -101,8 +116,15 @@ export default function LoginForm({ hideComponent }) {
                   name="password"
                   type="password"
                   autoComplete="current-password"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className={
+                    errors.password
+                      ? "block w-full rounded-md  border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-red-500 "
+                      : "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  }
                 />
+                {errors.password && (
+                  <p className="text-sm text-red-500">{errors.password}</p>
+                )}
               </div>
             </div>
 
@@ -125,10 +147,13 @@ export default function LoginForm({ hideComponent }) {
               Click here to register
             </div>
           </p>
-          <div className="mt-3">
-            {" "}
-            {isError && <DisplaySingleError myError={errors} />}
-          </div>
+
+          {failedLoginError && (
+            <div className="mt-3">
+              {" "}
+              <DisplaySingleError errorMessage={failedLoginError} />
+            </div>
+          )}
         </div>
       </div>
     </>

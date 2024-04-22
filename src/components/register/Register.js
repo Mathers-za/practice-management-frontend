@@ -1,23 +1,16 @@
 import React, { useState } from "react";
-import {
-  validateRegistrationEmail,
-  validateRegistrationPassword,
-} from "../../utiltyFunctions/validationFunctions.js";
 
 import axiosRequest from "../../apiRequests/apiRequests.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { RegisterFormSchema } from "../../form validation Schemas/validationSchemas.js";
 
 export default function Register({ hidecomponent }) {
-  const [errors, setErrors] = useState([]);
-  const [registered, setRegistered] = useState(false);
+  const [errors, setErrors] = useState({});
 
-  const [registrationData, setRegistrationData] = useState({
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
+  const [registrationData, setRegistrationData] = useState({});
 
   function handleChange(event) {
+    setErrors({});
     const { name, value } = event.target;
     setRegistrationData((prev) => ({
       ...prev,
@@ -25,20 +18,12 @@ export default function Register({ hidecomponent }) {
     }));
   }
 
-  function handleClick() {
-    setRegistered(true);
-  }
-
-  async function handleSubmit() {
-    const emailErrors = await validateRegistrationEmail(registrationData.email);
-    const passwordErrors = validateRegistrationPassword(
-      registrationData.password,
-      registrationData.confirmPassword
-    );
-    console.log(passwordErrors);
-    setErrors([...emailErrors, ...passwordErrors]);
-
-    if (emailErrors.length === 0 && passwordErrors.length === 0) {
+  async function handleSubmit(event) {
+    event.preventDefault();
+    try {
+      await RegisterFormSchema.validate(registrationData, {
+        abortEarly: false,
+      });
       try {
         const response = await axiosRequest(
           "post",
@@ -49,11 +34,21 @@ export default function Register({ hidecomponent }) {
         if (response.status === 201) {
           console.log("user created");
         }
+        hidecomponent();
       } catch (error) {
         console.error(error);
       }
-      console.log("Post was a success");
-      setRegistered(true);
+    } catch (error) {
+      console.log("the error in test");
+      console.error(error.inner);
+      error.inner.forEach((err) => {
+        if (!errors[err.path]) {
+          setErrors((prev) => ({
+            ...prev,
+            [err.path]: err.message,
+          }));
+        }
+      });
     }
   }
 
@@ -75,7 +70,11 @@ export default function Register({ hidecomponent }) {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <form
+            noValidate={false}
+            className="space-y-6"
+            onSubmit={handleSubmit}
+          >
             <div>
               <label
                 htmlFor="email"
@@ -90,10 +89,16 @@ export default function Register({ hidecomponent }) {
                   name="email"
                   type="email"
                   autoComplete="email"
-                  required
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className={
+                    errors?.email
+                      ? "block w-full rounded-md  border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-red-500 "
+                      : "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  }
                 />
               </div>
+              {errors?.email ? (
+                <p className="text-sm text-red-500">{errors.email}</p>
+              ) : null}
             </div>
 
             <div>
@@ -112,9 +117,15 @@ export default function Register({ hidecomponent }) {
                   name="password"
                   type="password"
                   autoComplete="current_password"
-                  required
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className={
+                    errors?.password
+                      ? "block w-full rounded-md  border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-red-500 "
+                      : "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  }
                 />
+                {errors?.password ? (
+                  <p className="text-sm text-red-500">{errors.password}</p>
+                ) : null}
               </div>
             </div>
             <div>
@@ -132,9 +143,17 @@ export default function Register({ hidecomponent }) {
                   id="password_confirm"
                   name="password_confirm"
                   type="password"
-                  required
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className={
+                    errors?.password_confirm
+                      ? "block w-full rounded-md  border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-red-500 "
+                      : "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  }
                 />
+                {errors?.password_confirm ? (
+                  <p className="text-sm text-red-500">
+                    {errors.password_confirm}
+                  </p>
+                ) : null}
               </div>
             </div>
 

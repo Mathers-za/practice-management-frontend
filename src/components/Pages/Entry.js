@@ -7,7 +7,6 @@ export default function Entry() {
   const [showRegistrationPage, setShowRegistrationPage] = useState(false);
   return (
     <>
-      <h1>the entry page</h1>
       {showLoginPage && (
         <Login
           hideComponent={() => {
