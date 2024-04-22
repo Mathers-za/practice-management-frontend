@@ -1,88 +1,83 @@
 import { Link } from "react-router-dom";
+import SideBarItemsWithIconDiv from "../miscellaneous components/SideBarItemsWithIcon";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function MainMenuSideBar({ itemsArray }) {
   return (
     <>
-      <div className="min-w-full bg-cyan-400 min-h-screen  sticky left-0 top-0 bottom-0 flex flex-col flex-wrap justify-center   ">
-        <Link
-          className="grow  flex items-center pl-3  hover:bg-slate-400"
-          to="profile"
-        >
-          Profile
-        </Link>{" "}
-        <Link
-          className="flex-auto flex items-center  pl-3  hover:bg-slate-400"
-          to="practice"
-        >
-          Practice
-        </Link>{" "}
-        <Link
-          className="flex-auto min-w-full flex items-center   pl-3  hover:bg-slate-400 box-border "
-          to="patient/search"
-        >
-          Patient List
-        </Link>{" "}
-        <Link
-          className="flex-auto min-w-full flex items-center  pl-3  hover:bg-slate-400"
-          to="patientCreate"
-        >
-          Create Patient
-        </Link>
-        <Link
-          className="flex-auto min-w-full flex items-center   pl-3  hover:bg-slate-400"
-          to="createAppointment"
-        >
-          Create appointment
-        </Link>
-        <Link
-          className="flex-auto min-w-full flex items-center   pl-3  hover:bg-slate-400"
-          to="appointmentTypePortal"
-        >
-          Appointment Type Portal
-        </Link>
-        <Link
-          className="flex-auto min-w-full flex items-center   pl-3  hover:bg-slate-400"
-          to="appointmentPortal"
-        >
-          View Appointments
-        </Link>
-        <Link
-          className="flex-auto min-w-full  flex items-center  pl-3  hover:bg-slate-400"
-          to="invoiceProgress"
-        >
-          {" "}
-          Invoice Progress{" "}
-        </Link>
-        <Link
-          className="flex-auto min-w-full  flex items-center  pl-3  hover:bg-slate-400"
-          to="invoicesPastDue"
-        >
-          Invoices Past Due
-        </Link>
-        <Link
-          className="flex-auto min-w-full  flex items-center  pl-3  hover:bg-slate-400"
-          to="paymentsTracker"
-        >
-          Payments Tracker
-        </Link>
-        <Link
-          className="flex-auto min-w-full flex items-center   pl-3  hover:bg-slate-400"
-          to="emailNotifications"
-        >
-          email Notification Customization
-        </Link>
-        <Link
-          className="flex-auto min-w-full flex items-center   pl-3  hover:bg-slate-400"
-          to="calendar"
-        >
-          Calendar
-        </Link>
-        <Link
-          className="flex-auto min-w-full  flex items-center  pl-3  hover:bg-slate-400"
-          to="componentStyling"
-        >
-          Custom Component styling
-        </Link>
+      <div className="min-w-full bg-slate-500 min-h-screen  sticky left-0 top-0 bottom-0 flex flex-col flex-wrap justify-center   ">
+        <div className=" pl-4 flex items-center space-x-1 ">
+          <p>
+            <FontAwesomeIcon
+              icon="fa-solid fa-bars"
+              size="2xl"
+              style={{ color: "whitesmoke" }}
+            />
+          </p>
+          <h1 className="text-2xl text-white p-3 ">Schedule Sensai</h1>
+        </div>
+        <SideBarItemsWithIconDiv
+          icon={<FontAwesomeIcon icon="fa-solid fa-user" size="lg" />}
+          linkText="Profile"
+          linkTo="profile"
+        />
+
+        <SideBarItemsWithIconDiv
+          icon={<FontAwesomeIcon icon="fa-solid fa-house-medical" size="lg" />}
+          linkText="Practice"
+          linkTo={"practice"}
+        />
+        <SideBarItemsWithIconDiv
+          linkText={"Patient List"}
+          linkTo={"patient/search"}
+          icon={<FontAwesomeIcon icon="fa-solid fa-rectangle-list" size="lg" />}
+        />
+        <SideBarItemsWithIconDiv
+          linkText={"Create Patient"}
+          linkTo={"patientCreate"}
+          icon={<FontAwesomeIcon icon="fa-solid fa-square-plus" size="lg" />}
+        />
+        <SideBarItemsWithIconDiv
+          linkText={"Create appointment"}
+          linkTo={"createAppointment"}
+          icon={<i class="fa-solid fa-circle-plus fa-lg"></i>}
+        />
+        <SideBarItemsWithIconDiv
+          linkText={"Appointment Type Portal"}
+          linkTo={"appointmentTypePortal"}
+          icon={<FontAwesomeIcon icon="fa-solid fa-list-check" size="lg" />}
+        />
+        <SideBarItemsWithIconDiv
+          linkText={"View Appointments"}
+          linkTo={"appointmentPortal"}
+          icon={<i class="fa-regular fa-calendar-check fa-lg"></i>}
+        />
+        <SideBarItemsWithIconDiv
+          linkText={"Payments Tracker"}
+          linkTo={"paymentsTracker"}
+          icon={<FontAwesomeIcon icon="fa-solid fa-chart-column" size="lg" />}
+        />
+        <SideBarItemsWithIconDiv
+          linkText={"Email Notification Customization"}
+          linkTo={"emailNotifications"}
+          icon={<FontAwesomeIcon icon="fa-solid fa-envelope" size="lg" />}
+        />
+        <SideBarItemsWithIconDiv
+          linkText={"Calendar"}
+          linkTo={"calendar"}
+          icon={<FontAwesomeIcon icon="fa-regular fa-calendar" size="lg" />}
+        />
+        <SideBarItemsWithIconDiv
+          linkText={"Custom Component styling"}
+          linkTo={"componentStyling"}
+          icon={<FontAwesomeIcon icon="fa-solid fa-mortar-pestle" size="lg" />}
+        />
+        <SideBarItemsWithIconDiv
+          linkText={"Invoice Progress"}
+          linkTo={"invoiceProgress"}
+          icon={<FontAwesomeIcon icon="fa-solid fa-receipt" size="lg" />}
+        />
+        <SideBarItemsWithIconDiv linkText={"invoicesPastDue"} />
       </div>
     </>
   );

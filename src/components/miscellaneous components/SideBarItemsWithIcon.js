@@ -1,7 +1,13 @@
-export default function SideBarItemsWithIconDiv({ textContent, icon }) {
+import { Link } from "react-router-dom";
+export default function SideBarItemsWithIconDiv({ icon, linkTo, linkText }) {
   return (
     <>
-      <div className="min-w-full "></div>
+      <Link
+        className=" text-wrap min-w-full gap-3 py-3.5 bg-inherit select-none flex    text-white font-semibold items-center cursor-pointer hover:bg-slate-700 pl-4 "
+        to={linkTo}
+      >
+        {icon} {linkText}
+      </Link>
     </>
   );
 }
