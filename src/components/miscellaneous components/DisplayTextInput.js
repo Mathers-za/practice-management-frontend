@@ -10,43 +10,28 @@ export default function Input({
   type,
   bottomInfo,
   pattern,
+  autoComplete = "off",
 }) {
-  const [showPlaceHolder, setShowPlaceHolder] = useState(true);
-  const [showLabel, setShowLabel] = useState(false);
-
-  function handleShowLabel(event) {
-    const { value } = event.target;
-    setShowPlaceHolder(false);
-    setShowLabel(true);
-    if (value) {
-      setShowLabel(true);
-      setShowPlaceHolder(false);
-    } else {
-      setShowLabel(false);
-      setShowPlaceHolder(true);
-    }
-  }
-
   return (
     <div className="group  space-y-1 ">
-      {showLabel && (
-        <label className="text-sm text-sky-600"> {labelText} </label>
-      )}
+      <label className="  text-sky-600  ring-sky-400  group-hover:text-blue-800 cursor-text  ">
+        {" "}
+        {labelText}{" "}
+      </label>
+
       <input
         pattern={pattern && pattern}
-        onChange={(event) => {
-          onchange(event);
-          handleShowLabel(event);
-        }}
+        onChange={(event) => onchange(event)}
         type={type || "text"}
-        placeholder={showPlaceHolder ? placeholder : null}
+        placeholder={placeholder}
         name={name}
         value={value}
         required={required}
-        className=" min-w-full  peer/input "
+        className=" min-w-full  peer/input placeholder:text-sm"
+        autoComplete={autoComplete}
       />
       {bottomInfo && (
-        <p className="hidden peer-focus/input:block text-slate-600 text-xs ">
+        <p className="opacity-0 peer-focus/input:opacity-100  text-slate-600 text-xs ">
           {bottomInfo}{" "}
         </p>
       )}
