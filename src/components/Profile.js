@@ -94,10 +94,10 @@ export default function Profile() {
             labelText="Phone number"
             type="tel"
             placeholder="Phone number"
-            pattern="^+27d{9}$"
+            pattern="^\+27\d{9}$"
             onchange={handleChange}
             value={profileData?.contact_num || ""}
-            bottomInfo="A valid phone number is expected eg: +2714836849"
+            bottomInfo="A valid phone number is expected eg: +27814836849"
           />
           <div className="col-span-2 flex items-center border-b border-slate-600 mb-2   ">
             <h1 className="text-lg font-medium">Additional Information</h1>
