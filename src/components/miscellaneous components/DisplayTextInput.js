@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 export default function Input({
   name,
@@ -8,21 +8,48 @@ export default function Input({
   required,
   onchange,
   type,
+  bottomInfo,
+  pattern,
 }) {
+  const [showPlaceHolder, setShowPlaceHolder] = useState(true);
+  const [showLabel, setShowLabel] = useState(false);
+
+  function handleShowLabel(event) {
+    const { value } = event.target;
+    setShowPlaceHolder(false);
+    setShowLabel(true);
+    if (value) {
+      setShowLabel(true);
+      setShowPlaceHolder(false);
+    } else {
+      setShowLabel(false);
+      setShowPlaceHolder(true);
+    }
+  }
+
   return (
-    <div>
+    <div className="group  space-y-1 ">
+      {showLabel && (
+        <label className="text-sm text-sky-600"> {labelText} </label>
+      )}
       <input
-        onChange={(event) => onchange(event.target.name, event.target.value)} // Pass name and value to onchange
+        pattern={pattern && pattern}
+        onChange={(event) => {
+          onchange(event);
+          handleShowLabel(event);
+        }}
         type={type || "text"}
-        placeholder={placeholder ?? ""}
+        placeholder={showPlaceHolder ? placeholder : null}
         name={name}
         value={value}
         required={required}
-        className="outline-none border-b-2 border-b-black placeholder:italic focus:border-sky-500 w-1/5  "
+        className=" min-w-full  peer/input "
       />
-      <label className="block text-sm text-slate-500 select-none mt-1">
-        {labelText ?? "userName"}
-      </label>
+      {bottomInfo && (
+        <p className="hidden peer-focus/input:block text-slate-600 text-xs ">
+          {bottomInfo}{" "}
+        </p>
+      )}
     </div>
   );
 }

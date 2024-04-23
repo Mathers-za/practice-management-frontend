@@ -91,10 +91,11 @@
   .paymentPage-bottom-half * input {
     min-width: 97%;
     max-width: 97%;
-    border: none;
+    border: 3px solid black;
     outline: none;
     border-bottom: 1px solid;
     margin-top: 4px;
+ 
     
     
   }
