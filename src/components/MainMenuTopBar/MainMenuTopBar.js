@@ -7,27 +7,34 @@ export default function MainMenuTopBar() {
   return (
     <>
       <div
-        className="min-h-full min-w-full bg-sky-600 flex gap-2 box-border items-center justify-center justify-around
+        className="min-h-full min-w-full bg-sky-600 flex  box-border items-center pl-7  justify-start gap-6
        text-white  "
       >
         <TopBarItemsLink
           toolTipText="Calendar"
           icon={<FontAwesomeIcon icon="fa-regular fa-calendar" size="xl" />}
           linkTo={"calendar"}
+          toolTipUnqiueId={"calendar"}
         />
         <TopBarItemsLink
           icon={<FontAwesomeIcon icon="fa-solid fa-rectangle-list" size="xl" />}
           linkTo={"patient/search"}
+          toolTipText={"Patient List"}
+          toolTipUnqiueId={"patientList"}
         />
 
         <TopBarItemsLink
           linkTo={"invoiceProgress"}
           icon={<FontAwesomeIcon icon="fa-solid fa-receipt" size="xl" />}
+          toolTipText={"invoices"}
+          toolTipUnqiueId={"invoices"}
         />
 
-        <p>ICON</p>
-        <p>ICON</p>
-        <p>ICON</p>
+        <TopBarItemsLink
+          toolTipText={"Appointments"}
+          toolTipUnqiueId={"appointmentsSearch"}
+          icon={<FontAwesomeIcon icon="fa-brands fa-old-republic" size="xl" />}
+        />
       </div>
     </>
   );
