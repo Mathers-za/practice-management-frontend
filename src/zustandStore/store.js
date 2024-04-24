@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import PracticeDetails from "../components/PracticeDetails";
 
 const usePaymentsPageStore = create((set) => ({
   paymentsPageDropDownStates: {},
@@ -104,10 +105,13 @@ export const useAppointmentDataFromCreateAppointment = create((set) => ({
   appointmentTypeData: {},
   appointmentData: {},
   profileData: {},
+  practiceDetails: {},
   setPatientData: (patientDataObj) => set({ patientData: patientDataObj }),
   setAppointmentTypeData: (apptypeDataObj) =>
     set({ appointmentTypeData: apptypeDataObj }),
   setAppointmentData: (appointmentDataObj) =>
     set({ appointmentData: appointmentDataObj }),
   setProfileData: (profileDataObj) => set({ profileData: profileDataObj }),
+  setPracticeDetails: (practiceDataObj) =>
+    set({ practiceDetails: practiceDataObj }),
 }));

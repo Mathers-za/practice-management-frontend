@@ -11,6 +11,10 @@ export default function DashBoard({ profileIdStateSetter }) {
   const setGlobalProfileData = useAppointmentDataFromCreateAppointment(
     (state) => state.setProfileData
   );
+
+  const setGlobalPracticeDetailsData = useAppointmentDataFromCreateAppointment(
+    (state) => state.setPracticeDetails
+  );
   const { data, httpStatus } = useFetchData(
     `/profile/view`,
     "profileDataDashboard"
@@ -34,7 +38,9 @@ export default function DashBoard({ profileIdStateSetter }) {
 
         profileIdStateSetter(data.id);
 
-        practiceMutation.mutate({ profile_id: data.id });
+        const { data: practiceDetailsData } =
+          await practiceMutation.mutateAsync({ profile_id: data.id });
+        setGlobalPracticeDetailsData(practiceDetailsData);
         emailNotificationMutation.mutate({ profile_id: data.id });
         sessionStorage.setItem("initialLogin", "false");
       } catch (error) {
@@ -63,7 +69,7 @@ export default function DashBoard({ profileIdStateSetter }) {
             <MainMenuSideBar />
           </div>
         </div>
-        <div className="col-start-3 col-end-13 row-start-2 row-end-13 p-2  ">
+        <div className="col-start-3 col-end-13 row-start-2 row-end-13 p-2  bg-slate-200 ">
           <Outlet />
         </div>
       </div>

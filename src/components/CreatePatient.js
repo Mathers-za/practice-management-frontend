@@ -1,13 +1,17 @@
 import { useState } from "react";
 import { usePostData } from "../CustomHooks/serverStateHooks";
 import TextInput from "./textInput";
+import Input from "./miscellaneous components/DisplayTextInput";
+import SubmitButton from "./miscellaneous components/SubmitButton";
+import GenericTopBar from "./miscellaneous components/GenericTopBar";
+import FullWithButton from "./miscellaneous components/FullWidthButton";
 
-export default function CreatePatient({ profileId }) {
+export default function CreatePatient({ profileId, hideComponent }) {
   const { handlePost } = usePostData(`/patients/create${profileId}`);
   const [patientInfo, setPatientInfo] = useState({});
 
-  function handleChange(e) {
-    const { name, value } = e.target;
+  function handleChange(event) {
+    const { name, value } = event.target;
 
     setPatientInfo((prev) => ({
       ...prev,
@@ -17,45 +21,59 @@ export default function CreatePatient({ profileId }) {
 
   return (
     <>
+      <GenericTopBar label="Create a patient" onclick={hideComponent} />
       <form
-        onSubmit={(e) => {
-          e.preventDefault();
+        className="grid grid-cols-2 gap-x-3 mt-4"
+        onSubmit={(event) => {
+          event.preventDefault();
           handlePost(patientInfo);
           setPatientInfo({});
         }}
       >
-        <TextInput
+        <Input
           type="text"
           name="first_name"
-          value={patientInfo.first_name ?? ""}
+          value={patientInfo.first_name || ""}
           labelText="First Name"
-          onChange={handleChange}
+          onchange={handleChange}
           required={true}
+          bottomInfo="Patients First name is a required field"
+          placeholder="First Name"
         />
-        <TextInput
+        <Input
           type="text"
           name="last_name"
-          value={patientInfo.last_name ?? ""}
+          value={patientInfo.last_name || ""}
           labelText="Last Name"
-          onChange={handleChange}
+          onchange={handleChange}
+          placeholder="Last name"
+          bottomInfo="The patients last name"
         />
-        <TextInput
+        <Input
           type="email"
           name="email"
-          value={patientInfo.email ?? ""}
+          value={patientInfo.email || ""}
           labelText="Email"
-          onChange={handleChange}
+          onchange={handleChange}
+          placeholder="Email"
+          bottomInfo="Email required if you wish to send notificcations to your patients/clients."
         />
-        <TextInput
-          type="text"
+        <Input
+          type="tel"
           name="contact_number"
           value={patientInfo.contact_number ?? ""}
           labelText="Contact number"
-          onChange={handleChange}
+          onchange={handleChange}
+          pattern="^\+27\d{9}$"
+          placeholder="Phone number"
+          bottomInfo="Valid phone number expected eg: +27825385432"
         />
-        <button disabled={Object.keys(patientInfo).length === 0} type="submit">
-          Save
-        </button>
+        <div className="col-span-2 ">
+          <FullWithButton
+            contentText="Save"
+            disabled={Object.keys(patientInfo).length === 0}
+          />
+        </div>
       </form>
     </>
   );
