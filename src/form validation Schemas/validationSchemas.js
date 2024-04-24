@@ -1,4 +1,4 @@
-import { object, ref, string } from "yup";
+import { number, object, ref, string } from "yup";
 import axiosRequest from "../apiRequests/apiRequests";
 
 export const loginFormSchema = object({
@@ -39,4 +39,13 @@ export const RegisterFormSchema = object({
   password_confirm: string("Invalid format")
     .oneOf([ref("password")], "Confirmation password does not match password")
     .required("Required"),
+});
+
+export const createPatientValidationSchema = object({
+  first_name: string("Invalid Format").required("First Name is required"),
+  last_name: string().nullable(),
+  email: string().email().nullable(),
+  contact_number: string("invalid format")
+    .matches(/^\+27\d{9}$/, "Invalid phone number")
+    .nullable(),
 });

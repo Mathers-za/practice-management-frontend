@@ -1,17 +1,37 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePostData } from "../CustomHooks/serverStateHooks";
 import TextInput from "./textInput";
 import Input from "./miscellaneous components/DisplayTextInput";
 import SubmitButton from "./miscellaneous components/SubmitButton";
 import GenericTopBar from "./miscellaneous components/GenericTopBar";
 import FullWithButton from "./miscellaneous components/FullWidthButton";
+import DisplaySingleError from "./miscellaneous components/WarningMessage";
+import { createPatientValidationSchema } from "../form validation Schemas/validationSchemas";
+import { patientCreationGuidance } from "../userGuidanceFunctions/createPatientFns";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function CreatePatient({ profileId, hideComponent }) {
   const { handlePost } = usePostData(`/patients/create${profileId}`);
   const [patientInfo, setPatientInfo] = useState({});
+  const [errorMessage, setErrorMessage] = useState();
+  const [guidanceMessage, setGuidanceMessage] = useState();
 
-  function handleChange(event) {
+  useEffect(() => {
+    const message = patientCreationGuidance(patientInfo);
+    setGuidanceMessage(message);
+  }, [patientInfo]);
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    try {
+      await createPatientValidationSchema.validate(patientInfo);
+    } catch (error) {
+      setErrorMessage(error.message);
+    }
+  }
+  async function handleChange(event) {
     const { name, value } = event.target;
+    setErrorMessage();
 
     setPatientInfo((prev) => ({
       ...prev,
@@ -23,12 +43,8 @@ export default function CreatePatient({ profileId, hideComponent }) {
     <>
       <GenericTopBar label="Create a patient" onclick={hideComponent} />
       <form
-        className="grid grid-cols-2 gap-x-3 mt-4"
-        onSubmit={(event) => {
-          event.preventDefault();
-          handlePost(patientInfo);
-          setPatientInfo({});
-        }}
+        className="grid grid-cols-2 gap-x-3 gap-y-5 mt-4"
+        onSubmit={handleSubmit}
       >
         <Input
           type="text"
@@ -36,9 +52,9 @@ export default function CreatePatient({ profileId, hideComponent }) {
           value={patientInfo.first_name || ""}
           labelText="First Name"
           onchange={handleChange}
-          required={true}
-          bottomInfo="Patients First name is a required field"
+          bottomInfo={"The patients first name."}
           placeholder="First Name"
+          required={true}
         />
         <Input
           type="text"
@@ -68,13 +84,27 @@ export default function CreatePatient({ profileId, hideComponent }) {
           placeholder="Phone number"
           bottomInfo="Valid phone number expected eg: +27825385432"
         />
-        <div className="col-span-2 ">
+
+        <div className="col-span-2 mt-3 ">
+          {guidanceMessage && (
+            <div className="flex gap-4 items-center px-3 py-4 col-span-2 bg-yellow-300 mb-4">
+              <FontAwesomeIcon icon="fa-solid fa-paperclip" size="lg" />{" "}
+              <p>{guidanceMessage}</p>
+            </div>
+          )}
+
           <FullWithButton
             contentText="Save"
             disabled={Object.keys(patientInfo).length === 0}
           />
         </div>
       </form>
+
+      {errorMessage && (
+        <div className="mt-4  ">
+          <DisplaySingleError errorMessage={errorMessage} />
+        </div>
+      )}
     </>
   );
 }
