@@ -42,7 +42,7 @@ export const RegisterFormSchema = object({
 });
 
 export const createPatientValidationSchema = object({
-  first_name: string("Invalid Format").required("First Name is required"),
+  first_name: string("Invalid Format").required("First name not provided"),
   last_name: string().nullable(),
   email: string().email().nullable(),
   contact_number: string("invalid format")

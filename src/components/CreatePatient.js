@@ -21,8 +21,11 @@ export default function CreatePatient({ profileId, hideComponent }) {
     setGuidanceMessage(message);
   }, [patientInfo]);
 
+  //TODO add submssion api sending logic
+
   async function handleSubmit(event) {
     event.preventDefault();
+    setGuidanceMessage();
     try {
       await createPatientValidationSchema.validate(patientInfo);
     } catch (error) {
@@ -54,7 +57,7 @@ export default function CreatePatient({ profileId, hideComponent }) {
           onchange={handleChange}
           bottomInfo={"The patients first name."}
           placeholder="First Name"
-          required={true}
+          required={false}
         />
         <Input
           type="text"
@@ -87,7 +90,7 @@ export default function CreatePatient({ profileId, hideComponent }) {
 
         <div className="col-span-2 mt-3 ">
           {guidanceMessage && (
-            <div className="flex gap-4 items-center px-3 py-4 col-span-2 bg-yellow-300 mb-4">
+            <div className="flex gap-4 items-center px-3 py-4 col-span-2 bg-yellow-300 mb-4 rounded-md">
               <FontAwesomeIcon icon="fa-solid fa-paperclip" size="lg" />{" "}
               <p>{guidanceMessage}</p>
             </div>

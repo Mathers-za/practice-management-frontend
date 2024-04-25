@@ -8,6 +8,7 @@ import FullWithButton from "../components/miscellaneous components/FullWidthButt
 import { useAppointmentDataFromCreateAppointment } from "../zustandStore/store";
 
 import LoginForm from "../components/login/Login";
+import AppointmentTypeCard from "../components/appointmentTypeComponents/AppointmentTypeCard";
 
 export default function ComponentView() {
   const globalProfileData = useAppointmentDataFromCreateAppointment(
@@ -37,6 +38,28 @@ export default function ComponentView() {
           <div>{globalProfileData.first_name}</div>
         </div>
         <LoginForm />
+
+        <div className="min-h-fit">
+          <AppointmentTypeCard
+            appointmentTypeData={{
+              appointment_name: "Intial consultation",
+              price: 500,
+              duration: 45,
+            }}
+            preDefinedIcdData={[
+              {
+                procedural_code: "4637",
+                price: 500,
+              },
+              {
+                icd_10: "hekosd",
+                procedural_code: "4637",
+                price: 400,
+              },
+              { price: 500 },
+            ]}
+          />
+        </div>
       </div>
     </>
   );
