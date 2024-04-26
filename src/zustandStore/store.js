@@ -105,7 +105,10 @@ export const useAppointmentDataFromCreateAppointment = create((set) => ({
   appointmentTypeData: {},
   appointmentData: {},
   profileData: {},
-  practiceDetails: { address: "1 dahlia street northmead ext 4 benon 1501" },
+  practiceDetails: {
+    appointment_name: "Mathers Chiropractic",
+    address: "1 dahlia street northmead ext 4 benon 1501",
+  },
   setPatientData: (patientDataObj) => set({ patientData: patientDataObj }),
   setAppointmentTypeData: (apptypeDataObj) =>
     set({ appointmentTypeData: apptypeDataObj }),

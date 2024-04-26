@@ -1,5 +1,6 @@
 import { number, object, ref, string } from "yup";
 import axiosRequest from "../apiRequests/apiRequests";
+import { duration } from "@mui/material";
 
 export const loginFormSchema = object({
   email: string("Invalid format")
@@ -48,4 +49,16 @@ export const createPatientValidationSchema = object({
   contact_number: string("invalid format")
     .matches(/^\+27\d{9}$/, "Invalid phone number")
     .nullable(),
+});
+
+export const appointmentTypeValidationSchema = object({
+  appointment_name: string().required("Appointment name required"),
+  duration: number("invalid format- needs to be a number")
+    .positive()
+    .min(0)
+    .required()
+    .truncate(),
+  price: number("Must be a valid number")
+    .positive("The number must be postive")
+    .required("The price is required field"),
 });

@@ -10,6 +10,8 @@ import { useAppointmentDataFromCreateAppointment } from "../zustandStore/store";
 import LoginForm from "../components/login/Login";
 import AppointmentTypeCard from "../components/appointmentTypeComponents/AppointmentTypeCard";
 
+import CreateAppointmentType from "../components/miscellaneous components/CreateAppointmentType";
+
 export default function ComponentView() {
   const globalProfileData = useAppointmentDataFromCreateAppointment(
     (state) => state.profileData
@@ -59,6 +61,9 @@ export default function ComponentView() {
               { price: 500 },
             ]}
           />
+        </div>
+        <div>
+          <CreateAppointmentType profileId={2} />
         </div>
       </div>
     </>

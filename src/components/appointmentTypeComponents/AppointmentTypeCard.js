@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useAppointmentDataFromCreateAppointment } from "../../zustandStore/store";
-import { format } from "date-fns";
 
 export default function AppointmentTypeCard({
   appointmentTypeData,
@@ -21,7 +20,7 @@ export default function AppointmentTypeCard({
   }, [predefinedIcdcodes, appointmentTypeData]);
   return (
     <>
-      <div className=" max-h-97 overflow-auto h-97  w-1/4 bg-white border shadow-md shadow-gray-600/75  ">
+      <div className=" h-97 overflow-auto  w-1/4 bg-white border shadow-md shadow-gray-600/75  ">
         <div>
           {" "}
           <img className="" src="../images/qb0FeYn.jpeg" alt="working" />
@@ -34,14 +33,16 @@ export default function AppointmentTypeCard({
                 {appointmentTypeData.appointment_name}{" "}
               </p>
               <p className="text-sm text-slate-500 mt-0">
-                {appointmentTypeData.duration} minutes
+                {appointmentTypeData?.duration || ""} minutes
               </p>
             </div>
             <div>
-              <p>R{total ? total : appointmentTypeData.price} </p>
-              {total && (
-                <p className="text-sm text-slate-500">Automated price</p>
-              )}
+              <p>{total ? `R${total}` : appointmentTypeData?.price || ""} </p>
+
+              <p className="text-sm text-slate-500">
+                {" "}
+                {total ? "Automated price" : "Price"}
+              </p>
             </div>
           </div>
           {globalPracticeData.address && (
@@ -68,8 +69,7 @@ export default function AppointmentTypeCard({
                     </tbody>
                   </table>
                   <p className="text-end px-2">
-                    {" "}
-                    <span className="font-bold">Total</span>: R{total}
+                    <span className="font-bold">Total</span>: R{total || "0"}
                   </p>
                 </div>
               )}

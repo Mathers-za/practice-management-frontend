@@ -60,16 +60,16 @@ export default function DashBoard({ profileIdStateSetter }) {
 
   return (
     <>
-      <div className="min-h-screen  grid grid-cols-12 grid-rows-12 min-w-full  ">
-        <div className="col-start-3 col-end-13 row-start-1 row-end-2 h-fit   sticky top-0 left-0 right-0 z-10 ">
+      <div className="min-h-sc grid grid-cols-12 grid-rows-12 min-w-full  ">
+        <div className="col-start-3 col-end-13 row-start-1 row-end-2 h-full  sticky top-0 left-0 right-0 z-10 ">
           <MainMenuTopBar />
         </div>
         <div className="col-start-1 col-end-3 row-start-1 row-end-13    ">
-          <div className="h-full max-h-screen overflow-auto sticky left-0 top-0 bottom-0">
+          <div className="h-sceen max-h-screen overflow-auto sticky left-0 top-0 bottom-0">
             <MainMenuSideBar />
           </div>
         </div>
-        <div className="col-start-3 col-end-13 row-start-2 row-end-13 p-2 h-dvh bg-slate-200 ">
+        <div className="col-start-3 col-end-13 row-start-2  row-end-13 p-2 h-screen max-screen overflow-auto bg-slate-200 ">
           <Outlet />
         </div>
       </div>

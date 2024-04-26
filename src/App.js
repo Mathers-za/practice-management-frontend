@@ -138,16 +138,11 @@ function App() {
               </Route>
               <Route
                 path="appointmentTypePortal"
-                element={<AppointmentTypePortal profileId={profileId} />}
+                element={<AppointmentTypeList profileId={profileId} />}
               >
                 <Route
                   path="createAppointmentType"
                   element={<AppTypeCreation profileId={profileId} />}
-                />
-
-                <Route
-                  index
-                  element={<AppointmentTypeList profileId={profileId} />}
                 />
 
                 <Route path="view/:id" element={<AppTypeCreation />} />
