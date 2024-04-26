@@ -1,41 +1,89 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Input from "./DisplayTextInput";
-import { usePostData } from "../../CustomHooks/serverStateHooks";
+import {
+  useFetchData,
+  usePatchData,
+  usePostData,
+} from "../../CustomHooks/serverStateHooks";
 
 import SubmitButton from "./SubmitButton";
-import { appointmentTypeValidationSchema } from "../../form validation Schemas/validationSchemas";
+import {
+  appointmentTypeValidationSchema,
+  updateAppointmentTypeValidatiionSchema,
+} from "../../form validation Schemas/validationSchemas";
 import DisplaySingleError from "./WarningMessage";
+import CancelButton from "./CancelButton";
 
-export default function CreateAppointmentType({ profileId, hideComponent }) {
+export default function CreateAppointmentType({
+  profileId,
+  appointmentTypeId,
+  hideComponent,
+}) {
   const [errorMessage, setErrorMessage] = useState();
   const { createMutation } = usePostData(
-    `/appointmentTypes/create${profileId}`
+    `/appointmentTypes/create${profileId}`,
+    "viewAllAppointmentTypes"
   );
-  const [postRequestPayload, setPostRequestPayload] = useState({});
+  const [apptypeData, setAppTypeData] = useState({});
+  const [changes, setChanges] = useState({});
+  const { data: appointmentType } = useFetchData(
+    `/appointmentTypes/view${appointmentTypeId ? appointmentTypeId : 0}`
+  );
+
+  const { patchMutation } = usePatchData(
+    `/appointmentTypes/update${appointmentTypeId}`
+  );
+  useEffect(() => {
+    if (appointmentType) {
+      setAppTypeData(appointmentType);
+    }
+  }, [appointmentType]);
 
   function handleChange(event) {
     const { name, value } = event.target;
+    setErrorMessage();
 
-    setPostRequestPayload((prev) => ({
+    setAppTypeData((prev) => ({
       ...prev,
       [name]: value === "" ? null : value,
     }));
-  } //TODO make a resubale cancel button
-  //TODO make a reusable close x button for the top right corner of the screen
-  //TODO test this compoenent thorughly and then itegrate it into the appointment lits page when teh ad dbutton is clicked
+
+    setChanges((prev) => ({
+      ...prev,
+      [name]: value === "" ? null : value,
+    }));
+  }
 
   async function handleSubmit(event) {
     event.preventDefault();
-    try {
-      const cleanedData =
-        appointmentTypeValidationSchema.cast(postRequestPayload);
-      await appointmentTypeValidationSchema.validate(cleanedData);
-      createMutation.mutate(cleanedData);
-      setPostRequestPayload({});
-    } catch (error) {
-      setErrorMessage(error.message);
+    if (appointmentTypeId) {
+      try {
+        const cleanedData = updateAppointmentTypeValidatiionSchema.cast(
+          changes,
+          { assert: false }
+        );
+        await updateAppointmentTypeValidatiionSchema.validate(cleanedData);
+        patchMutation.mutate(cleanedData);
+        setChanges({});
+      } catch (error) {
+        setErrorMessage(error.message);
+      }
+    } else {
+      try {
+        const cleanedData = appointmentTypeValidationSchema.cast(apptypeData, {
+          assert: false,
+        });
+
+        await appointmentTypeValidationSchema.validate(cleanedData);
+        createMutation.mutate(cleanedData);
+        setAppTypeData({});
+      } catch (error) {
+        setErrorMessage(error.message);
+      }
     }
   }
+
+  //TODO create a reusbale cancel button. keep in mind that we dont want to trigge rsubmits whne we lcick it in the form
 
   return (
     <>
@@ -52,9 +100,9 @@ export default function CreateAppointmentType({ profileId, hideComponent }) {
               type="text"
               name="appointment_name"
               onchange={handleChange}
-              value={postRequestPayload.appointment_name ?? ""}
+              value={apptypeData.appointment_name ?? ""}
               placeholder="Appointment Type name"
-              required={true}
+              required={false}
             />
             <Input
               labelText="Duration"
@@ -62,7 +110,7 @@ export default function CreateAppointmentType({ profileId, hideComponent }) {
               type="number"
               onchange={handleChange}
               name="duration"
-              value={postRequestPayload.duration ?? ""}
+              value={apptypeData.duration ?? ""}
               placeholder="Duration"
               bottomInfo="The duration of this appointment type in minutes"
             />
@@ -71,17 +119,24 @@ export default function CreateAppointmentType({ profileId, hideComponent }) {
               type="number"
               name="price"
               onchange={handleChange}
-              value={postRequestPayload.price ?? ""}
+              value={apptypeData.price ?? ""}
               placeholder="Price"
               required={true}
               bottomInfo="If not automated Icd10 codes are set, then the appointment will default to this price"
             />
           </div>
           <div className="flex justify-between items-end">
-            <SubmitButton text="Cancel" />
+            <CancelButton
+              onclick={() => hideComponent()}
+              textContent="Cancel"
+            />
             <SubmitButton
               text="Save"
-              disable={Object.keys(postRequestPayload).length !== 3}
+              disable={
+                appointmentTypeId
+                  ? Object.keys(changes).length === 0
+                  : Object.keys(apptypeData).length !== 3
+              }
             />
           </div>
 

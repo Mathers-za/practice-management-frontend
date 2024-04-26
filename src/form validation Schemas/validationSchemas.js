@@ -62,3 +62,15 @@ export const appointmentTypeValidationSchema = object({
     .positive("The number must be postive")
     .required("The price is required field"),
 });
+
+export const updateAppointmentTypeValidatiionSchema = object({
+  appointment_name: string().nonNullable("Appointment name cannot be empty"),
+  duration: number("invalid format- needs to be a number")
+    .positive()
+    .min(0)
+    .truncate()
+    .nonNullable(),
+  price: number("Must be a valid number")
+    .positive("The number must be postive")
+    .nonNullable(),
+});
