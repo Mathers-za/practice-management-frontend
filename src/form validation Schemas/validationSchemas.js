@@ -57,7 +57,7 @@ export const createAppointmentTypeValidationSchema = object({
     .positive()
     .min(0)
     .required()
-    .truncate(),
+    .integer("Duration must be a whole number, not a decimal"),
   price: number("Must be a valid number")
     .positive("The number must be postive")
     .required("The price is required field"),
@@ -68,8 +68,9 @@ export const updateAppointmentTypeValidatiionSchema = object({
   duration: number("invalid format- needs to be a number")
     .positive()
     .min(0)
-    .truncate()
-    .nonNullable(),
+    .nonNullable("Duration cannot be empty")
+    .integer("Duration must be a whole number, not a decimal"),
+
   price: number("Must be a valid number")
     .positive("The number must be postive")
     .nonNullable(),

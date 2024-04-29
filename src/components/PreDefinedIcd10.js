@@ -4,6 +4,7 @@ import {
   usePostData,
 } from "../CustomHooks/serverStateHooks";
 import { useEffect, useState } from "react";
+import Input from "./miscellaneous components/DisplayTextInput";
 
 function cleanData(data) {
   const newObject = {};
@@ -21,13 +22,13 @@ function cleanData(data) {
 }
 
 export default function PreDefinedIcdCoding({ appTypeId }) {
-  const { data } = useFetchData(
+  const { data, refetch } = useFetchData(
     `/predefinedIcd10/view${appTypeId}`,
     "icd10Data"
   );
   const { createMutation } = usePostData(
     `/predefinedIcd10/create${appTypeId}`,
-    "icd10Data"
+    "viewAllAppointmentTypes"
   );
   const { deleteMutation } = useDeleteData(
     `/predefinedIcd10/delete`,
@@ -52,54 +53,68 @@ export default function PreDefinedIcdCoding({ appTypeId }) {
 
   return (
     <>
-      <div>
-        <div>
-          <input
-            onChange={handleIcdInputChange}
-            placeholder="ICD-10 code"
-            type="text"
-            name="icd10_code"
-            value={preDefinedIcdInputData?.icd10_code ?? ""}
-          />
-          <input
-            onChange={handleIcdInputChange}
-            placeholder="Procedural-Code"
-            type="text"
-            name="procedural_code"
-            value={preDefinedIcdInputData?.procedural_code ?? ""}
-          />
-          <input
-            onChange={handleIcdInputChange}
-            placeholder="Price"
-            type="number"
-            name="price"
-            value={preDefinedIcdInputData?.price ?? ""}
-          />
-        </div>
-        <button
-          disabled={Object.keys(preDefinedIcdInputData).length === 0}
-          onClick={() => {
-            const cleanedData = cleanData(preDefinedIcdInputData);
+      <div className="bg-white space-y-4">
+        <div className="flex gap-5 w-full">
+          <div className="grow">
+            <Input
+              onchange={handleIcdInputChange}
+              placeholder="ICD-10 code"
+              type="text"
+              name="icd10_code"
+              value={preDefinedIcdInputData?.icd10_code ?? ""}
+            />
+          </div>
+          <div className="grow">
+            {" "}
+            <Input
+              onchange={handleIcdInputChange}
+              placeholder="Procedural-Code"
+              type="text"
+              name="procedural_code"
+              value={preDefinedIcdInputData?.procedural_code ?? ""}
+            />
+          </div>
+          <div className="grow">
+            <Input
+              onchange={handleIcdInputChange}
+              placeholder="Price"
+              type="number"
+              name="price"
+              value={preDefinedIcdInputData?.price ?? ""}
+            />
+          </div>
 
-            createMutation.mutate(cleanedData);
-            setPreDefinedIcdInputData({});
-          }}
-        >
-          Add
-        </button>
-        <table>
-          <tr>
+          <button
+            className="grow"
+            disabled={Object.keys(preDefinedIcdInputData).length === 0}
+            onClick={async () => {
+              const cleanedData = cleanData(preDefinedIcdInputData);
+
+              await createMutation.mutateAsync(cleanedData);
+              refetch();
+              setPreDefinedIcdInputData({});
+            }}
+          >
+            Add
+          </button>
+        </div>
+
+        <table className=" w-full h-fit  ">
+          <tr className="h-12 ">
             <th>ICD-10 </th>
-            <th>Procedural-Code</th>
+            <th>Procedural/Tariff Codes</th>
             <th>Price</th>
           </tr>
           {data && data?.length > 0 ? (
             data.map((code) => {
               return (
-                <tr key={code.id}>
-                  <td>{code.icd10_code}</td>
-                  <td>{code.procedural_code}</td>
-                  <td>
+                <tr
+                  className="h-10 gh hover:bg-slate-300 duration-100"
+                  key={code.id}
+                >
+                  <td className="border-none">{code.icd10_code}</td>
+                  <td className="border-none">{code.procedural_code}</td>
+                  <td className="border-none">
                     {code.price}
                     <button
                       type="button"
@@ -113,7 +128,9 @@ export default function PreDefinedIcdCoding({ appTypeId }) {
             })
           ) : (
             <tr>
-              <td>create some PreDefined ICD-10 codes to see them here.</td>
+              <td colSpan={3} height={"40px"}>
+                create some PreDefined ICD-10 codes to see them here.
+              </td>
             </tr>
           )}
         </table>

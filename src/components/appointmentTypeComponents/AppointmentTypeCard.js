@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAppointmentDataFromCreateAppointment } from "../../zustandStore/store";
 import UpdateAppointmentType from "./appointmentTypeUpdate";
+import ApptypeEditsAndIcdAutomationsPage from "./ApptypeUpdateAndIcdAutomations{age";
 
 export default function AppointmentTypeCard({
   appointmentTypeData,
@@ -17,7 +18,10 @@ export default function AppointmentTypeCard({
 
   useEffect(() => {
     let sum = 0;
-    if (predefinedIcdcodes) {
+    if (
+      predefinedIcdcodes &&
+      predefinedIcdcodes.some((price) => price != null)
+    ) {
       predefinedIcdcodes.forEach((code) => (sum += parseInt(code.price)));
     }
     setTotal(sum);
@@ -70,29 +74,35 @@ export default function AppointmentTypeCard({
                       {predefinedIcdcodes.map((code) => (
                         <div className="flex justify-around columns-3 border-b border-slate-500 py-1">
                           {" "}
-                          <td className="border-none  ">{code.icd_10 || ""}</td>
+                          <td className="border-none  ">
+                            {code.icd10_code || ""}
+                          </td>
                           <td className="border-none">
                             {code?.procedural_code || ""}
                           </td>
-                          <td className="border-none ">R{code?.price || ""}</td>
+                          <td className="border-none ">
+                            {code.price ? `R${code.price}` : ""}
+                          </td>
                         </div>
                       ))}
                     </tbody>
                   </table>
-                  <p className="text-end px-2">
-                    <span className="font-bold">Total</span>: R{total || "0"}
-                  </p>
+                  {total || total === 0 ? (
+                    <p className="text-end px-2">
+                      <span className="font-bold">Total</span>: R{total || "0"}
+                    </p>
+                  ) : null}
                 </div>
               )}
             </div>
           )}
         </div>
         {showApptypeEdit && (
-          <div className="z-10 fixed left-0 top-0 w-full h-screen bg-black bg-opacity-80">
-            <UpdateAppointmentType
+          <div className="z-10 fixed left-0 top-0 w-full h-screen max-h-screen overflow-auto bg-black bg-opacity-80 ">
+            <ApptypeEditsAndIcdAutomationsPage
               appointmentTypeId={appointmentTypeData.id}
               hideComponent={() => setShowAppTypeEdit(!showApptypeEdit)}
-              icd10Total={total}
+              icd10Total={total && total}
             />
           </div>
         )}

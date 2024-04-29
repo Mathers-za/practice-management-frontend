@@ -9,7 +9,7 @@ import DisplaySingleError from "../miscellaneous components/WarningMessage";
 export default function UpdateAppointmentType({
   appointmentTypeId,
   hideComponent,
-  icd10Total,
+  icd10Total = undefined,
 }) {
   const { data: appointmentTypeData } = useFetchData(
     `/appointmentTypes/view${appointmentTypeId}`
@@ -41,6 +41,7 @@ export default function UpdateAppointmentType({
   }
 
   async function handleSubmit(event) {
+    setErrorMessage();
     event.preventDefault();
 
     try {
@@ -48,9 +49,11 @@ export default function UpdateAppointmentType({
         changes,
         { assert: false }
       );
+      await updateAppointmentTypeValidatiionSchema.validate(cleanedChangesData);
       await patchMutation.mutateAsync(cleanedChangesData);
+      setChanges({});
     } catch (error) {
-      setErrorMessage(error.errorMessage);
+      setErrorMessage(error.message);
     }
   }
   return (
@@ -87,10 +90,12 @@ export default function UpdateAppointmentType({
                 type="number"
                 name="price"
                 onchange={handleChange}
-                value={icd10Total ?? displayAppointmentData.price}
+                value={
+                  icd10Total ? icd10Total : displayAppointmentData?.price ?? ""
+                }
+                disable={icd10Total}
                 placeholder="Price"
                 required={true}
-                disable={icd10Total && true}
                 staticBottomInfo={
                   icd10Total
                     ? "Pricing for this product is automatically set according to the automated icd-10 codes and cannot be edited"
