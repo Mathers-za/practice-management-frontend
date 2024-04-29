@@ -92,28 +92,24 @@ const usePatchData = (endpoint = "", queryKey = undefined) => {
 export { usePatchData };
 
 const useDeleteData = (endpoint = "", queryKey = undefined) => {
-  console.log(queryKey);
   const queryClient = useQueryClient();
   const deleteMutation = useMutation(
-    {
-      mutationFn: async (id) => {
-        return await axios.delete(`http://localhost:4000${endpoint}${id}`, {
-          withCredentials: true,
-        });
-      },
+    async (id) => {
+      return await axios.delete(`http://localhost:4000${endpoint}${id}`, {
+        withCredentials: true,
+      });
     },
 
     {
-      onSuccess: (data, error, variables, context) => {
-        if (context.status === "success") {
-          queryKey && queryClient.invalidateQueries(queryKey);
+      onSuccess: () => {
+        if (queryKey) {
+          queryClient.invalidateQueries(queryKey);
         }
       },
     }
   );
   return { deleteMutation };
 };
-
 const usePagination = (queryString, queryID, fetchData) => {
   return useQuery({
     queryKey: [queryString, queryID],

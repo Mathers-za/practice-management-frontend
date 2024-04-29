@@ -70,8 +70,8 @@ export default function UpdateAppointmentType({
             required={false}
             staticBottomInfo={"eg: intial consultation, follow-up etc"}
           />
-          <div className="flex gap-3  ">
-            <div className="grow">
+          <div className="flex gap-3 flex-wrap  ">
+            <div className="flex-1">
               <Input
                 labelText="Duration"
                 required={true}
@@ -83,13 +83,13 @@ export default function UpdateAppointmentType({
                 staticBottomInfo="The duration of this appointment type in minutes"
               />{" "}
             </div>
-            <div className="grow">
+            <div className="flex-1">
               {" "}
               <Input
                 labelText="Price"
                 type="number"
                 name="price"
-                onchange={handleChange}
+                onchange={icd10Total ? null : handleChange}
                 value={
                   icd10Total ? icd10Total : displayAppointmentData?.price ?? ""
                 }

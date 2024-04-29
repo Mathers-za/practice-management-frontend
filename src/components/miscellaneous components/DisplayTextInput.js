@@ -26,7 +26,7 @@ export default function Input({
 
       <input
         pattern={pattern && pattern}
-        onChange={(event) => onchange(event)}
+        onChange={onchange ? (event) => onchange(event) : null}
         type={type || "text"}
         placeholder={placeholder}
         name={name}

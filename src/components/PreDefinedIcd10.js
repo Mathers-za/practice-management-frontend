@@ -5,6 +5,7 @@ import {
 } from "../CustomHooks/serverStateHooks";
 import { useEffect, useState } from "react";
 import Input from "./miscellaneous components/DisplayTextInput";
+import DeleteDustbin from "./miscellaneous components/DeleteDustbin";
 
 function cleanData(data) {
   const newObject = {};
@@ -32,7 +33,7 @@ export default function PreDefinedIcdCoding({ appTypeId }) {
   );
   const { deleteMutation } = useDeleteData(
     `/predefinedIcd10/delete`,
-    "icd10Data"
+    "viewAllAppointmentTypes"
   );
 
   const [preDefinedIcdInputData, setPreDefinedIcdInputData] = useState({});
@@ -51,10 +52,12 @@ export default function PreDefinedIcdCoding({ appTypeId }) {
     }));
   }
 
+  //TODO refactor this page, make a resuable add button and fix the rations of the inputs
+
   return (
     <>
       <div className="bg-white space-y-4">
-        <div className="flex gap-5 w-full">
+        <div className="flex gap-5 w-full flex-1 flex-wrap">
           <div className="grow">
             <Input
               onchange={handleIcdInputChange}
@@ -64,7 +67,7 @@ export default function PreDefinedIcdCoding({ appTypeId }) {
               value={preDefinedIcdInputData?.icd10_code ?? ""}
             />
           </div>
-          <div className="grow">
+          <div className="flex-1">
             {" "}
             <Input
               onchange={handleIcdInputChange}
@@ -74,7 +77,7 @@ export default function PreDefinedIcdCoding({ appTypeId }) {
               value={preDefinedIcdInputData?.procedural_code ?? ""}
             />
           </div>
-          <div className="grow">
+          <div className="flex-1">
             <Input
               onchange={handleIcdInputChange}
               placeholder="Price"
@@ -85,7 +88,7 @@ export default function PreDefinedIcdCoding({ appTypeId }) {
           </div>
 
           <button
-            className="grow"
+            className="flex-1"
             disabled={Object.keys(preDefinedIcdInputData).length === 0}
             onClick={async () => {
               const cleanedData = cleanData(preDefinedIcdInputData);
@@ -114,14 +117,16 @@ export default function PreDefinedIcdCoding({ appTypeId }) {
                 >
                   <td className="border-none">{code.icd10_code}</td>
                   <td className="border-none">{code.procedural_code}</td>
-                  <td className="border-none">
+                  <td className="border-none relative ">
                     {code.price}
-                    <button
-                      type="button"
-                      onClick={() => deleteMutation.mutate(code.id)}
-                    >
-                      Delete
-                    </button>
+                    <div className=" absolute right-5 top-2 ">
+                      <DeleteDustbin
+                        onclick={async () => {
+                          await deleteMutation.mutateAsync(code.id);
+                          refetch();
+                        }}
+                      />
+                    </div>
                   </td>
                 </tr>
               );
