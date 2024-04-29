@@ -70,7 +70,7 @@ export default function PracticeDetails({ profileId }) {
                 value={practiceData?.practice_name || ""}
                 onchange={handleChange}
                 type="text"
-                bottomInfo="Business name you would liketo display on invoices"
+                dynamicBottomInfo="Business name you would liketo display on invoices"
               />
             </div>
             <div className="col-span-3">
@@ -81,7 +81,7 @@ export default function PracticeDetails({ profileId }) {
                 value={practiceData?.practice_num || ""}
                 onchange={handleChange}
                 type="text"
-                bottomInfo="Practice number to be displayed on your invoices"
+                dynamicBottomInfo="Practice number to be displayed on your invoices"
               />
             </div>
 

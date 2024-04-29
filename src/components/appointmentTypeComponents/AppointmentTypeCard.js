@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAppointmentDataFromCreateAppointment } from "../../zustandStore/store";
+import UpdateAppointmentType from "./appointmentTypeUpdate";
 
 export default function AppointmentTypeCard({
   appointmentTypeData,
@@ -8,8 +9,11 @@ export default function AppointmentTypeCard({
   const globalPracticeData = useAppointmentDataFromCreateAppointment(
     (state) => state.practiceDetails
   );
+  const [showApptypeEdit, setShowAppTypeEdit] = useState(false);
 
   const [total, setTotal] = useState();
+
+  console.log(appointmentTypeData);
 
   useEffect(() => {
     let sum = 0;
@@ -18,12 +22,19 @@ export default function AppointmentTypeCard({
     }
     setTotal(sum);
   }, [predefinedIcdcodes, appointmentTypeData]);
+
   return (
     <>
       <div className=" h-97 overflow-auto  w-1/4 bg-white border shadow-md shadow-gray-600/75  ">
-        <div>
+        <div className="relative">
           {" "}
-          <img className="" src="../images/qb0FeYn.jpeg" alt="working" />
+          <img src="../images/qb0FeYn.jpeg" alt="working" />
+          <button
+            onClick={() => setShowAppTypeEdit(!showApptypeEdit)}
+            className="px-2 py-1 bg-slate-300 text-back hover:bg-slate-400 absolute top-1 right-1"
+          >
+            Edit
+          </button>
         </div>
 
         <div>
@@ -76,6 +87,15 @@ export default function AppointmentTypeCard({
             </div>
           )}
         </div>
+        {showApptypeEdit && (
+          <div className="z-10 fixed left-0 top-0 w-full h-screen bg-black bg-opacity-80">
+            <UpdateAppointmentType
+              appointmentTypeId={appointmentTypeData.id}
+              hideComponent={() => setShowAppTypeEdit(!showApptypeEdit)}
+              icd10Total={total}
+            />
+          </div>
+        )}
       </div>
     </>
   );

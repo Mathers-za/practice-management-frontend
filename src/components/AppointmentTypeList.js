@@ -53,18 +53,20 @@ export default function AppointmentTypeList({ profileId }) {
               {console.log(
                 "made it here" + apptypeAndIcdData.appointmentTypeData
               )}
-              {apptypeAndIcdData.appointmentTypeData.map((type) => (
-                <AppointmentTypeCard
-                  appointmentTypeData={type}
-                  predefinedIcdcodes={apptypeAndIcdData.predefinedIcd10Data.find(
-                    (arr) => {
-                      return arr.some(
-                        (icddata) => icddata.appointment_type_id === type.id
-                      );
-                    }
-                  )}
-                />
-              ))}
+              {apptypeAndIcdData.appointmentTypeData
+                .sort((a, b) => a.id - b.id)
+                .map((type) => (
+                  <AppointmentTypeCard
+                    appointmentTypeData={type}
+                    predefinedIcdcodes={apptypeAndIcdData.predefinedIcd10Data.find(
+                      (arr) => {
+                        return arr.some(
+                          (icddata) => icddata.appointment_type_id === type.id
+                        );
+                      }
+                    )}
+                  />
+                ))}
             </div>
           ) : (
             <div>

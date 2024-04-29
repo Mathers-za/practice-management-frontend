@@ -55,7 +55,7 @@ export default function CreatePatient({ profileId, hideComponent }) {
           value={patientInfo.first_name || ""}
           labelText="First Name"
           onchange={handleChange}
-          bottomInfo={"The patients first name."}
+          staticBottomInfo={"Required field"}
           placeholder="First Name"
           required={false}
         />
@@ -66,7 +66,7 @@ export default function CreatePatient({ profileId, hideComponent }) {
           labelText="Last Name"
           onchange={handleChange}
           placeholder="Last name"
-          bottomInfo="The patients last name"
+          staticBottomInfo="The patients last name. Optional but recommended"
         />
         <Input
           type="email"
@@ -75,7 +75,7 @@ export default function CreatePatient({ profileId, hideComponent }) {
           labelText="Email"
           onchange={handleChange}
           placeholder="Email"
-          bottomInfo="Email required if you wish to send notificcations to your patients/clients."
+          staticBottomInfo="Email required if you wish to send notificcations to your patients/clients."
         />
         <Input
           type="tel"
@@ -85,7 +85,7 @@ export default function CreatePatient({ profileId, hideComponent }) {
           onchange={handleChange}
           pattern="^\+27\d{9}$"
           placeholder="Phone number"
-          bottomInfo="Valid phone number expected eg: +27825385432"
+          staticBottomInfo="Valid phone number expected eg: +27825385432"
         />
 
         <div className="col-span-2 mt-3 ">

@@ -88,7 +88,7 @@ export default function Profile() {
               placeholder="Email Address"
               onchange={handleChange}
               value={profileData?.profile_email || ""}
-              bottomInfo={
+              dynamicBottomInfo={
                 "The email you would like to recieve notifications on."
               }
             />
@@ -100,7 +100,7 @@ export default function Profile() {
               pattern="^\+27\d{9}$"
               onchange={handleChange}
               value={profileData?.contact_num || ""}
-              bottomInfo="A valid phone number is expected eg: +27814836849"
+              dynamicBottomInfo="A valid phone number is expected eg: +27814836849"
             />
             <div className="col-span-2 flex items-center border-b border-slate-600 mb-2   ">
               <h1 className="text-xl font-medium mb-2">
@@ -114,7 +114,7 @@ export default function Profile() {
                   labelText="Registration Number"
                   type="text"
                   placeholder="Registration number"
-                  bottomInfo="Your personal professional council number"
+                  dynamicBottomInfo="Your personal professional council number"
                   onchange={handleChange}
                   value={profileData?.council_reg_num || ""}
                 />
@@ -127,6 +127,7 @@ export default function Profile() {
                   placeholder="Profession"
                   type="text"
                   value={profileData?.profession || ""}
+                  dynamicBottomInfo="Your profession ie: chiropractor, doctor, physiotherapist etc"
                 />
               </div>
             </div>

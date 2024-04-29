@@ -51,7 +51,7 @@ export const createPatientValidationSchema = object({
     .nullable(),
 });
 
-export const appointmentTypeValidationSchema = object({
+export const createAppointmentTypeValidationSchema = object({
   appointment_name: string().required("Appointment name required"),
   duration: number("invalid format- needs to be a number")
     .positive()
