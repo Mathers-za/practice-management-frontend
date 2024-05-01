@@ -32,14 +32,12 @@ export default function Register({ hidecomponent }) {
         );
 
         if (response.status === 201) {
-          console.log("user created");
         }
         hidecomponent();
       } catch (error) {
         console.error(error);
       }
     } catch (error) {
-      console.log("the error in test");
       console.error(error.inner);
       error.inner.forEach((err) => {
         if (!errors[err.path]) {

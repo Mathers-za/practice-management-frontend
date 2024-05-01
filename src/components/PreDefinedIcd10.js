@@ -1,47 +1,57 @@
 import {
-  useDeleteData,
+  useBatchDeleteData,
   useFetchData,
   usePostData,
 } from "../CustomHooks/serverStateHooks";
 import { useEffect, useState } from "react";
 import Input from "./miscellaneous components/DisplayTextInput";
 import DeleteDustbin from "./miscellaneous components/DeleteDustbin";
-
-function cleanData(data) {
-  const newObject = {};
-
-  for (const property in data) {
-    const value = data[property];
-
-    if (property === "price" && typeof value === "string") {
-      newObject[property] = data[property].replace(",", ".");
-    } else {
-      newObject[property] = data[property];
-    }
-  }
-  return newObject;
-}
+import { useAppointmentTypeAndIcdAutomationsPage } from "../zustandStore/store";
+import SubmitButton from "./miscellaneous components/SubmitButton";
+import { validatepreDefinedICD10CodeCreation } from "../form validation Schemas/validationSchemas";
+import DisplaySingleError from "./miscellaneous components/WarningMessage";
 
 export default function PreDefinedIcdCoding({ appTypeId }) {
-  const { data, refetch } = useFetchData(
+  const { data: originalICDData } = useFetchData(
     `/predefinedIcd10/view${appTypeId}`,
+    "icd10Data",
+    undefined,
+    0
+  );
+  const [errorMessage, setErrorMessage] = useState();
+
+  const {
+    icd10List,
+    arrayOfIcdIdsToDelete,
+    arrayOfIcdsToUpdate,
+    copyOfOrginalIcdData,
+    resetAll,
+    updateIcdList,
+    incrementTotal,
+    decrementTotal,
+
+    resetArrayOfIcdIdsToDelete,
+    deleteIcdListItem,
+    setIcd10List,
+  } = useAppointmentTypeAndIcdAutomationsPage();
+  const { createMutation } = usePostData(
+    `/predefinedIcd10/batchCreate${appTypeId}`,
     "icd10Data"
   );
-  const { createMutation } = usePostData(
-    `/predefinedIcd10/create${appTypeId}`,
-    "viewAllAppointmentTypes"
+  const { deleteMutation } = useBatchDeleteData(
+    `/predefinedIcd10/batchDeletion`
   );
-  const { deleteMutation } = useDeleteData(
-    `/predefinedIcd10/delete`,
-    "viewAllAppointmentTypes"
-  );
-
-  const [preDefinedIcdInputData, setPreDefinedIcdInputData] = useState({});
+  console.log("orginal icd data " + JSON.stringify(copyOfOrginalIcdData));
+  console.log("active icd10data " + JSON.stringify(icd10List));
+  console.log("array of icds to update " + JSON.stringify(arrayOfIcdsToUpdate));
 
   useEffect(() => {
-    if (data) {
-    }
-  }, [data]);
+    if (originalICDData && originalICDData.length > 0) {
+      setIcd10List(originalICDData);
+    } else setIcd10List([]);
+  }, [originalICDData]);
+
+  const [preDefinedIcdInputData, setPreDefinedIcdInputData] = useState({});
 
   function handleIcdInputChange(e) {
     const { name, value } = e.target;
@@ -51,6 +61,46 @@ export default function PreDefinedIcdCoding({ appTypeId }) {
       [name]: value === "" ? null : value,
     }));
   }
+
+  function handleDelete(codeObj) {
+    deleteIcdListItem(codeObj.id);
+    decrementTotal(codeObj?.price);
+  }
+
+  async function handleSubmit() {
+    if (arrayOfIcdIdsToDelete.length > 0) {
+      deleteMutation.mutate(arrayOfIcdIdsToDelete);
+      resetArrayOfIcdIdsToDelete();
+    }
+
+    if (arrayOfIcdsToUpdate.length > 0) {
+      createMutation.mutate(arrayOfIcdsToUpdate);
+      resetAll();
+    }
+  }
+
+  async function addIcdToList() {
+    setErrorMessage();
+    try {
+      const cleanedData = validatepreDefinedICD10CodeCreation.cast(
+        preDefinedIcdInputData,
+        { assert: false }
+      );
+      const validatedData = await validatepreDefinedICD10CodeCreation.validate(
+        cleanedData
+      );
+
+      updateIcdList(validatedData);
+
+      incrementTotal(validatedData?.price);
+
+      setPreDefinedIcdInputData({});
+    } catch (error) {
+      setErrorMessage(error.message);
+    }
+  }
+
+  console.log(arrayOfIcdIdsToDelete);
 
   //TODO refactor this page, make a resuable add button and fix the rations of the inputs
 
@@ -90,13 +140,7 @@ export default function PreDefinedIcdCoding({ appTypeId }) {
           <button
             className="flex-1"
             disabled={Object.keys(preDefinedIcdInputData).length === 0}
-            onClick={async () => {
-              const cleanedData = cleanData(preDefinedIcdInputData);
-
-              await createMutation.mutateAsync(cleanedData);
-              refetch();
-              setPreDefinedIcdInputData({});
-            }}
+            onClick={addIcdToList}
           >
             Add
           </button>
@@ -108,24 +152,19 @@ export default function PreDefinedIcdCoding({ appTypeId }) {
             <th>Procedural/Tariff Codes</th>
             <th>Price</th>
           </tr>
-          {data && data?.length > 0 ? (
-            data.map((code) => {
+          {icd10List && icd10List.length > 0 ? (
+            icd10List.map((code) => {
               return (
                 <tr
                   className="h-10 gh hover:bg-slate-300 duration-100"
-                  key={code.id}
+                  key={code?.id}
                 >
-                  <td className="border-none">{code.icd10_code}</td>
-                  <td className="border-none">{code.procedural_code}</td>
+                  <td className="border-none">{code?.icd10_code}</td>
+                  <td className="border-none">{code?.procedural_code}</td>
                   <td className="border-none relative ">
-                    {code.price}
+                    {code?.price}
                     <div className=" absolute right-5 top-2 ">
-                      <DeleteDustbin
-                        onclick={async () => {
-                          await deleteMutation.mutateAsync(code.id);
-                          refetch();
-                        }}
-                      />
+                      <DeleteDustbin onclick={() => handleDelete(code)} />
                     </div>
                   </td>
                 </tr>
@@ -139,6 +178,18 @@ export default function PreDefinedIcdCoding({ appTypeId }) {
             </tr>
           )}
         </table>
+
+        {errorMessage && <DisplaySingleError errorMessage={errorMessage} />}
+        <div className="flex justify-end">
+          <SubmitButton
+            text="Save"
+            onclick={handleSubmit}
+            disable={
+              arrayOfIcdIdsToDelete.length === 0 &&
+              arrayOfIcdsToUpdate.length === 0
+            }
+          />
+        </div>
       </div>
     </>
   );

@@ -118,3 +118,112 @@ export const useAppointmentDataFromCreateAppointment = create((set) => ({
   setPracticeDetails: (practiceDataObj) =>
     set({ practiceDetails: practiceDataObj }),
 }));
+
+export const useAppointmentTypeAndIcdAutomationsPage = create(
+  (set, getState) => ({
+    icdPriceTotal: undefined,
+    icd10List: [],
+    arrayOfIcdIdsToDelete: [],
+    arrayOfIcdsToUpdate: [],
+    copyOfOrginalIcdData: [],
+    count: -30,
+    setIcd10List: (icdData) => {
+      getState().resetTotal();
+      set({
+        icd10List: icdData,
+      });
+
+      set({ copyOfOrginalIcdData: icdData });
+
+      if (icdData) {
+        icdData.forEach((icdCode) =>
+          getState().incrementTotal(
+            (icdCode?.price && icdCode.price) || undefined
+          )
+        );
+      }
+    },
+
+    resetArrayOfIcdIdsToDelete: () => set({ arrayOfIcdIdsToDelete: [] }),
+
+    incrementCount: () =>
+      set((state) => ({
+        count: state.count + 1,
+      })),
+
+    updateIcdList: (newDataObj) => {
+      let modifiedObj = {};
+      if (newDataObj) {
+        modifiedObj = { ...newDataObj, id: getState().count };
+        console.log("the modfied object is " + JSON.stringify(modifiedObj));
+        getState().incrementCount();
+      }
+      set((state) => ({
+        icd10List: [...state.icd10List, modifiedObj],
+      }));
+      set((state) => ({
+        arrayOfIcdsToUpdate: [...state.arrayOfIcdsToUpdate, modifiedObj],
+      }));
+    },
+    resetAll: () =>
+      set({
+        icd10List: [],
+        icdPriceTotal: undefined,
+        arrayOfIcdIdsToDelete: [],
+        arrayOfIcdsToUpdate: [],
+        copyOfOrginalIcdData: [],
+        count: -30,
+      }),
+    resetTotal: () =>
+      set({
+        icdPriceTotal: undefined,
+      }),
+
+    decrementTotal: (number) => {
+      if (!number) return;
+      set((prevState) => ({
+        icdPriceTotal: (prevState.icdPriceTotal || 0) - parseFloat(number),
+      }));
+    },
+
+    incrementTotal: (number) => {
+      if (!number) return; // If number is falsy, return early
+      set((prevState) => ({
+        // Using prevState to avoid issues with concurrent updates
+        icdPriceTotal: (prevState.icdPriceTotal || 0) + parseFloat(number), // Increment icdPriceTotal by number
+      }));
+    },
+    deleteIcdListItem: (id) => {
+      const orginalICDData = getState().copyOfOrginalIcdData;
+      const arrayOfIcdsToUpdate = getState().arrayOfIcdsToUpdate;
+
+      if (orginalICDData) {
+        const icd = orginalICDData.find((element) => {
+          return element.id === id;
+        });
+        console.log("icd id of deleteIcd is +", JSON.stringify(icd));
+        if (icd) {
+          set((state) => ({
+            arrayOfIcdIdsToDelete: [...state.arrayOfIcdIdsToDelete, icd.id],
+          }));
+        }
+      }
+      if (arrayOfIcdsToUpdate && arrayOfIcdsToUpdate.length > 0) {
+        const newArray = arrayOfIcdsToUpdate.filter((icd) => icd.id !== id);
+        set({ arrayOfIcdsToUpdate: newArray });
+      }
+      set((state) => {
+        const newList = state.icd10List.filter((icdItem) => icdItem.id !== id);
+        return { icd10List: newList };
+      });
+    },
+  })
+);
+
+export const useAppointmentTypeListComponenet = create((set) => ({
+  refetchAppointmentListTypeData: null,
+  setRefetchAppointmentListTypeData: (callback) =>
+    set({
+      refetchAppointmentListTypeData: callback,
+    }),
+}));

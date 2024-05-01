@@ -9,13 +9,12 @@ import CancelButton from "./CancelButton";
 
 export default function CreateAppointmentType({
   profileId,
-
+  refetchFn,
   hideComponent,
 }) {
   const [errorMessage, setErrorMessage] = useState();
   const { createMutation } = usePostData(
-    `/appointmentTypes/create${profileId}`,
-    "viewAllAppointmentTypes"
+    `/appointmentTypes/create${profileId}`
   );
 
   const [appointmentTypeDataPayload, setAppointmentTypeDataPayload] = useState(
@@ -46,6 +45,7 @@ export default function CreateAppointmentType({
       await createAppointmentTypeValidationSchema.validate(cleanedData);
       await createMutation.mutateAsync(cleanedData);
       setAppointmentTypeDataPayload({});
+      refetchFn();
     } catch (error) {
       setErrorMessage(error.message);
     }

@@ -31,9 +31,8 @@ function filterInvoiceData(data, invoice_status, searchBarInput = null) {
 function filterPastDueInvoices(invoiceData, startIntInDays, endIntInDays) {
   const filteredData = invoiceData.filter((invoice) => {
     if (parseFloat(invoice.amount_due) > 0) {
-      console.log("in past due made it here");
       const result = differenceInDays(new Date(), invoice.invoice_end_date);
-      console.log(result);
+
       return result >= startIntInDays && result <= endIntInDays;
     } else {
       return false;

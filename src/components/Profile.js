@@ -13,10 +13,7 @@ export default function Profile() {
   const [profileData, setProfileData] = useState({});
   const [changes, setChanges] = useState({});
 
-  const { patchMutation } = usePatchData(
-    `/profile/update${profileData?.id}`,
-    "profileData"
-  );
+  const { patchMutation } = usePatchData(`/profile/update${profileData?.id}`);
 
   useEffect(() => {
     if (data) {

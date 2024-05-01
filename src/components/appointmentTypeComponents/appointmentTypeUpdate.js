@@ -5,18 +5,20 @@ import Input from "../miscellaneous components/DisplayTextInput";
 import SubmitButton from "../miscellaneous components/SubmitButton";
 import CancelButton from "../miscellaneous components/CancelButton";
 import DisplaySingleError from "../miscellaneous components/WarningMessage";
+import { useAppointmentTypeAndIcdAutomationsPage } from "../../zustandStore/store";
 
 export default function UpdateAppointmentType({
   appointmentTypeId,
   hideComponent,
-  icd10Total = undefined,
 }) {
+  const icd10PricesTotal = useAppointmentTypeAndIcdAutomationsPage(
+    (state) => state.icdPriceTotal
+  );
   const { data: appointmentTypeData } = useFetchData(
     `/appointmentTypes/view${appointmentTypeId}`
   );
   const { patchMutation } = usePatchData(
-    `/appointmentTypes/update${appointmentTypeId}`,
-    "viewAllAppointmentTypes"
+    `/appointmentTypes/update${appointmentTypeId}`
   );
   const [displayAppointmentData, setDisplayAppointmentData] = useState({});
 
@@ -89,15 +91,17 @@ export default function UpdateAppointmentType({
                 labelText="Price"
                 type="number"
                 name="price"
-                onchange={icd10Total ? null : handleChange}
+                onchange={icd10PricesTotal ? null : handleChange}
                 value={
-                  icd10Total ? icd10Total : displayAppointmentData?.price ?? ""
+                  icd10PricesTotal
+                    ? icd10PricesTotal
+                    : displayAppointmentData?.price ?? ""
                 }
-                disable={icd10Total}
+                disable={icd10PricesTotal}
                 placeholder="Price"
                 required={true}
                 staticBottomInfo={
-                  icd10Total
+                  icd10PricesTotal
                     ? "Pricing for this product is automatically set according to the automated icd-10 codes and cannot be edited"
                     : "Set the price for this appointment type"
                 }

@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { useFetchData } from "../CustomHooks/serverStateHooks";
-import { useNavigate } from "react-router-dom";
 
 import AppointmentTypeCard from "./appointmentTypeComponents/AppointmentTypeCard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useAppointmentDataFromCreateAppointment } from "../zustandStore/store";
+import {
+  useAppointmentDataFromCreateAppointment,
+  useAppointmentTypeListComponenet,
+} from "../zustandStore/store";
 import CreateAppointmentType from "./miscellaneous components/CreateAppointmentType";
 
 export default function AppointmentTypeList({ profileId }) {
@@ -14,16 +16,17 @@ export default function AppointmentTypeList({ profileId }) {
   const globalPracticeDetailsData = useAppointmentDataFromCreateAppointment(
     (state) => state.practiceDetails
   );
-  const { data: apptypeAndIcdData } = useFetchData(
+  const { data: apptypeAndIcdData, refetch } = useFetchData(
     `/appointmentTypes/getAppTypesAndThierIcds${profileId}`,
     "viewAllAppointmentTypes"
   );
-
+  const setRefetchAppointmentDataGlobal = useAppointmentTypeListComponenet(
+    (state) => state.setRefetchAppointmentListTypeData
+  );
   useEffect(() => {
-    if (apptypeAndIcdData?.appointmentTypeData) {
-      console.log(apptypeAndIcdData.appointmentTypeData);
-    }
-  }, [apptypeAndIcdData]);
+    setRefetchAppointmentDataGlobal(refetch);
+  }, [refetch]);
+
   return (
     <>
       <div className="flex justify-center">
@@ -41,6 +44,7 @@ export default function AppointmentTypeList({ profileId }) {
           </div>
           {showCreateAppointmentType && (
             <CreateAppointmentType
+              refetchFn={refetch}
               profileId={profileId}
               hideComponent={() =>
                 setShowCreateAppointmentType(!showCreateAppointmentType)
@@ -50,9 +54,6 @@ export default function AppointmentTypeList({ profileId }) {
           {apptypeAndIcdData &&
           apptypeAndIcdData?.appointmentTypeData.length > 0 ? (
             <div className="flex justify-around gap-2 gap-y-6 flex-wrap">
-              {console.log(
-                "made it here" + apptypeAndIcdData.appointmentTypeData
-              )}
               {apptypeAndIcdData.appointmentTypeData
                 .sort((a, b) => a.id - b.id)
                 .map((type) => (

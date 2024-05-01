@@ -2,19 +2,25 @@ import axios from "axios";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 
-const useFetchData = (endpoint = "", queryKey, paramsData = "") => {
+const useFetchData = (
+  endpoint = "",
+  queryKey,
+  paramsData = undefined,
+  cacheTime = 300000
+) => {
   //endpoint:string, querykey: string or an array with queryString and uniqueId, [aramsData:object of key value pairs you want to pass]
   const [httpStatus, setHttpStatus] = useState();
   const { data, isSuccess, isError, error, isLoading, isRefetching, refetch } =
     useQuery({
       //data.data.property to acces properties. data.status to access http codes
       queryKey: queryKey,
+      cacheTime: cacheTime,
       queryFn: async () => {
         const response = await axios.get(
           `http://localhost:4000${endpoint}`,
 
           {
-            params: paramsData,
+            params: paramsData && paramsData,
             withCredentials: true,
           }
         );
@@ -83,10 +89,7 @@ const usePatchData = (endpoint = "", queryKey = undefined) => {
     },
   });
 
-  function handlePatch(payload) {
-    patchMutation.mutate(payload);
-  }
-  return { patchMutation, handlePatch };
+  return { patchMutation };
 };
 
 export { usePatchData };
@@ -99,7 +102,6 @@ const useDeleteData = (endpoint = "", queryKey = undefined) => {
         withCredentials: true,
       });
     },
-
     {
       onSuccess: () => {
         if (queryKey) {
@@ -108,8 +110,31 @@ const useDeleteData = (endpoint = "", queryKey = undefined) => {
       },
     }
   );
+
   return { deleteMutation };
 };
+
+const useBatchDeleteData = (endpoint = "", queryKey = undefined) => {
+  const queryClient = useQueryClient();
+  const deleteMutation = useMutation(
+    async (payload) => {
+      return await axios.delete(`http://localhost:4000${endpoint}`, {
+        data: payload,
+        withCredentials: true,
+      });
+    },
+    {
+      onSuccess: () => {
+        if (queryKey) {
+          queryClient.invalidateQueries(queryKey);
+        }
+      },
+    }
+  );
+
+  return { deleteMutation };
+};
+
 const usePagination = (queryString, queryID, fetchData) => {
   return useQuery({
     queryKey: [queryString, queryID],
@@ -121,4 +146,4 @@ const usePagination = (queryString, queryID, fetchData) => {
     }),
   });
 };
-export { useDeleteData, usePagination };
+export { useDeleteData, usePagination, useBatchDeleteData };

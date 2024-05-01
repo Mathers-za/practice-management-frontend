@@ -22,7 +22,7 @@ export const RegisterFormSchema = object({
             email: value,
           }
         );
-        console.log("the reponse in test is " + response.status);
+
         if (response.status === 200) {
           return true;
         }
@@ -71,4 +71,10 @@ export const updateAppointmentTypeValidatiionSchema = object({
     .integer("Duration must be a whole number, not a decimal"),
 
   price: number("Must be a valid number").min(0, "").nonNullable(),
+});
+
+export const validatepreDefinedICD10CodeCreation = object({
+  icd10_code: string().nullable(),
+  procedural_code: string().nullable(),
+  price: number().nullable().min(0, "Price cannot be less than 0"),
 });

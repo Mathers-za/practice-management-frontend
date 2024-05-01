@@ -8,7 +8,7 @@ import { useAppointmentDataFromCreateAppointment } from "../zustandStore/store";
 export default function PracticeDetails({ profileId }) {
   const { data: practiceDetailsData } = useFetchData(
     `/practiceDetails/view${profileId}`,
-    "practiceDetails"
+    "practiceDetailsInPracticeComponent"
   );
   const setGlobalPracticeDetailsData = useAppointmentDataFromCreateAppointment(
     (state) => state.setPracticeDetails
@@ -18,15 +18,13 @@ export default function PracticeDetails({ profileId }) {
   const [changes, setChanges] = useState({});
 
   const { patchMutation } = usePatchData(
-    `/practiceDetails/update${practiceData?.id}`,
-    "practiceDetails"
+    `/practiceDetails/update${practiceData?.id}`
   );
 
   async function handleSubmit(event) {
     event.preventDefault();
     const { data } = await patchMutation.mutateAsync(changes);
     setGlobalPracticeDetailsData(data);
-    setPracticeData({});
   }
 
   useEffect(() => {

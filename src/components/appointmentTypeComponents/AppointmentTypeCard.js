@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import { useAppointmentDataFromCreateAppointment } from "../../zustandStore/store";
+import {
+  useAppointmentDataFromCreateAppointment,
+  useAppointmentTypeAndIcdAutomationsPage,
+} from "../../zustandStore/store";
 import UpdateAppointmentType from "./appointmentTypeUpdate";
 import ApptypeEditsAndIcdAutomationsPage from "./ApptypeUpdateAndIcdAutomations{age";
 
@@ -10,11 +13,11 @@ export default function AppointmentTypeCard({
   const globalPracticeData = useAppointmentDataFromCreateAppointment(
     (state) => state.practiceDetails
   );
+  const resetAppointmentTypeUpdateAndAutomationsZustandStore =
+    useAppointmentTypeAndIcdAutomationsPage((state) => state.resetAll);
   const [showApptypeEdit, setShowAppTypeEdit] = useState(false);
 
   const [total, setTotal] = useState();
-
-  console.log(appointmentTypeData);
 
   useEffect(() => {
     let sum = 0;
@@ -34,7 +37,10 @@ export default function AppointmentTypeCard({
           {" "}
           <img src="../images/qb0FeYn.jpeg" alt="working" />
           <button
-            onClick={() => setShowAppTypeEdit(!showApptypeEdit)}
+            onClick={() => {
+              setShowAppTypeEdit(!showApptypeEdit);
+              resetAppointmentTypeUpdateAndAutomationsZustandStore();
+            }}
             className="px-2 py-1 bg-slate-300 text-back hover:bg-slate-400 absolute top-1 right-1"
           >
             Edit

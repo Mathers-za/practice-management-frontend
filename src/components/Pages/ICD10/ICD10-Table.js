@@ -27,13 +27,6 @@ export default function ICD10Table({
     "PatientICD10Data"
   );
 
-  console.log(
-    " appointmentId and appointmentTypeId in icd10 table comp is " +
-      appointmentId +
-      " " +
-      appointmentTypeId
-  );
-
   const [codesForMapping, setCodesForMapping] = useState();
 
   const { createMutation } = usePostData(

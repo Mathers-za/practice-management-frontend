@@ -63,7 +63,6 @@ function App() {
 
   function setProfileIdProp(id) {
     setProfileId(id);
-    console.log("profile id set in parent is " + id);
   }
 
   function setPatientIdProp(id) {

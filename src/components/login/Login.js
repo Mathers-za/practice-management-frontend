@@ -34,7 +34,6 @@ export default function LoginForm({ hideComponent }) {
         const response = await axiosRequest("post", "/users/login", loginData);
 
         if (response.status === 200) {
-          console.log("successfully logged in");
           navigate("/", { replace: true });
         }
       } catch (error) {

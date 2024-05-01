@@ -31,9 +31,7 @@ export default function EditCreateTreatmentNote({ patientId }) {
   );
 
   const { deleteMutation } = useDeleteData(`/treatmentNotes/delete`);
-  console.log(
-    "the value of noteid just befor ethe patch mutation is " + noteId
-  );
+
   const { patchMutation } = usePatchData(
     `/treatmentNotes/update${noteId}`,
     "viewSpecificTreatmentNote"
@@ -56,7 +54,6 @@ export default function EditCreateTreatmentNote({ patientId }) {
     if (noteId !== 0) {
       setTreatmentNoteData(data);
       setIsCreateMode(false);
-      console.log("condtion in useeffect fired");
     } else {
       setIsCreateMode(true);
       setTreatmentNoteData({ date: format(new Date(), "yyyy-MM-dd") });

@@ -9,7 +9,6 @@ import PreDefinedIcdCoding from "./PreDefinedIcd10";
 import { useNavigate, useParams } from "react-router-dom";
 
 function cleanedData(data) {
-  console.log("data sent to function " + data);
   const patchedData = {};
   for (const property in data) {
     const value = data[property];
@@ -27,7 +26,6 @@ function cleanedData(data) {
       patchedData[property] = null;
     }
   }
-  console.log(patchedData);
 
   return patchedData;
 }
