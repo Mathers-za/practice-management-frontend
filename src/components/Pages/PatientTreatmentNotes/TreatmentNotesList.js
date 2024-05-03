@@ -1,20 +1,15 @@
 import { useFetchData } from "../../../CustomHooks/serverStateHooks";
 import { format } from "date-fns";
+import CreateTreatmentNote from "./CreateTreatmentNote";
 
-import { useNavigate } from "react-router-dom";
-import EditCreateTreatmentNote from "./TreatmentNotesEditCreate";
 import { useRef, useState } from "react";
+import EditTreatmentNote from "./EditTreatmentNotes";
 
 export default function PatientTreatmentNotesList({ patientId }) {
-  //add navigattion to create treatment note page
-  console.log("the patient id is " + patientId);
-  const navigate = useNavigate();
-  const [
-    showEditAndTreatmentNoteComponent,
-    setShowEditAndtreatmentNoteComponent,
-  ] = useState(false);
-  const treatmentNoteIdToEdit = useRef();
-  const { data, httpStatus } = useFetchData(
+  const [showCreateTreatmentNote, setShowCreateTreatmentNote] = useState(false);
+  const [showPatchTreatmentNote, setShowPatchTreatmentNote] = useState(false);
+  const treatmentNoteIdForEdit = useRef();
+  const { data } = useFetchData(
     `/treatmentNotes/viewAll${patientId}`,
     "treatmentNoteData"
   );
@@ -23,11 +18,7 @@ export default function PatientTreatmentNotesList({ patientId }) {
     <>
       <div className="h-screen max-h-screen overflow-auto">
         <button
-          onClick={() =>
-            setShowEditAndtreatmentNoteComponent(
-              !showEditAndTreatmentNoteComponent
-            )
-          }
+          onClick={() => setShowCreateTreatmentNote(!showCreateTreatmentNote)}
           type="button"
         >
           {" "}
@@ -54,11 +45,10 @@ export default function PatientTreatmentNotesList({ patientId }) {
                   {treatmentNote.objective}
                 </div>
                 <button
-                  onClick={() =>
-                    setShowEditAndtreatmentNoteComponent(
-                      !showEditAndTreatmentNoteComponent
-                    )
-                  }
+                  onClick={() => {
+                    treatmentNoteIdForEdit.current = treatmentNote.id;
+                    setShowPatchTreatmentNote(!showPatchTreatmentNote);
+                  }}
                   type="button"
                 >
                   Edit
@@ -70,17 +60,25 @@ export default function PatientTreatmentNotesList({ patientId }) {
           <div>Create Treatment Notes in order to view them here</div>
         )}
 
-        {showEditAndTreatmentNoteComponent && (
+        {showCreateTreatmentNote && (
           <div className="fixed bg-white left-0 top-0 w-full h-screen max-h-screen overflow-auto z-10">
             {" "}
-            <EditCreateTreatmentNote
+            <CreateTreatmentNote
               patientId={patientId}
               hideComponent={() =>
-                setShowEditAndtreatmentNoteComponent(
-                  !showEditAndTreatmentNoteComponent
-                )
+                setShowCreateTreatmentNote(!showCreateTreatmentNote)
               }
-              topBarLabelText="Patient treatment Note"
+            />
+          </div>
+        )}
+
+        {showPatchTreatmentNote && (
+          <div className="fixed bg-white left-0 top-0 w-full h-screen max-h-screen overflow-auto z-10">
+            <EditTreatmentNote
+              treatmentNoteId={treatmentNoteIdForEdit.current}
+              hideComponent={() =>
+                setShowPatchTreatmentNote(!showPatchTreatmentNote)
+              }
             />
           </div>
         )}

@@ -7,6 +7,7 @@ export default function CustomTextArea({
   value,
   cols = 10,
   rows = 8,
+  required = false,
 }) {
   return (
     <>
@@ -15,6 +16,7 @@ export default function CustomTextArea({
           {labelText}
         </label>
         <textarea
+          required={required}
           cols={cols}
           rows={rows}
           className="peer/textArea min-w-full placeholder:text-sm rounded-md"

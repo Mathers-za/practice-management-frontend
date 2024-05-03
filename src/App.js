@@ -14,11 +14,11 @@ import CreateAppointment from "./components/CreateAppointment";
 import PatientPicker from "./components/Pages/PatientPickerPage";
 import PatientPortal from "./components/Pages/PatientPortal";
 import MedicalAid from "./components/MedicalAid";
-import AppointmentTypePortal from "./components/Pages/AppointTypePortal";
+
 import AppointmentTypeList from "./components/AppointmentTypeList";
 import AppointmentPortal from "./components/Pages/AppointmentPortal";
 import PatientTreatmentNotesList from "./components/Pages/PatientTreatmentNotes/TreatmentNotesList";
-import EditCreateTreatmentNote from "./components/Pages/PatientTreatmentNotes/TreatmentNotesEditCreate";
+
 import InvoicePortal from "./components/Pages/ICD10/InvoicePage";
 import InvoiceProgressPage from "./components/Pages/financialsViewPortal/invoiceProgressComponents/InvoiceProgress";
 import PastDueInvoices from "./components/Pages/financialsViewPortal/PastDueInvoices";
@@ -118,15 +118,6 @@ function App() {
                 <Route
                   path="treatmentNotes"
                   element={<PatientTreatmentNotesList patientId={patientId} />}
-                />
-
-                <Route
-                  path="editTreatmentNote/:id"
-                  element={<EditCreateTreatmentNote patientId={patientId} />}
-                />
-                <Route
-                  path="createTreatmentNote"
-                  element={<EditCreateTreatmentNote patientId={patientId} />}
                 />
 
                 <Route index element={<Patient patientId={patientId} />} />
