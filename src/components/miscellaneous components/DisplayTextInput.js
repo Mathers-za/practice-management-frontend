@@ -18,7 +18,7 @@ export default function Input({
     <div className="group  space-y-1 ">
       <label
         id={id}
-        className="  text-sky-600   ring-sky-400  group-hover:text-blue-800 cursor-text  disabled:text-gray-500   "
+        className="  text-sky-600t  ring-sky-400  group-hover:text-blue-800 cursor-text  disabled:text-gray-500   "
       >
         {" "}
         {labelText}{" "}

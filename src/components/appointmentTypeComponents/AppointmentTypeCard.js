@@ -3,7 +3,7 @@ import {
   useAppointmentDataFromCreateAppointment,
   useAppointmentTypeAndIcdAutomationsPage,
 } from "../../zustandStore/store";
-import UpdateAppointmentType from "./appointmentTypeUpdate";
+
 import ApptypeEditsAndIcdAutomationsPage from "./ApptypeUpdateAndIcdAutomations{age";
 
 export default function AppointmentTypeCard({
@@ -58,10 +58,13 @@ export default function AppointmentTypeCard({
               </p>
             </div>
             <div>
-              <p>{total ? `R${total}` : appointmentTypeData?.price || ""} </p>
+              <p>
+                {total
+                  ? `R${total.toFixed(2)}`
+                  : appointmentTypeData?.price || ""}{" "}
+              </p>
 
               <p className="text-sm text-slate-500">
-                {" "}
                 {total ? "Automated price" : "Price"}
               </p>
             </div>

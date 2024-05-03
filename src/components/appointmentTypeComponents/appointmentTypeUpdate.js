@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useFetchData, usePatchData } from "../../CustomHooks/serverStateHooks";
 import { updateAppointmentTypeValidatiionSchema } from "../../form validation Schemas/validationSchemas";
 import Input from "../miscellaneous components/DisplayTextInput";
-import SubmitButton from "../miscellaneous components/SubmitButton";
+import GenericButton from "../miscellaneous components/SubmitButton";
 import CancelButton from "../miscellaneous components/CancelButton";
 import DisplaySingleError from "../miscellaneous components/WarningMessage";
 import { useAppointmentTypeAndIcdAutomationsPage } from "../../zustandStore/store";
@@ -57,6 +57,7 @@ export default function UpdateAppointmentType({
     } catch (error) {
       setErrorMessage(error.message);
     }
+    console.log("the parse float value is " + icd10PricesTotal);
   }
   return (
     <>
@@ -94,7 +95,7 @@ export default function UpdateAppointmentType({
                 onchange={icd10PricesTotal ? null : handleChange}
                 value={
                   icd10PricesTotal
-                    ? icd10PricesTotal
+                    ? icd10PricesTotal.toFixed(2)
                     : displayAppointmentData?.price ?? ""
                 }
                 disable={icd10PricesTotal}
@@ -111,9 +112,10 @@ export default function UpdateAppointmentType({
 
           <div className="flex justify-between items-end">
             <CancelButton textContent="Cancel" onclick={hideComponent} />
-            <SubmitButton
+            <GenericButton
               text="Save"
               disable={Object.keys(changes).length === 0}
+              type="submit"
             />
           </div>
 

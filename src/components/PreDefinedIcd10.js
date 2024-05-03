@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import Input from "./miscellaneous components/DisplayTextInput";
 import DeleteDustbin from "./miscellaneous components/DeleteDustbin";
 import { useAppointmentTypeAndIcdAutomationsPage } from "../zustandStore/store";
-import SubmitButton from "./miscellaneous components/SubmitButton";
+import GenericButton from "./miscellaneous components/SubmitButton";
 import { validatepreDefinedICD10CodeCreation } from "../form validation Schemas/validationSchemas";
 import DisplaySingleError from "./miscellaneous components/WarningMessage";
 
@@ -181,13 +181,14 @@ export default function PreDefinedIcdCoding({ appTypeId }) {
 
         {errorMessage && <DisplaySingleError errorMessage={errorMessage} />}
         <div className="flex justify-end">
-          <SubmitButton
+          <GenericButton
             text="Save"
             onclick={handleSubmit}
             disable={
               arrayOfIcdIdsToDelete.length === 0 &&
               arrayOfIcdsToUpdate.length === 0
             }
+            type="submit"
           />
         </div>
       </div>

@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useFetchData, usePatchData } from "../CustomHooks/serverStateHooks";
 import { useAppointmentDataFromCreateAppointment } from "../zustandStore/store";
 import Input from "./miscellaneous components/DisplayTextInput";
-import SubmitButton from "./miscellaneous components/SubmitButton";
+
+import GenericButton from "./miscellaneous components/SubmitButton";
 
 export default function Profile() {
   const { data } = useFetchData("/profile/view", "profileData");
@@ -129,9 +130,10 @@ export default function Profile() {
               </div>
             </div>
             <div className="col-span-2 flex justify-end items-end ">
-              <SubmitButton
+              <GenericButton
                 text="Save"
                 disable={Object.keys(changes).length === 0}
+                type="submit"
               />
             </div>
           </form>

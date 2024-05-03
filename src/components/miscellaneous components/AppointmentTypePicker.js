@@ -1,6 +1,6 @@
 import { useFetchData } from "../../CustomHooks/serverStateHooks";
 import GenericTopBar from "./GenericTopBar";
-import SubmitButton from "./SubmitButton";
+import GenericButton from "./SubmitButton";
 
 export default function AppointmentTypePicker({
   profileId,
@@ -40,7 +40,7 @@ export default function AppointmentTypePicker({
           </div>
         </div>
         <div className="absolute bottom-2 left-2 ">
-          <SubmitButton text="Cancel" onclick={() => hideComponent()} />
+          <GenericButton text="Cancel" onclick={() => hideComponent()} />
         </div>
       </div>
     </>

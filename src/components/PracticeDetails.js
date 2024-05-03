@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useFetchData, usePatchData } from "../CustomHooks/serverStateHooks";
 import Input from "./miscellaneous components/DisplayTextInput";
-import SubmitButton from "./miscellaneous components/SubmitButton";
+import GenericButton from "./miscellaneous components/SubmitButton";
 import CustomTextArea from "./miscellaneous components/CustomTextArea";
 import { useAppointmentDataFromCreateAppointment } from "../zustandStore/store";
 
@@ -118,7 +118,8 @@ export default function PracticeDetails({ profileId }) {
             </div>
 
             <div className="col-span-6 flex justify-end items-end ">
-              <SubmitButton
+              <GenericButton
+                type="submit"
                 disable={Object.keys(changes).length === 0}
                 text="Save"
               />

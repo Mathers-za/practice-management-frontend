@@ -187,10 +187,9 @@ export const useAppointmentTypeAndIcdAutomationsPage = create(
     },
 
     incrementTotal: (number) => {
-      if (!number) return; // If number is falsy, return early
+      if (!number) return;
       set((prevState) => ({
-        // Using prevState to avoid issues with concurrent updates
-        icdPriceTotal: (prevState.icdPriceTotal || 0) + parseFloat(number), // Increment icdPriceTotal by number
+        icdPriceTotal: (prevState.icdPriceTotal || 0) + parseFloat(number),
       }));
     },
     deleteIcdListItem: (id) => {
