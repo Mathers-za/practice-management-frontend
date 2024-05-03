@@ -35,41 +35,18 @@ export default function TreatmentNoteForm({
               required={true}
             />
           </div>
-          <div>
-            <DateDisplay
-              dateStringOrObject={treatmentNoteData?.date || new Date()}
-              onclick={() => setShowDatePicker(!showDatePicker)}
-            />
-          </div>
+          <MobileDatePicker
+            orientation="portrait"
+            closeOnSelect={true}
+            value={new Date(treatmentNoteData.date)}
+            onAccept={(date) => handleDateChange(date)}
+            slotProps={{
+              actionBar: { actions: [] },
+              toolbar: { sx: { bgcolor: "#38bdf8" } },
+            }}
+            label="Note Date"
+          />
         </div>
-
-        {showDatePicker && (
-          <div className="fixed left-0 top-0 w-full  bg-opacity-50 bg-slate-500 z-10 flex justify-center items-center">
-            (
-            <div>
-              <StaticDatePicker
-                name="date"
-                value={new Date(treatmentNoteData.date)}
-                onChange={(date) => handleDateChange(date)}
-                onAccept={(date) => {
-                  handleDateChange(date);
-                  setShowDatePicker(!showDatePicker);
-                }}
-                slotProps={{
-                  toolbar: {
-                    sx: { backgroundColor: "#0369A1", color: "white" },
-                  },
-
-                  actionBar: { actions: ["cancel", "today", "accept"] },
-                  layout: {
-                    onCancel: () => setShowDatePicker(!showDatePicker),
-                  },
-                }}
-              />
-            </div>
-            )
-          </div>
-        )}
 
         <div className="grid grid-cols-2 gap-x-6 gap-y-4">
           <CustomTextArea
@@ -119,7 +96,7 @@ export default function TreatmentNoteForm({
             <GenericButton
               text="Delete"
               type="button"
-              className="bg-red-500  hover:bg-red-600 hover:ring-red-500 "
+              className=" hover:bg-red-600 bg-red-500 hover:ring-red-500"
               onclick={() => {
                 {
                   handleDelete(treatmentNoteData.id);

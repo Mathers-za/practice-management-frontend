@@ -38,16 +38,14 @@ export default function Profile() {
 
   async function handleSubmit(event) {
     event.preventDefault();
-    await patchMutation.mutateAsync(changes);
-
-    setChanges({});
-  }
-
-  useEffect(() => {
-    if (patchMutation.isSuccess) {
+    try {
+      const { data } = await patchMutation.mutateAsync(changes);
       setGlobalProfileData(data);
+      setChanges({});
+    } catch (error) {
+      console.log(error);
     }
-  }, [patchMutation.isSuccess, data]);
+  }
 
   return (
     <>

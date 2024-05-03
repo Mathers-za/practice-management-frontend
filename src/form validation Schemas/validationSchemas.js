@@ -78,3 +78,5 @@ export const validatepreDefinedICD10CodeCreation = object({
   procedural_code: string().nullable(),
   price: number().nullable().min(0, "Price cannot be less than 0"),
 });
+
+export const validatetreatmentNote = object({});

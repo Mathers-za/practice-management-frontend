@@ -15,8 +15,9 @@ export default function PatientPortal({ patientId }) {
         </li>
       </ul>
       <h1>This is the pateint portal</h1>
-
-      <Outlet />
+      <div className="w-full max-w-full overflow-clip">
+        <Outlet />
+      </div>
     </>
   );
 }

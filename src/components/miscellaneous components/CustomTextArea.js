@@ -12,14 +12,14 @@ export default function CustomTextArea({
   return (
     <>
       <div className="group min-w-full min-h-full space-y-1 ">
-        <label className="text-sky-600  focus:ring-transparent ring-sky-400  group-hover:text-blue-800 cursor-text block  ">
+        <label className="text-sky-600 resize-none  focus:ring-transparent ring-sky-400  group-hover:text-blue-800 cursor-text block  ">
           {labelText}
         </label>
         <textarea
           required={required}
           cols={cols}
           rows={rows}
-          className="peer/textArea min-w-full placeholder:text-sm rounded-md"
+          className="peer/textArea min-w-full placeholder:text-sm rounded-md  resize-none"
           name={name}
           placeholder={placeholder}
           onChange={onchange ? (event) => onchange(event) : null}
