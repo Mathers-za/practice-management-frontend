@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
 import GenericButton from "../../miscellaneous components/SubmitButton";
 import Input from "../../miscellaneous components/DisplayTextInput";
@@ -6,6 +6,7 @@ import CustomTextArea from "../../miscellaneous components/CustomTextArea";
 import DateDisplay from "../../miscellaneous components/DateDisplay";
 import GenericTopBar from "../../miscellaneous components/GenericTopBar";
 import { MobileDatePicker } from "@mui/x-date-pickers";
+import EditTreatmentNote from "./EditTreatmentNotes";
 
 export default function TreatmentNoteForm({
   treatmentNoteData,

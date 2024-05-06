@@ -6,17 +6,16 @@ import {
   usePatchData,
 } from "../CustomHooks/serverStateHooks";
 import { useQueryClient } from "react-query";
-import { TextField, Checkbox, Button } from "@mui/material";
-import InputAdornment from "@mui/material/InputAdornment";
+import { TextField, Checkbox, Button, FormControlLabel } from "@mui/material";
 
 export default function MedicalAid({ patientId }) {
   const queryClient = useQueryClient();
-  const { data, httpStatus, isSuccess } = useFetchData(
+  const { data, isSuccess } = useFetchData(
     `/medicalAid/view${patientId}`,
     "medicalAidData"
   );
 
-  const [isFirstTimeCreatingPost, setIsFirstTimeCreatingPost] = useState(false);
+  const [isFirstTimeCreatingPost, setIsFirstTimeCreatingPost] = useState(true);
   const { createMutation } = usePostData(
     `/medicalAid/create${patientId}`,
     "medicalAidData"
@@ -24,23 +23,21 @@ export default function MedicalAid({ patientId }) {
 
   const [medAidInformation, setMedAidInformation] = useState({});
   const [changes, setChanges] = useState({});
-  const { patchMutation } = usePatchData(
-    `/medicalAid/update${data?.id}`,
-    "medicalAidData"
-  );
+  const { patchMutation } = usePatchData(`/medicalAid/update${data?.id}`);
 
   const [showDependantFields, setShowDependantFields] = useState(false);
 
   useEffect(() => {
-    if (!data) {
-      setIsFirstTimeCreatingPost(true);
-      setMedAidInformation({});
-    }
-
-    queryClient.invalidateQueries("medicalAidData"); // had to inlcude this in order to sync patient Id prop. patient id was not syncng in medicalAid and thus displaying data of previous id
-    if (data) {
+    if (data && isSuccess) {
       setMedAidInformation(data);
       setIsFirstTimeCreatingPost(false);
+      setShowDependantFields(data.is_dependant);
+    }
+
+    if (!data) {
+      //syncing issue with patient id. this solve sthe problem. dont touch
+      setMedAidInformation({});
+      setShowDependantFields(false);
     }
   }, [data, patientId]);
 
@@ -92,6 +89,7 @@ export default function MedicalAid({ patientId }) {
             name="medaid_name"
             value={medAidInformation?.medaid_name || ""}
             label="Medical Aid Name"
+            helperText="Medical-aid name"
           />
           <TextField
             variant="standard"
@@ -109,15 +107,27 @@ export default function MedicalAid({ patientId }) {
             value={medAidInformation?.medaid_number || ""}
             label="Medical Aid Number"
           />
-          <Checkbox
-            onChange={(event) => {
-              setShowDependantFields(!showDependantFields);
-              handleChange(event);
-            }}
-            size="medium"
-            defaultChecked={false}
-            name="dependant"
-            value={medAidInformation.dependant}
+          <FormControlLabel
+            label="Patient is a dependant"
+            control={
+              <Checkbox
+                onChange={(event) => {
+                  setShowDependantFields(!showDependantFields);
+                  setChanges((prev) => ({
+                    ...prev,
+                    is_dependant: event.target.checked,
+                  }));
+                  setMedAidInformation((prev) => ({
+                    ...prev,
+                    is_dependant: event.target.checked,
+                  }));
+                }}
+                checked={showDependantFields ? showDependantFields : false}
+                size="medium"
+                name="dependant"
+                value={medAidInformation.dependant}
+              />
+            }
           />
         </div>
 

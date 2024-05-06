@@ -2,7 +2,7 @@ import { Route, Routes, useNavigate } from "react-router-dom";
 import Entry from "./components/Pages/Entry";
 import DashBoard from "./components/Pages/Dashboard";
 import axiosRequest from "./apiRequests/apiRequests";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Profile from "./components/Profile";
 import PracticeDetails from "./components/PracticeDetails";
 import PatientList from "./components/PatientList";
@@ -41,8 +41,9 @@ const queryClient = new QueryClient();
 function App() {
   const [profileId, setProfileId] = useState();
   const navigate = useNavigate();
-  const [patientId, setPatientId] = useState();
+
   const [appTypeId, setAppTypeId] = useState();
+  const patientIdRef = useRef(null);
 
   useEffect(() => {
     async function checkSession() {
@@ -67,7 +68,7 @@ function App() {
   }
 
   function setPatientIdProp(id) {
-    setPatientId(id);
+    patientIdRef.current = id;
   }
 
   return (
@@ -115,7 +116,7 @@ function App() {
                   path="patientPortal"
                   element={
                     <PatientPortal
-                      patientId={patientId}
+                      patientId={patientIdRef}
                       profileId={profileId}
                     />
                   }
@@ -123,14 +124,19 @@ function App() {
                   <Route
                     path="treatmentNotes"
                     element={
-                      <PatientTreatmentNotesList patientId={patientId} />
+                      <PatientTreatmentNotesList
+                        patientId={patientIdRef.current}
+                      />
                     }
                   />
 
-                  <Route index element={<Patient patientId={patientId} />} />
+                  <Route
+                    index
+                    element={<Patient patientId={patientIdRef.current} />}
+                  />
                   <Route
                     path="medicalAid"
-                    element={<MedicalAid patientId={patientId} />}
+                    element={<MedicalAid patientId={patientIdRef.current} />}
                   />
                 </Route>
                 <Route
