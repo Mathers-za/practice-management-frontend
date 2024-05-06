@@ -18,7 +18,7 @@ export default function Input({
     <div className="group  space-y-1 ">
       <label
         id={id}
-        className="  text-sky-600  ring-sky-400  group-hover:text-blue-800 cursor-text  disabled:text-gray-500   "
+        className=" focus:ring-0 focus:ring-transparent text-sky-600  ring-sky-400  group-hover:text-blue-800 cursor-text  disabled:text-gray-500   "
       >
         {" "}
         {labelText}{" "}
@@ -32,7 +32,7 @@ export default function Input({
         name={name}
         value={value}
         required={required}
-        className=" min-w-full  peer/input placeholder:text-sm  disabled:opacity-50 disabled:border-gray-600 disabled:text-yellow-300 "
+        className="   min-w-full  peer/input placeholder:text-sm  disabled:opacity-50 disabled:border-gray-600 disabled:text-yellow-300 "
         autoComplete={autoComplete}
         id={id ? id : null}
       />
