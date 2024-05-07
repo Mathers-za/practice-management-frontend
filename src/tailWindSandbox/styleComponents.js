@@ -11,6 +11,8 @@ import LoginForm from "../components/login/Login";
 import AppointmentTypeCard from "../components/appointmentTypeComponents/AppointmentTypeCard";
 
 import CreateAppointmentType from "../components/miscellaneous components/CreateAppointmentType";
+import { MobileDatePicker } from "@mui/x-date-pickers";
+import { InputAdornment, TextField } from "@mui/material";
 
 export default function ComponentView() {
   const globalProfileData = useAppointmentDataFromCreateAppointment(
@@ -56,6 +58,14 @@ export default function ComponentView() {
         </div>
         <div>
           <CreateAppointmentType profileId={2} />
+        </div>
+        <div className="flex gap-5 items-center">
+          <MobileDatePicker
+            slotProps={{
+              textField: { inputProps: { startAdornment: "hello" } },
+            }}
+          />{" "}
+          <span>to</span> <MobileDatePicker />
         </div>
       </div>
     </>

@@ -47,7 +47,7 @@ export const createPatientValidationSchema = object({
   last_name: string().nullable(),
   email: string().email().nullable(),
   contact_number: string("invalid format")
-    .matches(/^\+27\d{9}$/, "Invalid phone number")
+    .matches(/^\+27[6-8][0-9]{8}$/, "Invalid phone number")
     .nullable(),
 });
 

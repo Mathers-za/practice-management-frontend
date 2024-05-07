@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useFetchData } from "../../CustomHooks/serverStateHooks";
 import GenericTopBar from "./GenericTopBar";
+import { TextField } from "@mui/material";
 
 export default function PatientPicker({ profileId, hideComponent, onclick }) {
   const { data: patientData } = useFetchData(
@@ -37,18 +38,18 @@ export default function PatientPicker({ profileId, hideComponent, onclick }) {
     <>
       <GenericTopBar label="Choose a Patient" onclick={hideComponent} />
       <div className="p-3 overflow-y-scroll ">
-        <input
-          className="bg-slate-200  focus:outline-none placeholder:text-lg peer/searchBar placeholder:text-slate-500 border-b-2 border-slate-500 py-4 px-3 cursor-text hover:bg-slate-300 min-w-full   "
-          placeholder="Search"
+        <TextField
+          variant="filled"
+          label="search"
+          fullWidth
           value={searchBarInput || ""}
           type="text"
           name="searchBarInput"
           onChange={(event) => setSearchBarInput(event.target.value)}
           autoFocus={true}
+          helperText=" Search according to name,surname,email or phone number"
         />
-        <p className="text-black text-xs hidden peer-focus/searchBar:block select-none outline-none focus-within::border-none">
-          Search according to name,surname,email or phone number
-        </p>
+
         <div className="mt-6 select-none overflow-y-scroll ">
           {filteredSearch.length > 0
             ? filteredSearch

@@ -67,7 +67,7 @@ export default function UpdateAppointmentType({
             labelText="Appointment Type name"
             type="text"
             name="appointment_name"
-            onchange={handleChange}
+            onChange={handleChange}
             value={displayAppointmentData.appointment_name ?? ""}
             placeholder="Appointment Type name"
             required={false}
@@ -79,7 +79,7 @@ export default function UpdateAppointmentType({
                 labelText="Duration"
                 required={true}
                 type="number"
-                onchange={handleChange}
+                onChange={handleChange}
                 name="duration"
                 value={displayAppointmentData.duration ?? ""}
                 placeholder="Duration"
@@ -92,7 +92,7 @@ export default function UpdateAppointmentType({
                 labelText="Price"
                 type="number"
                 name="price"
-                onchange={icd10PricesTotal ? null : handleChange}
+                onChange={icd10PricesTotal ? null : handleChange}
                 value={
                   icd10PricesTotal
                     ? icd10PricesTotal.toFixed(2)

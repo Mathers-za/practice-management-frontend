@@ -69,7 +69,7 @@ export default function CreateAppointmentType({
               labelText="Appointment Type name"
               type="text"
               name="appointment_name"
-              onchange={handleChange}
+              onChange={handleChange}
               value={appointmentTypeDataPayload.appointment_name ?? ""}
               placeholder="Appointment Type name"
               required={false}
@@ -78,7 +78,7 @@ export default function CreateAppointmentType({
               labelText="Duration"
               required={true}
               type="number"
-              onchange={handleChange}
+              onChange={handleChange}
               name="duration"
               value={appointmentTypeDataPayload.duration ?? ""}
               placeholder="Duration"
@@ -88,7 +88,7 @@ export default function CreateAppointmentType({
               labelText="Price"
               type="number"
               name="price"
-              onchange={handleChange}
+              onChange={handleChange}
               value={appointmentTypeDataPayload.price ?? ""}
               placeholder="Price"
               required={true}

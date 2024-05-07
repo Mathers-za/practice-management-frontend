@@ -47,7 +47,10 @@ export default function EditTreatmentNote({ hideComponent, treatmentNoteId }) {
 
   function handleSubmit(event) {
     event.preventDefault();
-    patchMutation.mutate(changes);
+    try {
+      patchMutation.mutate(changes);
+      setChanges({});
+    } catch (error) {}
   }
 
   function handleDateChange(date) {

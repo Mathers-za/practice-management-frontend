@@ -110,7 +110,7 @@ export default function PreDefinedIcdCoding({ appTypeId }) {
         <div className="flex gap-5 w-full flex-1 flex-wrap">
           <div className="grow">
             <Input
-              onchange={handleIcdInputChange}
+              onChange={handleIcdInputChange}
               placeholder="ICD-10 code"
               type="text"
               name="icd10_code"
@@ -120,7 +120,7 @@ export default function PreDefinedIcdCoding({ appTypeId }) {
           <div className="flex-1">
             {" "}
             <Input
-              onchange={handleIcdInputChange}
+              onChange={handleIcdInputChange}
               placeholder="Procedural-Code"
               type="text"
               name="procedural_code"
@@ -129,7 +129,7 @@ export default function PreDefinedIcdCoding({ appTypeId }) {
           </div>
           <div className="flex-1">
             <Input
-              onchange={handleIcdInputChange}
+              onChange={handleIcdInputChange}
               placeholder="Price"
               type="number"
               name="price"

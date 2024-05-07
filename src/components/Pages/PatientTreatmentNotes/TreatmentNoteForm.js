@@ -1,12 +1,7 @@
-import { useRef, useState } from "react";
-import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
-import GenericButton from "../../miscellaneous components/SubmitButton";
-import Input from "../../miscellaneous components/DisplayTextInput";
-import CustomTextArea from "../../miscellaneous components/CustomTextArea";
-import DateDisplay from "../../miscellaneous components/DateDisplay";
 import GenericTopBar from "../../miscellaneous components/GenericTopBar";
 import { MobileDatePicker } from "@mui/x-date-pickers";
-import EditTreatmentNote from "./EditTreatmentNotes";
+
+import { Button, TextField } from "@mui/material";
 
 export default function TreatmentNoteForm({
   treatmentNoteData,
@@ -19,23 +14,24 @@ export default function TreatmentNoteForm({
   isPostRequestBoolean,
   disable,
 }) {
-  const [showDatePicker, setShowDatePicker] = useState(false);
-
   return (
     <>
       <GenericTopBar label={topBarLabelText} onclick={hideComponent} />
       <form className="space-y-5 w-full h-full  p-5 " onSubmit={handleSubmit}>
         <div className="flex items-center  justify-between  ">
           <div className="w-2/3 ">
-            <Input
-              onchange={handleChange}
+            <TextField
+              fullWidth
+              variant="standard"
+              onChange={handleChange}
               name="title"
               value={treatmentNoteData?.title || null}
-              staticBottomInfo="This field is required"
-              labelText="Title"
+              label="Title"
               required={true}
+              helperText="Field required"
             />
           </div>
+
           <MobileDatePicker
             orientation="portrait"
             closeOnSelect={true}
@@ -50,39 +46,50 @@ export default function TreatmentNoteForm({
         </div>
 
         <div className="grid grid-cols-2 gap-x-6 gap-y-4">
-          <CustomTextArea
-            labelText="Subjective"
-            onchange={handleChange}
+          <TextField
+            multiline
+            rows={8}
+            label="Subjective"
+            onChange={handleChange}
             name="subjective"
             value={treatmentNoteData?.subjective || ""}
+            sx={{ ".MuiInputBase-input": { boxShadow: "none" } }}
           />
-
-          <CustomTextArea
-            labelText="Objective"
-            onchange={handleChange}
+          <TextField
+            multiline
+            rows={8}
+            label="Objective"
+            onChange={handleChange}
             name="objective"
             value={treatmentNoteData?.objective || ""}
+            sx={{ ".MuiInputBase-input": { boxShadow: "none" } }}
           />
-
-          <CustomTextArea
-            labelText="Assessment"
-            onchange={handleChange}
+          <TextField
+            multiline
+            rows={8}
+            label="Assessment"
+            onChange={handleChange}
             name="assessment"
             value={treatmentNoteData?.assessment || ""}
+            sx={{ ".MuiInputBase-input": { boxShadow: "none" } }}
           />
-
-          <CustomTextArea
-            labelText="Plan"
-            onchange={handleChange}
+          <TextField
+            multiline
+            rows={8}
+            label="Plan"
+            onChange={handleChange}
             name="plan"
             value={treatmentNoteData?.plan || ""}
+            sx={{ ".MuiInputBase-input": { boxShadow: "none" } }}
           />
-
-          <CustomTextArea
-            labelText="Additional Notes"
-            onchange={handleChange}
+          <TextField
+            multiline
+            rows={8}
+            label="Additional Notes"
+            onChange={handleChange}
             name="additional_notes"
             value={treatmentNoteData?.additional_notes || ""}
+            sx={{ ".MuiInputBase-input": { boxShadow: "none" } }}
           />
         </div>
 
@@ -94,18 +101,20 @@ export default function TreatmentNoteForm({
           }
         >
           {!isPostRequestBoolean && (
-            <GenericButton
-              text="Delete"
+            <Button
+              variant="contained"
+              color="error"
               type="button"
-              className=" hover:bg-red-600 bg-red-500 hover:ring-red-500"
-              onclick={() => {
-                {
-                  handleDelete(treatmentNoteData.id);
-                }
+              onClick={() => {
+                handleDelete(treatmentNoteData.id);
               }}
-            />
+            >
+              Delete
+            </Button>
           )}
-          <GenericButton text="Save" disable={disable} type="submit" />
+          <Button variant="contained" disabled={disable} type="submit">
+            Save
+          </Button>
         </div>
       </form>
     </>

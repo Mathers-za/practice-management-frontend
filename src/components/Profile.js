@@ -4,6 +4,7 @@ import { useAppointmentDataFromCreateAppointment } from "../zustandStore/store";
 import Input from "./miscellaneous components/DisplayTextInput";
 
 import GenericButton from "./miscellaneous components/SubmitButton";
+import { Button, TextField } from "@mui/material";
 
 export default function Profile() {
   const { data } = useFetchData("/profile/view", "profileData");
@@ -49,90 +50,99 @@ export default function Profile() {
 
   return (
     <>
-      <div className="flex min-w-full min-h-full justify-center items-center ">
-        <div className="w-11/12  min-h-full     bg-white">
+      <div className="flex w-full h-full justify-center items-center max-h-full overflow-auto   ">
+        <div className="w-11/12  h-fit rounded-md      bg-white">
           <form
-            className="min-w-full h-fit p-4   border grid  grid-cols-2 gap-y-4 gap-x-2  shadow-md  shadow-slate-600 rounded-md relative  "
+            className="min-w-full h-fit px-4 py-6   border   shadow-md  shadow-slate-600 rounded-md relative  "
             onSubmit={handleSubmit}
           >
             {" "}
-            <div className="flex col-span-2  items-center border-b border-slate-600">
-              <h1 className="font-medium text-xl  border-black mb-2  ">
-                Contact Details
+            <div className="space-y-8">
+              <h1 className="text-xl font-medium mb-2 border-b border-slate-500 pb-3">
+                Details
               </h1>
-            </div>
-            <Input
-              name="first_name"
-              labelText="First name"
-              type="text"
-              placeholder="First name"
-              onchange={handleChange}
-              value={profileData?.first_name || ""}
-            />
-            <Input
-              name="last_name"
-              labelText="Last name"
-              type="text"
-              placeholder="Last name"
-              onchange={handleChange}
-              value={profileData?.last_name || ""}
-            />
-            <Input
-              name="profile_email"
-              labelText="Email Address"
-              type="email"
-              placeholder="Email Address"
-              onchange={handleChange}
-              value={profileData?.profile_email || ""}
-              dynamicBottomInfo={
-                "The email you would like to recieve notifications on."
-              }
-            />
-            <Input
-              name="contact_num"
-              labelText="Phone number"
-              type="tel"
-              placeholder="Phone number"
-              pattern="^\+27\d{9}$"
-              onchange={handleChange}
-              value={profileData?.contact_num || ""}
-              dynamicBottomInfo="A valid phone number is expected eg: +27814836849"
-            />
-            <div className="col-span-2 flex items-center border-b border-slate-600 mb-2   ">
-              <h1 className="text-xl font-medium mb-2">
+
+              <div className="flex gap-3 ">
+                <TextField
+                  fullWidth
+                  variant="standard"
+                  name="first_name"
+                  label="First name"
+                  type="text"
+                  onChange={handleChange}
+                  value={profileData?.first_name || ""}
+                />
+                <TextField
+                  fullWidth
+                  variant="standard"
+                  name="last_name"
+                  label="Last name"
+                  type="text"
+                  onChange={handleChange}
+                  value={profileData?.last_name || ""}
+                />
+              </div>
+
+              <div className="flex gap-3">
+                <TextField
+                  fullWidth
+                  variant="standard"
+                  name="profile_email"
+                  label="Email Address"
+                  type="email"
+                  onChange={handleChange}
+                  value={profileData?.profile_email || ""}
+                />
+                <TextField
+                  fullWidth
+                  variant="standard"
+                  name="contact_num"
+                  label="Phone number"
+                  type="tel"
+                  pattern="^\+27\d{9}$"
+                  onChange={handleChange}
+                  value={profileData?.contact_num || ""}
+                />
+              </div>
+
+              <h1 className="text-xl font-medium mb-2 border-b pb-3 border-slate-500 ">
                 Additional Information
               </h1>
-            </div>
-            <div className="col-span-2  ">
+
               <div className="mb-2">
-                <Input
+                <TextField
+                  fullWidth
+                  variant="standard"
                   name="council_reg_num"
-                  labelText="Registration Number"
+                  label="Registration Number"
                   type="text"
-                  placeholder="Registration number"
-                  dynamicBottomInfo="Your personal professional council number"
-                  onchange={handleChange}
+                  onChange={handleChange}
                   value={profileData?.council_reg_num || ""}
                 />
               </div>
               <div>
-                <Input
-                  labelText="Profession"
+                <TextField
+                  fullWidth
+                  variant="standard"
+                  label="Profession"
                   name="profession"
-                  onchange={handleChange}
-                  placeholder="Profession"
+                  onChange={handleChange}
                   type="text"
                   value={profileData?.profession || ""}
-                  dynamicBottomInfo="Your profession ie: chiropractor, doctor, physiotherapist etc"
                 />
               </div>
-            </div>
-            <div className="col-span-2 flex justify-end items-end ">
-              <GenericButton
-                text="Save"
-                disable={Object.keys(changes).length === 0}
-                type="submit"
-              />
+              <div className="col-span-2 flex justify-end items-end ">
+                <Button
+                  color="primary"
+                  type="submit"
+                  variant="contained"
+                  fullWidth
+                  disabled={Object.keys(changes).length === 0}
+                >
+                  {" "}
+                  Save
+                </Button>
+              </div>
             </div>
           </form>
         </div>

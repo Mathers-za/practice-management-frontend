@@ -7,7 +7,7 @@ export default function MainMenuTopBar() {
   return (
     <>
       <div
-        className="min-h-full min-w-full bg-sky-600 flex  box-border items-center pl-7  justify-start gap-6
+        className="h-fit w-full bg-sky-600 flex  items-center pl-7  justify-start gap-6
        text-white  "
       >
         <TopBarItemsLink

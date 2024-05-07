@@ -33,6 +33,7 @@ import theme from "./mui themes/muiThemes";
 import { fab } from "@fortawesome/free-brands-svg-icons";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
+import "@fontsource/inter";
 
 import ComponentView from "./tailWindSandbox/styleComponents";
 

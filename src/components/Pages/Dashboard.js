@@ -60,8 +60,8 @@ export default function DashBoard({ profileIdStateSetter }) {
 
   return (
     <>
-      <div className="min-h-sc grid grid-cols-12 grid-rows-12 min-w-full  ">
-        <div className="col-start-3 col-end-13 row-start-1 row-end-2 h-full  sticky top-0 left-0 right-0 z-10 ">
+      <div className="h-scrren grid grid-cols-12 grid-rows-12 w-full  ">
+        <div className="col-start-3 col-end-13 row-start-1 row-end-2  sticky top-0 left-0 right-0 z-10 ">
           <MainMenuTopBar />
         </div>
         <div className="col-start-1 col-end-3 row-start-1 row-end-13    ">
@@ -69,7 +69,7 @@ export default function DashBoard({ profileIdStateSetter }) {
             <MainMenuSideBar />
           </div>
         </div>
-        <div className="col-start-3 col-end-13 row-start-2  row-end-13 p-2 h-screen max-screen overflow-y-auto bg-slate-200 ">
+        <div className="col-start-3 col-end-13 row-start-2  row-end-13 p-2 h-full overflow-auto   bg-slate-200 ">
           <Outlet />
         </div>
       </div>

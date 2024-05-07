@@ -12,7 +12,7 @@ export default function CustomTextArea({
   return (
     <>
       <div className="group min-w-full min-h-full space-y-1 ">
-        <label className="text-sky-600 resize-none  focus:ring-transparent ring-sky-400  group-hover:text-blue-800 cursor-text block  ">
+        <label className="  first-letter:text-sm resize-none  focus:ring-transparent ring-sky-400  group-focus-within:text-sky-500 cursor-text block  ">
           {labelText}
         </label>
         <textarea
