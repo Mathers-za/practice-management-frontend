@@ -6,11 +6,18 @@ import { useFetchData, usePostData } from "../../CustomHooks/serverStateHooks";
 import MainMenuSideBar from "../mainMenuSideBar/MainMenuSideBar";
 import MainMenuTopBar from "../MainMenuTopBar/MainMenuTopBar";
 import { useAppointmentDataFromCreateAppointment } from "../../zustandStore/store";
+import { animated, useSpring } from "react-spring";
 
 export default function DashBoard({ profileIdStateSetter }) {
   const setGlobalProfileData = useAppointmentDataFromCreateAppointment(
     (state) => state.setProfileData
   );
+  const [toggleSlider, setToggleSlider] = useState(false);
+  const sideBarAnimation = useSpring({
+    from: { width: "18rem" },
+    width: toggleSlider ? "0px" : "18rem",
+    
+  });
 
   const setGlobalPracticeDetailsData = useAppointmentDataFromCreateAppointment(
     (state) => state.setPracticeDetails
@@ -19,6 +26,10 @@ export default function DashBoard({ profileIdStateSetter }) {
     `/profile/view`,
     "profileDataDashboard"
   );
+
+  function toggleSideBar() {
+    setToggleSlider(!toggleSlider);
+  }
 
   const { createMutation: profileMutation } = usePostData(
     `/profile/createProfile`
@@ -60,17 +71,21 @@ export default function DashBoard({ profileIdStateSetter }) {
 
   return (
     <>
-      <div className="h-scrren grid grid-cols-12 grid-rows-12 w-full  ">
-        <div className="col-start-3 col-end-13 row-start-1 row-end-2  sticky top-0 left-0 right-0 z-10 ">
-          <MainMenuTopBar />
-        </div>
-        <div className="col-start-1 col-end-3 row-start-1 row-end-13    ">
-          <div className="h-sceen max-h-screen overflow-y-auto sticky left-0 top-0 bottom-0">
-            <MainMenuSideBar />
+      <div className="flex  w-full h-screen   ">
+        <animated.div
+          style={sideBarAnimation}
+          className="h-full w-72 max-h-screen overflow-y-auto  "
+        >
+          <MainMenuSideBar />
+        </animated.div>
+        <div className="w-full flex flex-col h-full">
+          <div className="w-full h-16">
+            <MainMenuTopBar toggleSideBar={toggleSideBar} />
           </div>
-        </div>
-        <div className="col-start-3 col-end-13 row-start-2  row-end-13 p-2 h-full overflow-auto   bg-slate-200 ">
-          <Outlet />
+
+          <div className=" w-full p-2 h-full max-h-full overflow-auto  bg-slate-200 ">
+            <Outlet />
+          </div>
         </div>
       </div>
     </>

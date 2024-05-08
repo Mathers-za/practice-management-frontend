@@ -3,13 +3,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SideBarItemsWithIconDiv from "../miscellaneous components/SideBarItemsWithIcon";
 import TopBarItemsLink from "../miscellaneous components/TopBarItemsLink";
 
-export default function MainMenuTopBar() {
+export default function MainMenuTopBar({ toggleSideBar }) {
   return (
     <>
       <div
-        className="h-fit w-full bg-sky-600 flex  items-center pl-7  justify-start gap-6
+        className="h-full w-full bg-sky-600 flex  items-center pl-7  justify-start gap-6
        text-white  "
       >
+        <button onClick={() => toggleSideBar()}>click me</button>
         <TopBarItemsLink
           toolTipText="Calendar"
           icon={<FontAwesomeIcon icon="fa-regular fa-calendar" size="xl" />}
