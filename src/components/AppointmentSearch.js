@@ -8,46 +8,40 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import AppointmentFilterSearchList from "../AppointmentFilterSearchList";
+import { useQueryClient } from "react-query";
 
-export default function AppointmentSearch({
-  profileId,
-  setResultsInAppPortal,
-}) {
+export default function AppointmentSearch({ profileId }) {
   const [showAppointmentList, setShowAppointmentList] = useState(false);
   const [searchParams, setSearchParams] = useState({
-    start_date: startOfMonth(new Date()),
-    end_date: endOfMonth(new Date()),
+    start_date: format(startOfMonth(new Date()), "yyyy-MM-dd"),
+    end_date: format(endOfMonth(new Date()), "yyyy-MM-dd"),
   });
-  const [filterBy, setFilterBy] = useState("patients.first_name");
 
-  async function handleFilteredSearach(profileId, searchParams) {
-    try {
-      const result = await axios.get(
-        `http://localhost:4000/appointments/filter${profileId}`,
-        {
-          params: searchParams,
-        }
-      );
+  const queryClient = useQueryClient();
 
-      setResultsInAppPortal(result.data);
-    } catch (error) {
-      console.error(error);
-    }
+  const [searchBarInput, setSearchBarInput] = useState("");
+  const [selectedOption, setSelectedOption] = useState("patient.first_name");
+
+  function handleSubmit() {
+    setShowAppointmentList(!!showAppointmentList);
+    queryClient.invalidateQueries("appointmentFilterList");
   }
 
-  function handleChange(e) {
-    const { name, value } = e.target;
+  function handleSearchBarChange(event) {
+    const { value } = event.target;
+
+    setSearchBarInput(value);
 
     setSearchParams((prev) => ({
       ...prev,
-      [name]: value,
+      [selectedOption]: value,
     }));
   }
 
   return (
     <>
-      <div className=" flex">
-        <div className="flex flex-col h-full justify-evenly  min-h-full w-64 bg-slate-400 p-2 space-y-4   ">
+      <div className=" h-full w-full flex">
+        <div className="flex flex-col justify-evenly h-full w-80 bg-slate-400 p-2 space-y-4   ">
           <h1 className="text-lg  ">Appointment Search </h1>
           <div className="border-t border-b  border-black space-y-6 py-7 ">
             <h2 className="mb-2">Filter by start and end dates</h2>
@@ -82,12 +76,17 @@ export default function AppointmentSearch({
             >
               <InputLabel id="select">Search by</InputLabel>
               <Select
+                value={selectedOption}
                 variant="outlined"
                 labelId="select"
-                value={filterBy}
                 label="Search by"
                 onChange={(event) => {
-                  setFilterBy(event.target.value);
+                  setSearchBarInput();
+                  setSelectedOption(event.target.value);
+                  setSearchParams((prev) => ({
+                    start_date: prev.start_date,
+                    end_date: prev.end_date,
+                  }));
                 }}
               >
                 <MenuItem value={"patients.first_name"}>First Name</MenuItem>
@@ -98,29 +97,19 @@ export default function AppointmentSearch({
             <TextField
               fullWidth
               variant="standard"
-              onChange={handleChange}
+              onChange={handleSearchBarChange}
               type="text"
-              name={filterBy}
               label="search"
-              value={
-                searchParams?.patients?.first_name ||
-                searchParams?.patients?.last_name ||
-                null
-              }
+              value={searchBarInput || ""}
             />
           </div>
           <div className=" flex items-end h-full">
             <Button
+              onClick={handleSubmit}
               variant="contained"
               size="large"
               fullWidth
-              onClick={() => {
-                handleFilteredSearach(profileId, searchParams);
-                setSearchParams({
-                  start_date: searchParams.start_date,
-                  end_date: searchParams.end_date,
-                });
-              }}
+              type="button"
             >
               Search
             </Button>
@@ -128,11 +117,10 @@ export default function AppointmentSearch({
         </div>
         {showAppointmentList && (
           <div className="w-full h-full">
-            {" "}
             <AppointmentFilterSearchList
               profileId={profileId}
               params={searchParams}
-            />{" "}
+            />
           </div>
         )}
       </div>
