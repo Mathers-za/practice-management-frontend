@@ -83,8 +83,8 @@ export default function AppointmentSearch({
                 setFilterBy(event.target.value);
               }}
             >
-              <MenuItem value={"first_name"}>First Name</MenuItem>
-              <MenuItem value={"last_name"}>Last Name</MenuItem>
+              <MenuItem value={"patients.first_name"}>First Name</MenuItem>
+              <MenuItem value={"patients.last_name"}>Last Name</MenuItem>
             </Select>
           </FormControl>
 

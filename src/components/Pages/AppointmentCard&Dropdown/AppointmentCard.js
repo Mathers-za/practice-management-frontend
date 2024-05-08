@@ -2,40 +2,52 @@ import styles from "./appCardStyle.module.css";
 import { format } from "date-fns";
 import AppointmentCardDropDown from "./AppointmentCardDropdown";
 import { useEffect } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Chip } from "@mui/material";
 
-export default function AppointmentCard(props) {
+export default function AppointmentCard({ appointmentData }) {
   return (
     <>
-      <div className={styles.container}>
-        <div className={styles.left}>
-          <AppointmentCardDropDown
-            patientId={props.patient_id}
-            appointmentId={props.appointment_id}
-            appointmentTypeId={props.apptype_id}
-            setOverlayFlag={props.setOverlayFlag}
-            patient_first_name={props.patient_first_name}
-            patient_last_name={props.patient_last_name}
-            amount_due={props.amount_due}
-            appointmentsWithInvoicesRef={props.appointmentsWithInvoicesRef}
-            profile_id={props.profile_id}
-          />
-        </div>
-        <div className={styles.middle}>
-          {" "}
-          <p>{props.patient_first_name + " " + props.patient_last_name}</p>{" "}
-          <p>
+      <div className="h-fit w-full">
+        <div className="flex">
+          <div className=" w-1/5 h-full flex justify-center items-center  border-r border-inherit">
+            <FontAwesomeIcon
+              icon="fa-solid fa-ellipsis-vertical"
+              size="lg"
+              style={{ color: "#0a5ae6" }}
+            />
+          </div>
+          <div className="w-4/5 h-full flex justify-between ">
+            <p>
+              <Chip
+                size="small"
+                color="primary"
+                variant="filled"
+                label={appointmentData?.invoice_status || "New"}
+              />{" "}
+              {appointmentData.patient_first_name +
+                " " +
+                appointmentData.patient_last_name || ""}
+            </p>
+            <p className="text-sm">
+              {format(new Date(appointmentData.appointment_date), "yyyy-MM-dd")}
+              , {appointmentData.start_time} - {appointmentData.end_time}
+            </p>
+            <p className="text-sm">
+              {appointmentData?.appointment_name +
+                " " +
+                "with" +
+                " " +
+                appointmentData.practitioner_first_name +
+                " " +
+                appointmentData.practitioner_last_name || ""}
+            </p>
+          </div>
+          <div className="1/5 flex items-center justify-center">
             {" "}
-            {format(new Date(props.appointment_date), "eee dd MMM yyyy")}{" "}
-            {props?.start_time?.slice(0, props.start_time.length - 3)} -{" "}
-            {props?.end_time?.slice(0, props.end_time.length - 3)}
-          </p>
-          <p>
-            {props.appointment_name} With{" "}
-            {props.practitioner_first_name + " " + props.practitioner_last_name}{" "}
-            at {props.practice_name}
-          </p>
+            R{appointmentData.amoumnt_due}
+          </div>
         </div>
-        <div className={styles.right}>{props.apptype_price}</div>
       </div>
     </>
   );
