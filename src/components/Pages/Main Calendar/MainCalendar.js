@@ -84,6 +84,7 @@ export default function MainCalendar({ profileId }) {
       </div>
       {showDropDownMenu && (
         <MainOptionsMenu
+          hideComponent={() => setShowDropDownMenu(!showDropDownMenu)}
           profileId={profileId}
           patientId={selectedEvent.patientId}
           appointment_id={selectedEvent.appointmentId}

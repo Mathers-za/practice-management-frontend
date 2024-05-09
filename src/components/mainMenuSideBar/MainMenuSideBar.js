@@ -5,8 +5,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 export default function MainMenuSideBar({ itemsArray }) {
   return (
     <>
-      <div className="min-w-full bg-slate-500 h-fit  sticky left-0 top-0 bottom-0 flex flex-col flex-wrap justify-center   ">
-        <div className=" pl-4 flex items-center space-x-1 ">
+      <div className="min-w-full bg-slate-500 h-fit   sticky left-0 top-0 bottom-0 flex flex-col flex-wrap justify-center   ">
+        <div className=" pl-4 flex items-center space-x-1 flex-nowrap text-nowrap ">
           <p>
             <FontAwesomeIcon
               icon="fa-solid fa-bars"

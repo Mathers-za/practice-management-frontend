@@ -6,18 +6,13 @@ import { useFetchData, usePostData } from "../../CustomHooks/serverStateHooks";
 import MainMenuSideBar from "../mainMenuSideBar/MainMenuSideBar";
 import MainMenuTopBar from "../MainMenuTopBar/MainMenuTopBar";
 import { useAppointmentDataFromCreateAppointment } from "../../zustandStore/store";
-import { animated, useSpring } from "react-spring";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function DashBoard({ profileIdStateSetter }) {
   const setGlobalProfileData = useAppointmentDataFromCreateAppointment(
     (state) => state.setProfileData
   );
-  const [toggleSlider, setToggleSlider] = useState(false);
-  const sideBarAnimation = useSpring({
-    from: { width: "18rem" },
-    width: toggleSlider ? "0px" : "18rem",
-    
-  });
+  const [showSideBar, setShowSideBar] = useState(true);
 
   const setGlobalPracticeDetailsData = useAppointmentDataFromCreateAppointment(
     (state) => state.setPracticeDetails
@@ -28,7 +23,7 @@ export default function DashBoard({ profileIdStateSetter }) {
   );
 
   function toggleSideBar() {
-    setToggleSlider(!toggleSlider);
+    setShowSideBar(!showSideBar);
   }
 
   const { createMutation: profileMutation } = usePostData(
@@ -72,12 +67,18 @@ export default function DashBoard({ profileIdStateSetter }) {
   return (
     <>
       <div className="flex  w-full h-screen   ">
-        <animated.div
-          style={sideBarAnimation}
-          className="h-full w-72 max-h-screen overflow-y-auto  "
-        >
-          <MainMenuSideBar />
-        </animated.div>
+        <AnimatePresence>
+          {showSideBar && (
+            <motion.div
+              initial={{ width: "0px" }}
+              animate={{ width: "384px" }}
+              exit={{ width: "0px" }}
+              className="h-full w-96 max-h-screen overflow-y-auto  "
+            >
+              <MainMenuSideBar />
+            </motion.div>
+          )}
+        </AnimatePresence>
         <div className="w-full flex flex-col h-full">
           <div className="w-full h-16">
             <MainMenuTopBar toggleSideBar={toggleSideBar} />

@@ -22,6 +22,7 @@ export default function CustomDatePicker({
         closeOnSelect={true}
         sx={{
           width: "12rem",
+          border: "white",
         }}
         slotProps={{
           textField: {

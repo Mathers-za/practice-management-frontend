@@ -6,7 +6,6 @@ import { Button, TextField } from "@mui/material";
 import CustomDatePicker from "./miscellaneous components/DateRangePicker";
 
 import AppointmentFilterSearchList from "../AppointmentFilterSearchList";
-import { useQueryClient } from "react-query";
 
 export default function AppointmentSearch({ profileId }) {
   const [showAppointmentList, setShowAppointmentList] = useState(false);
@@ -15,8 +14,6 @@ export default function AppointmentSearch({ profileId }) {
     end_date: format(endOfMonth(new Date()), "yyyy-MM-dd"),
   });
   const [filter, setFilter] = useState({});
-
-  //FIXME Bug when tring to serach once a search is already done
 
   async function handleSubmit() {
     setFilter(searchParams);
@@ -34,7 +31,7 @@ export default function AppointmentSearch({ profileId }) {
   return (
     <>
       <div className=" h-full w-full   flex">
-        <div className="flex flex-col justify-evenly   min-h-full min-w-72 max-w-72 bg-slate-400 p-2 space-y-4   ">
+        <div className="flex flex-col justify-evenly   min-h-full min-w-72 max-w-72 bg-slate-400 border border-black p-2 space-y-4   ">
           <h1 className="text-lg  ">Appointment Search </h1>
           <div className="border-t border-b  border-black space-y-6 py-7 ">
             <h2 className="mb-2">Filter by start and end dates</h2>
