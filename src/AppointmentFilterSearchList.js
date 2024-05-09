@@ -3,9 +3,10 @@ import { useFetchData } from "./CustomHooks/serverStateHooks";
 import AppointmentCard from "./components/Pages/AppointmentCard&Dropdown/AppointmentCard";
 
 export default function AppointmentFilterSearchList({ params, profileId }) {
+  console.log(params);
   const { data: appointmentData } = useFetchData(
-    `/appointments/filter${profileId}`,
-    "appointmentFilterList",
+    `/appointments/searchByFilter:id${profileId}`,
+    ["appointmentFilterList", params],
     params
   );
 

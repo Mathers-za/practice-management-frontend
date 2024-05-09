@@ -1,12 +1,10 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import axios from "axios";
 import { endOfMonth, format, startOfMonth } from "date-fns";
 
-import { Button, Select, TextField } from "@mui/material";
+import { Button, TextField } from "@mui/material";
 import CustomDatePicker from "./miscellaneous components/DateRangePicker";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
+
 import AppointmentFilterSearchList from "../AppointmentFilterSearchList";
 import { useQueryClient } from "react-query";
 
@@ -16,32 +14,27 @@ export default function AppointmentSearch({ profileId }) {
     start_date: format(startOfMonth(new Date()), "yyyy-MM-dd"),
     end_date: format(endOfMonth(new Date()), "yyyy-MM-dd"),
   });
+  const [filter, setFilter] = useState({});
 
-  const queryClient = useQueryClient();
+  //FIXME Bug when tring to serach once a search is already done
 
-  const [searchBarInput, setSearchBarInput] = useState("");
-  const [selectedOption, setSelectedOption] = useState("patient.first_name");
-
-  function handleSubmit() {
-    setShowAppointmentList(!!showAppointmentList);
-    queryClient.invalidateQueries("appointmentFilterList");
+  async function handleSubmit() {
+    setFilter(searchParams);
+    setShowAppointmentList(true);
   }
 
   function handleSearchBarChange(event) {
-    const { value } = event.target;
-
-    setSearchBarInput(value);
-
+    const { name, value } = event.target;
     setSearchParams((prev) => ({
       ...prev,
-      [selectedOption]: value,
+      [name]: value === "" ? undefined : value,
     }));
   }
 
   return (
     <>
-      <div className=" h-full w-full flex">
-        <div className="flex flex-col justify-evenly h-full w-80 bg-slate-400 p-2 space-y-4   ">
+      <div className=" h-full w-full   flex">
+        <div className="flex flex-col justify-evenly   min-h-full min-w-72 max-w-72 bg-slate-400 p-2 space-y-4   ">
           <h1 className="text-lg  ">Appointment Search </h1>
           <div className="border-t border-b  border-black space-y-6 py-7 ">
             <h2 className="mb-2">Filter by start and end dates</h2>
@@ -69,30 +62,6 @@ export default function AppointmentSearch({ profileId }) {
 
           <div className="   space-y-4">
             <h2>Filter by patient identity</h2>
-            <FormControl
-              variant="outlined"
-              size="small"
-              sx={{ width: "12rem" }}
-            >
-              <InputLabel id="select">Search by</InputLabel>
-              <Select
-                value={selectedOption}
-                variant="outlined"
-                labelId="select"
-                label="Search by"
-                onChange={(event) => {
-                  setSearchBarInput();
-                  setSelectedOption(event.target.value);
-                  setSearchParams((prev) => ({
-                    start_date: prev.start_date,
-                    end_date: prev.end_date,
-                  }));
-                }}
-              >
-                <MenuItem value={"patients.first_name"}>First Name</MenuItem>
-                <MenuItem value={"patients.last_name"}>Last Name</MenuItem>
-              </Select>
-            </FormControl>
 
             <TextField
               fullWidth
@@ -100,7 +69,9 @@ export default function AppointmentSearch({ profileId }) {
               onChange={handleSearchBarChange}
               type="text"
               label="search"
-              value={searchBarInput || ""}
+              value={searchParams?.searchSubString || ""}
+              name="searchSubString"
+              helperText="Search by first name,last name, email or phone number. Search is case sensitive"
             />
           </div>
           <div className=" flex items-end h-full">
@@ -119,7 +90,7 @@ export default function AppointmentSearch({ profileId }) {
           <div className="w-full h-full">
             <AppointmentFilterSearchList
               profileId={profileId}
-              params={searchParams}
+              params={filter}
             />
           </div>
         )}
