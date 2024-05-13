@@ -6,9 +6,14 @@ import { useGlobalStore } from "../../zustandStore/store";
 import { format, setHours, setMinutes } from "date-fns";
 import { useState } from "react";
 import InvoicePortal from "../Pages/ICD10/InvoicePage";
+import ICD10Table from "../Pages/ICD10/ICD10-Table";
+import PaymentPage from "../Pages/Payments/PaymentPage";
+import GenericTopBar from "../miscellaneous components/GenericTopBar";
 
 export default function MainOptionsMenu({ hideComponent }) {
   const [showInvoicePage, setShowInvoicePage] = useState(false);
+  const [showIcdCodeComponent, setShowIcdCodeComponent] = useState(false);
+  const [showPaymentsPage, setShowPaymentsPage] = useState(false);
   const {
     globalPatientData,
     globalAppointmentTypeData,
@@ -16,6 +21,8 @@ export default function MainOptionsMenu({ hideComponent }) {
     globalProfileData,
     globalPracticeDetailsData,
   } = useGlobalStore();
+
+  console.log(globalAppointmentData.id);
   return (
     <>
       <div className="min-h-1/2 min-w-full border-b bg-slate-600  border-slate-500">
@@ -35,19 +42,19 @@ export default function MainOptionsMenu({ hideComponent }) {
             <CloseIcon color="inherit" />
           </IconButton>
         </div>
-        <div>
-          <MenuDivsWithIcon
-            text="Manage codes"
-            icon={
-              <FontAwesomeIcon
-                icon="fa-regular fa-file-lines"
-                size="xl"
-                style={{ color: "#0284C7" }}
-              />
-            }
-            displayText="Manage codes"
-          />
-        </div>
+
+        <MenuDivsWithIcon
+          onclick={() => setShowIcdCodeComponent(!showIcdCodeComponent)}
+          text="Manage codes"
+          icon={
+            <FontAwesomeIcon
+              icon="fa-regular fa-file-lines"
+              size="xl"
+              style={{ color: "#0284C7" }}
+            />
+          }
+          displayText="Manage codes"
+        />
 
         <MenuDivsWithIcon
           onclick={() => setShowInvoicePage(!showInvoicePage)}
@@ -63,6 +70,7 @@ export default function MainOptionsMenu({ hideComponent }) {
 
         <div>
           <MenuDivsWithIcon
+            onclick={() => setShowPaymentsPage(!showPaymentsPage)}
             icon={
               <FontAwesomeIcon
                 icon="fa-solid fa-coins"
@@ -98,6 +106,31 @@ export default function MainOptionsMenu({ hideComponent }) {
             text="Delete"
           />
         </div>
+        {showPaymentsPage && (
+          <div>
+            <PaymentPage
+              hideComponent={() => setShowPaymentsPage(!showPaymentsPage)}
+              appointmentId={globalAppointmentData.id}
+              appointmentTypeId={globalAppointmentTypeData.id}
+            />
+          </div>
+        )}
+        {showIcdCodeComponent && (
+          <div className="fixed top-0 left-0 w-full h-screen z-10 flex items-center justify-center bg-black/30">
+            <div className="max-h-fit w-2/4 bg-white">
+              <GenericTopBar
+                label="Manage codes"
+                onclick={() => setShowIcdCodeComponent(!showIcdCodeComponent)}
+              />
+              <div className="mt-4">
+                <ICD10Table
+                  appointmentTypeId={globalAppointmentTypeData.id}
+                  appointmentId={globalAppointmentData.id}
+                />
+              </div>
+            </div>
+          </div>
+        )}
         {showInvoicePage && (
           <div>
             <InvoicePortal />

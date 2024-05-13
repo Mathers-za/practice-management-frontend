@@ -8,6 +8,7 @@ import { useGlobalStore } from "../../../zustandStore/store";
 
 export default function AppointmentCard({ appointmentData }) {
   const [chipProperties, setChipProperties] = useState();
+
   const {
     setGlobalAppointmentData,
     setGlobalPatientData,
@@ -20,6 +21,7 @@ export default function AppointmentCard({ appointmentData }) {
       appointment_date: appointmentData.appointment_date,
       start_time: appointmentData.start_time,
       end_time: appointmentData.end_time,
+      id: appointmentData.appointment_id,
     });
 
     setGlobalPatientData({
@@ -30,6 +32,7 @@ export default function AppointmentCard({ appointmentData }) {
 
     setGlobalAppointmentTypeData({
       appointment_name: appointmentData.appointment_name,
+      id: appointmentData.apptype_id,
     });
 
     setShowOptionsMenu(!showOptionsMenu);

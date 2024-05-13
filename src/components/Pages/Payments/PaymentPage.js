@@ -8,6 +8,7 @@ import {
 } from "../../../CustomHooks/serverStateHooks";
 import { format } from "date-fns";
 import { usePaymentsPageStore } from "../../../zustandStore/store";
+import GenericTopBar from "../../miscellaneous components/GenericTopBar";
 
 function checkForErrors(paymentPayload, data) {
   const errors = [];
@@ -49,7 +50,11 @@ function cleanAmount(payload) {
   return { ...payload, amount: cleanedAmount };
 }
 
-export default function PaymentPage({ appointmentId, appointmentTypeId }) {
+export default function PaymentPage({
+  appointmentId,
+  appointmentTypeId,
+  hideComponent,
+}) {
   const { data, refetch } = useFetchData(
     `/financials/view${appointmentId}`,
     "financialsData"
@@ -100,10 +105,7 @@ export default function PaymentPage({ appointmentId, appointmentTypeId }) {
   return (
     <>
       <div className={styles["paymentPage-overlay"]}>
-        <div className={styles["paymentPage-top-nav"]}>
-          <p>Payments</p>
-          <p onClick={() => togglePaymentsPage(appointmentId)}>Close</p>
-        </div>
+        <GenericTopBar onclick={hideComponent} label="Payments" />
         <div className={styles["paymentPage-top-half"]}>
           <p className={styles["paymentPage-totals"]}>totals</p>
           <div>

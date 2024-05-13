@@ -6,13 +6,18 @@ import {
 } from "../../../CustomHooks/serverStateHooks";
 import styles from "./ICDTable.module.css";
 import CodeLineItem from "./LineItemSelection";
+import GenericTopBar from "../../miscellaneous components/GenericTopBar";
+import { Button, IconButton } from "@mui/material";
+import { Delete, Edit } from "@mui/icons-material";
 
 export default function ICD10Table({
   appointmentId,
   appointmentTypeId,
-  financialsDataRefetch,
+
+  queryKeyToInvalidate = "",
 }) {
-  const passCodeData = useRef(null);
+  console.log(appointmentId);
+  const codeDataToEdit = useRef(null);
   const { data: ICD10Data } = useFetchData(
     `/icd10Codes/view${appointmentId}`,
     "PatientICD10Data"
@@ -22,16 +27,12 @@ export default function ICD10Table({
     `/predefinedIcd10/view${appointmentTypeId}`,
     "predefinedICDData"
   );
-  const { patchMutation } = usePatchData(
-    `/icd10Codes/update${passCodeData.current?.id}`,
-    "PatientICD10Data"
-  );
 
   const [codesForMapping, setCodesForMapping] = useState();
 
   const { createMutation } = usePostData(
     `/icd10Codes/create${appointmentId}`,
-    "PatientICD10Data"
+    queryKeyToInvalidate
   );
   const [showLineItem, setShowLineItem] = useState(false);
   const [createMode, setCreateMode] = useState();
@@ -50,75 +51,82 @@ export default function ICD10Table({
 
   async function postData(data) {
     await createMutation.mutateAsync(data);
-    financialsDataRefetch();
-  }
-
-  async function patchData(data) {
-    await patchMutation.mutateAsync(data);
-    financialsDataRefetch();
   }
 
   return (
     <>
-      <div className={styles.container}>
-        <table className={styles.tableContainer}>
-          <button
-            onClick={() => {
-              setShowLineItem(true);
-              setCreateMode(true);
-            }}
-            className={styles.addBtn}
-          >
-            Add
-          </button>
-          <tr>
-            <th width="35%">ICD10-Code</th>
-            <th width="35%">Procedural-Code</th>
-            <th width="30%">Price</th>
-          </tr>
-          {codesForMapping && Object.keys(codesForMapping).length > 0 ? (
-            codesForMapping.map((code) => {
-              return (
-                <tr>
-                  <td>{code?.icd_10_code}</td>
-                  <td>{code?.procedural_codes}</td>
-                  <td>
-                    {code?.price}{" "}
-                    <button
-                      onClick={() => {
-                        setShowLineItem(true);
-                        passCodeData.current = code;
-                        setCreateMode(false);
-                      }}
-                      className={styles["edit-btn"]}
-                    >
-                      E
-                    </button>{" "}
-                    <button className={styles["delete-btn"]}>D</button>
-                  </td>
-                </tr>
-              );
-            })
-          ) : (
-            <tr>
-              <td className={styles.noData} colSpan="3">
-                No data to display
-              </td>
+      <div className="w-full h-fit bg-white  ">
+        <div className=" flex flex-col items-center  space-y-2 justify-center p-3">
+          <table className="w-11/12  table-fixed ">
+            <tr className="h-12">
+              <th>ICD10-Code</th>
+              <th>Procedural-Code</th>
+              <th>Price</th>
             </tr>
-          )}
-        </table>
+            {codesForMapping && Object.keys(codesForMapping).length > 0 ? (
+              codesForMapping
+                .sort((a, b) => a.id - b.id)
+                .map((code) => {
+                  return (
+                    <tr className="h-9">
+                      <td>{code?.icd_10_code}</td>
+                      <td>{code?.procedural_codes}</td>
+                      <td>
+                        <div className="flex w-full border-none items-center h-full">
+                          <p className="w-11/12">{code?.price}</p>
+                          <IconButton
+                            sx={{
+                              "&.MuiButtonBase-root": { padding: "0px" },
+                            }}
+                            onClick={() => {
+                              setShowLineItem(true);
+                              codeDataToEdit.current = code;
+                            }}
+                            color="secondary"
+                          >
+                            <Edit />
+                          </IconButton>
+                          <IconButton
+                            color="error"
+                            sx={{
+                              "&.MuiButtonBase-root": { padding: "0px" },
+                            }}
+                          >
+                            <Delete />
+                          </IconButton>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+            ) : (
+              <tr>
+                <td className={styles.noData} colSpan="3">
+                  No data to display
+                </td>
+              </tr>
+            )}
+          </table>
+          <div className="self-end">
+            <Button
+              variant="contained"
+              onClick={() => {
+                setShowLineItem(true);
+                setCreateMode(true);
+                codeDataToEdit.current = undefined;
+              }}
+            >
+              Add
+            </Button>
+          </div>
+        </div>
         {showLineItem && (
-          <div className={styles.overlay}>
-            <div className={styles["overlay-content"]}>
-              <CodeLineItem
-                financialsDataRefetch={() => financialsDataRefetch()}
-                toggleLineItemFlag={toggleLineItemFlag}
-                createMode={createMode}
-                postData={postData}
-                patchData={patchData}
-                passedData={passCodeData.current}
-              />
-            </div>
+          <div className="fixed w-full h-screen top-0 left-0 z-20  bg-black/40 flex justify-center items-center">
+            <CodeLineItem
+              codeData={codeDataToEdit.current}
+              hideComponent={() => setShowLineItem(!showLineItem)}
+              QueryKeyToInvalidate="PatientICD10Data"
+            />
           </div>
         )}
       </div>
