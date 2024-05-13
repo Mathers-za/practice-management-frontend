@@ -6,7 +6,7 @@ export default function MainMenuSideBar({ itemsArray }) {
   return (
     <>
       <div className="min-w-full bg-slate-500 h-fit   sticky left-0 top-0 bottom-0 flex flex-col flex-wrap justify-center   ">
-        <div className=" pl-4 flex items-center space-x-1 flex-nowrap text-nowrap ">
+        <div className=" pl-4 flex items-center space-x-1 text-nowrap  ">
           <p>
             <FontAwesomeIcon
               icon="fa-solid fa-bars"
@@ -14,7 +14,7 @@ export default function MainMenuSideBar({ itemsArray }) {
               style={{ color: "whitesmoke" }}
             />
           </p>
-          <h1 className="text-2xl text-white p-3 ">Schedule Sensai</h1>
+          <h1 className="text-2xl  text-white p-3 ">Schedule Sensai</h1>
         </div>
         <SideBarItemsWithIconDiv
           icon={<FontAwesomeIcon icon="fa-solid fa-user" size="lg" />}
@@ -58,7 +58,7 @@ export default function MainMenuSideBar({ itemsArray }) {
           icon={<FontAwesomeIcon icon="fa-solid fa-chart-column" size="lg" />}
         />
         <SideBarItemsWithIconDiv
-          linkText={"Email Notification Customization"}
+          linkText={`Email Notification Customization`}
           linkTo={"emailNotifications"}
           icon={<FontAwesomeIcon icon="fa-solid fa-envelope" size="lg" />}
         />

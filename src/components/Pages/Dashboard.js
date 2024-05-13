@@ -5,13 +5,27 @@ import { Outlet } from "react-router-dom";
 import { useFetchData, usePostData } from "../../CustomHooks/serverStateHooks";
 import MainMenuSideBar from "../mainMenuSideBar/MainMenuSideBar";
 import MainMenuTopBar from "../MainMenuTopBar/MainMenuTopBar";
-import { useAppointmentDataFromCreateAppointment } from "../../zustandStore/store";
+import {
+  useAppointmentDataFromCreateAppointment,
+  useDashboardComponent,
+} from "../../zustandStore/store";
 import { motion, AnimatePresence } from "framer-motion";
+import axiosRequest from "../../apiRequests/apiRequests";
 
 export default function DashBoard({ profileIdStateSetter }) {
   const setGlobalProfileData = useAppointmentDataFromCreateAppointment(
     (state) => state.setProfileData
   );
+
+  const {
+    profileData,
+    setProfileData,
+    setPracticeDetailsData,
+    practiceDetailsData,
+  } = useDashboardComponent();
+
+  const [errorMessage, setErrorMessage] = useState();
+
   const [showSideBar, setShowSideBar] = useState(true);
 
   const setGlobalPracticeDetailsData = useAppointmentDataFromCreateAppointment(
@@ -21,6 +35,25 @@ export default function DashBoard({ profileIdStateSetter }) {
     `/profile/view`,
     "profileDataDashboard"
   );
+
+  async function setGlobalProfileAndPracticeData(
+    userProfileData,
+    profileDataSetterFn,
+    practiceDetailsSetterFn
+  ) {
+    try {
+      profileDataSetterFn(userProfileData);
+      const { data: practiceDataResponse } = await axiosRequest(
+        "get",
+        `/practiceDetails/view${userProfileData.id}`
+      );
+      practiceDetailsSetterFn(practiceDataResponse);
+    } catch (error) {
+      console.error(error);
+
+      throw error;
+    }
+  }
 
   function toggleSideBar() {
     setShowSideBar(!showSideBar);
@@ -59,8 +92,14 @@ export default function DashBoard({ profileIdStateSetter }) {
     }
 
     if (httpStatus === 200) {
+      setGlobalProfileAndPracticeData(
+        data,
+        setProfileData,
+        setPracticeDetailsData
+      );
       profileIdStateSetter(data.id);
-      setGlobalProfileData(data);
+      console.log(profileData);
+      console.log(practiceDetailsData);
     }
   }, [data, httpStatus]);
 

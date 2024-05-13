@@ -226,3 +226,16 @@ export const useAppointmentTypeListComponenet = create((set) => ({
       refetchAppointmentListTypeData: callback,
     }),
 }));
+
+export const useDashboardComponent = create((set) => ({
+  profileData: {},
+  practiceDetailsData: {},
+  setProfileData: (profileData) =>
+    set({
+      profileData: profileData,
+    }),
+  setPracticeDetailsData: (practiceData) =>
+    set({
+      practiceDetailsData: practiceData,
+    }),
+}));
