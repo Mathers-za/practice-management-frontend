@@ -5,20 +5,17 @@ import GenericTopBar from "../components/miscellaneous components/GenericTopBar"
 
 import FullWithButton from "../components/miscellaneous components/FullWidthButton";
 
-import { useAppointmentDataFromCreateAppointment } from "../zustandStore/store";
+import { useGlobalStore } from "../zustandStore/store";
 
 import LoginForm from "../components/login/Login";
 import AppointmentTypeCard from "../components/appointmentTypeComponents/AppointmentTypeCard";
 
 import CreateAppointmentType from "../components/miscellaneous components/CreateAppointmentType";
-import { MobileDatePicker } from "@mui/x-date-pickers";
-import { InputAdornment, TextField } from "@mui/material";
+
 import CustomDatePicker from "../components/miscellaneous components/DateRangePicker";
 
 export default function ComponentView() {
-  const globalProfileData = useAppointmentDataFromCreateAppointment(
-    (state) => state.profileData
-  );
+  const globalProfileData = useGlobalStore((state) => state.profileData);
   return (
     <>
       <div className="flex flex-col gap-3">

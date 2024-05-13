@@ -100,23 +100,22 @@ export {
   useFlags,
 };
 
-export const useAppointmentDataFromCreateAppointment = create((set) => ({
-  patientData: {},
-  appointmentTypeData: {},
-  appointmentData: {},
-  profileData: {},
-  practiceDetails: {
-    appointment_name: "Mathers Chiropractic",
-    address: "1 dahlia street northmead ext 4 benon 1501",
-  },
-  setPatientData: (patientDataObj) => set({ patientData: patientDataObj }),
-  setAppointmentTypeData: (apptypeDataObj) =>
-    set({ appointmentTypeData: apptypeDataObj }),
-  setAppointmentData: (appointmentDataObj) =>
-    set({ appointmentData: appointmentDataObj }),
-  setProfileData: (profileDataObj) => set({ profileData: profileDataObj }),
-  setPracticeDetails: (practiceDataObj) =>
-    set({ practiceDetails: practiceDataObj }),
+export const useGlobalStore = create((set) => ({
+  globalPatientData: {},
+  globalAppointmentTypeData: {},
+  globalAppointmentData: {},
+  globalProfileData: {},
+  globalPracticeDetailsData: {},
+  setGlobalPatientData: (patientDataObj) =>
+    set({ globalPatientData: patientDataObj }),
+  setGlobalAppointmentTypeData: (apptypeDataObj) =>
+    set({ globalAppointmentTypeData: apptypeDataObj }),
+  setGlobalAppointmentData: (appointmentDataObj) =>
+    set({ globalAppointmentData: appointmentDataObj }),
+  setGlobalProfileData: (profileDataObj) =>
+    set({ globalProfileData: profileDataObj }),
+  setGlobalPracticeDetails: (practiceDataObj) =>
+    set({ GlobalPracticeDetails: practiceDataObj }),
 }));
 
 export const useAppointmentTypeAndIcdAutomationsPage = create(
@@ -237,5 +236,13 @@ export const useDashboardComponent = create((set) => ({
   setPracticeDetailsData: (practiceData) =>
     set({
       practiceDetailsData: practiceData,
+    }),
+}));
+
+export const useAppointmentCard = create((set) => ({
+  patientData: {},
+  setPatientData: (patientData) =>
+    set({
+      patientData: patientData,
     }),
 }));

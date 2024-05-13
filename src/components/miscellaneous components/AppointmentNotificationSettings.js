@@ -1,22 +1,16 @@
 import { useNavigate } from "react-router-dom";
 import FullWithButton from "./FullWidthButton";
 import GenericTopBar from "./GenericTopBar";
-import { useAppointmentDataFromCreateAppointment } from "../../zustandStore/store";
+import { useGlobalStore } from "../../zustandStore/store";
 import { format } from "date-fns";
 
 export default function ({ onchange, onsubmit, onExit }) {
-  const profileData = useAppointmentDataFromCreateAppointment(
-    (state) => state.profileData
-  );
-  const patientData = useAppointmentDataFromCreateAppointment(
-    (state) => state.patientData
-  );
-  const appointmentTypeData = useAppointmentDataFromCreateAppointment(
+  const profileData = useGlobalStore((state) => state.profileData);
+  const patientData = useGlobalStore((state) => state.patientData);
+  const appointmentTypeData = useGlobalStore(
     (state) => state.appointmentTypeData
   );
-  const appointmentData = useAppointmentDataFromCreateAppointment(
-    (state) => state.appointmentData
-  );
+  const appointmentData = useGlobalStore((state) => state.appointmentData);
   //TODO mostly done. make componenet for pathing pts once they create appoitnment
   //TODO needs error handling and validation
 

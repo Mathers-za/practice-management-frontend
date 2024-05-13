@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useFetchData, usePatchData } from "../CustomHooks/serverStateHooks";
-import { useAppointmentDataFromCreateAppointment } from "../zustandStore/store";
+import { useGlobalStore } from "../zustandStore/store";
 import Input from "./miscellaneous components/DisplayTextInput";
 
 import GenericButton from "./miscellaneous components/SubmitButton";
@@ -8,9 +8,11 @@ import { Button, TextField } from "@mui/material";
 
 export default function Profile() {
   const { data } = useFetchData("/profile/view", "profileData");
-  const setGlobalProfileData = useAppointmentDataFromCreateAppointment(
-    (state) => state.setProfileData
-  );
+  const {
+    globalProfileData,
+
+    setGlobalProfileData,
+  } = useGlobalStore();
 
   const [profileData, setProfileData] = useState({});
   const [changes, setChanges] = useState({});

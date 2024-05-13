@@ -1,13 +1,11 @@
 import { format } from "date-fns";
-import { useAppointmentDataFromCreateAppointment } from "../../../zustandStore/store";
+import { useGlobalStore } from "../../../zustandStore/store";
 
 export default function TreatmentNoteListItem({
   treatmentNoteData,
   editButtonclickFn,
 }) {
-  const globalProfileData = useAppointmentDataFromCreateAppointment(
-    (state) => state.profileData
-  );
+  const globalProfileData = useGlobalStore((state) => state.profileData);
   return (
     <>
       <div className="flex max-w-full text-wrap gap-10 relative">

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Login from "../login/Login";
+import Login from "./Login";
 import Register from "../register/Register";
 
 export default function Entry() {

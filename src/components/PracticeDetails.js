@@ -3,7 +3,7 @@ import { useFetchData, usePatchData } from "../CustomHooks/serverStateHooks";
 
 import GenericButton from "./miscellaneous components/SubmitButton";
 import CustomTextArea from "./miscellaneous components/CustomTextArea";
-import { useAppointmentDataFromCreateAppointment } from "../zustandStore/store";
+import { useGlobalStore } from "../zustandStore/store";
 import { Button, TextField } from "@mui/material";
 
 export default function PracticeDetails({ profileId }) {
@@ -11,7 +11,7 @@ export default function PracticeDetails({ profileId }) {
     `/practiceDetails/view${profileId}`,
     "practiceDetailsInPracticeComponent"
   );
-  const setGlobalPracticeDetailsData = useAppointmentDataFromCreateAppointment(
+  const setGlobalPracticeDetailsData = useGlobalStore(
     (state) => state.setPracticeDetails
   );
 

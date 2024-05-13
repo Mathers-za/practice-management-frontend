@@ -4,7 +4,7 @@ import { useFetchData } from "../CustomHooks/serverStateHooks";
 import AppointmentTypeCard from "./appointmentTypeComponents/AppointmentTypeCard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  useAppointmentDataFromCreateAppointment,
+  useGlobalStore,
   useAppointmentTypeListComponenet,
 } from "../zustandStore/store";
 import CreateAppointmentType from "./miscellaneous components/CreateAppointmentType";
@@ -13,7 +13,7 @@ export default function AppointmentTypeList({ profileId }) {
   const [showCreateAppointmentType, setShowCreateAppointmentType] =
     useState(false);
 
-  const globalPracticeDetailsData = useAppointmentDataFromCreateAppointment(
+  const globalPracticeDetailsData = useGlobalStore(
     (state) => state.practiceDetails
   );
   const { data: apptypeAndIcdData, refetch } = useFetchData(

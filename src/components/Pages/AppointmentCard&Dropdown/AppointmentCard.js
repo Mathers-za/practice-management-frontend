@@ -1,14 +1,39 @@
-import styles from "./appCardStyle.module.css";
 import { format } from "date-fns";
-import AppointmentCardDropDown from "./AppointmentCardDropdown";
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Chip, Portal } from "@mui/material";
+import { Chip } from "@mui/material";
 import MainOptionsMenu from "../../Main Options/MainOptionsMenu";
 import { motion, AnimatePresence } from "framer-motion";
+import { useGlobalStore } from "../../../zustandStore/store";
 
 export default function AppointmentCard({ appointmentData }) {
   const [chipProperties, setChipProperties] = useState();
+  const {
+    setGlobalAppointmentData,
+    setGlobalPatientData,
+    setGlobalAppointmentTypeData,
+    globalAppointmentData,
+  } = useGlobalStore();
+
+  function handleOptionsClick() {
+    setGlobalAppointmentData({
+      appointment_date: appointmentData.appointment_date,
+      start_time: appointmentData.start_time,
+      end_time: appointmentData.end_time,
+    });
+
+    setGlobalPatientData({
+      first_name: appointmentData.patient_first_name,
+      last_name: appointmentData.patient_last_name,
+      id: appointmentData.patient_id,
+    });
+
+    setGlobalAppointmentTypeData({
+      appointment_name: appointmentData.appointment_name,
+    });
+
+    setShowOptionsMenu(!showOptionsMenu);
+  }
 
   const [showOptionsMenu, setShowOptionsMenu] = useState(false);
   function getChipProperties(invoiceStatus) {
@@ -49,7 +74,7 @@ export default function AppointmentCard({ appointmentData }) {
           <div className="w-4/5 min-h-full pl-7 flex gap-5 py-2 items-center ">
             <div>
               <div
-                onClick={() => setShowOptionsMenu(!showOptionsMenu)}
+                onClick={handleOptionsClick}
                 className=" hover:bg-slate-300  size-7 rounded-full flex items-center justify-center"
               >
                 <FontAwesomeIcon

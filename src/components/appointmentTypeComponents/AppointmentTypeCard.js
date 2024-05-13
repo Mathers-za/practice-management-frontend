@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import {
-  useAppointmentDataFromCreateAppointment,
+  useGlobalStore,
   useAppointmentTypeAndIcdAutomationsPage,
 } from "../../zustandStore/store";
 
@@ -10,9 +10,7 @@ export default function AppointmentTypeCard({
   appointmentTypeData,
   predefinedIcdcodes,
 }) {
-  const globalPracticeData = useAppointmentDataFromCreateAppointment(
-    (state) => state.practiceDetails
-  );
+  const globalPracticeData = useGlobalStore((state) => state.practiceDetails);
   const resetAppointmentTypeUpdateAndAutomationsZustandStore =
     useAppointmentTypeAndIcdAutomationsPage((state) => state.resetAll);
   const [showApptypeEdit, setShowAppTypeEdit] = useState(false);

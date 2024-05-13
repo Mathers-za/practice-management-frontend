@@ -11,6 +11,7 @@ import {
 import PaymentPage from "../Payments/PaymentPage";
 import {
   useAppointmentPortalStore,
+  useGlobalStore,
   usePaymentsPageStore,
 } from "../../../zustandStore/store";
 import PaymentReference from "./PaymentReference";
@@ -62,9 +63,11 @@ export default function InvoicePortal() {
   const { state } = location;
   const [drop, setDrop] = useState(new Array(2).fill(false));
   const { data: financialsData, refetch } = useFetchData(
-    `/financials/view${state.appointmentId}`,
+    `/financials/view${globalPatientData}`,
     "financialsDataInInvoicePage"
   );
+
+  const { globalPatientData } = useGlobalStore();
 
   const [showInvoiceSendCard, setShowInvoiceSendCard] = useState(false);
 
@@ -78,13 +81,13 @@ export default function InvoicePortal() {
   const [invoiceExist, setInvoiceExist] = useState();
 
   const { patchMutation } = usePatchData(
-    `/financials/update${state.appointmentId}`
+    `/financials/update${globalPatientData.id}`
   );
   const [changes, setChanges] = useState({});
   const [isErrors, setIsErrors] = useState(false);
   const [errorMessage, setErrorMessage] = useState();
   const { data: paymentsData } = useFetchData(
-    `/payments/view${state.appointmentId}`,
+    `/payments/view${globalPatientData.id}`,
     "paymentsDataInInvoices"
   );
 
@@ -93,11 +96,11 @@ export default function InvoicePortal() {
     : undefined;
 
   const { patchMutation: invoiceMutation } = usePatchData(
-    `/invoices/update${state.appointmentId}`
+    `/invoices/update${globalPatientData.id}`
   );
 
   const { createMutation } = usePostData(
-    `/invoices/create${state.appointmentId}`
+    `/invoices/create${globalPatientData.id}`
   );
 
   const togglePaymentsPage = usePaymentsPageStore(

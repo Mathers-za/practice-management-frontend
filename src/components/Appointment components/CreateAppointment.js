@@ -1,21 +1,21 @@
 import { useNavigate } from "react-router-dom";
-import { useFetchData, usePostData } from "../CustomHooks/serverStateHooks";
+import { useFetchData, usePostData } from "../../CustomHooks/serverStateHooks";
 import { useEffect, useState } from "react";
 import { format, add, set, parse } from "date-fns";
 
-import { checkAndSetIcds } from "../apiRequests/apiRequests";
-import GenericTopBar from "./miscellaneous components/GenericTopBar";
-import DivSvgDisplayCombo from "./miscellaneous components/DivSvgLabelCombo";
-import TimestartAndEndDisplay from "./miscellaneous components/TimeStartAndEndDisplay";
+import { checkAndSetIcds } from "../../apiRequests/apiRequests";
+import GenericTopBar from "../miscellaneous components/GenericTopBar";
+import DivSvgDisplayCombo from "../miscellaneous components/DivSvgLabelCombo";
+import TimestartAndEndDisplay from "../miscellaneous components/TimeStartAndEndDisplay";
 
-import AppointmentTypePicker from "./miscellaneous components/AppointmentTypePicker";
+import AppointmentTypePicker from "../miscellaneous components/AppointmentTypePicker";
 import { StaticTimePicker } from "@mui/x-date-pickers/StaticTimePicker";
 import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
-import FullWithButton from "./miscellaneous components/FullWidthButton";
-import PatientPicker from "./miscellaneous components/PatientPicker";
+import FullWithButton from "../miscellaneous components/FullWidthButton";
+import PatientPicker from "../miscellaneous components/PatientPicker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useAppointmentDataFromCreateAppointment } from "../zustandStore/store";
-import AppointmentNotificationSettings from "./miscellaneous components/AppointmentNotificationSettings";
+import { useGlobalStore } from "../../zustandStore/store";
+import AppointmentNotificationSettings from "../miscellaneous components/AppointmentNotificationSettings";
 
 function checkForSelectedKeys(ArrayOfkeys, dataobj) {
   return ArrayOfkeys.every((key) => dataobj.hasOwnProperty(key));
@@ -41,13 +41,11 @@ export default function CreateAppointment({
   const [showPatientPicker, setShowPatientPicker] = useState(false);
   const { formattedCurrentDate, currentTime, endTime } = setDateAndTimes();
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const setGlobalPatientData = useAppointmentDataFromCreateAppointment(
-    (state) => state.setPatientData
-  );
-  const setGlobalAppointmentTypeData = useAppointmentDataFromCreateAppointment(
+  const setGlobalPatientData = useGlobalStore((state) => state.setPatientData);
+  const setGlobalAppointmentTypeData = useGlobalStore(
     (state) => state.setAppointmentTypeData
   );
-  const setGlobalAppointmentData = useAppointmentDataFromCreateAppointment(
+  const setGlobalAppointmentData = useGlobalStore(
     (state) => state.setAppointmentData
   );
   const navigate = useNavigate();

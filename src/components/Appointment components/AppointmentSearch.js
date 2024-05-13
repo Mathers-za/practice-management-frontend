@@ -3,9 +3,9 @@ import axios from "axios";
 import { endOfMonth, format, startOfMonth } from "date-fns";
 
 import { Button, TextField } from "@mui/material";
-import CustomDatePicker from "./miscellaneous components/DateRangePicker";
+import CustomDatePicker from "../miscellaneous components/DateRangePicker";
 
-import AppointmentFilterSearchList from "../AppointmentFilterSearchList";
+import AppointmentFilterSearchList from "../../AppointmentFilterSearchList";
 
 export default function AppointmentSearch({ profileId }) {
   const [showAppointmentList, setShowAppointmentList] = useState(false);

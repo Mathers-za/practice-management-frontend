@@ -1,5 +1,5 @@
 import { Route, Routes, useNavigate } from "react-router-dom";
-import Entry from "./components/Pages/Entry";
+import Entry from "./components/login/Entry";
 import DashBoard from "./components/Pages/Dashboard";
 import axiosRequest from "./apiRequests/apiRequests";
 import { useEffect, useRef, useState } from "react";
@@ -8,9 +8,9 @@ import PracticeDetails from "./components/PracticeDetails";
 import PatientList from "./components/PatientList";
 import Patient from "./components/Patient";
 import { QueryClient, QueryClientProvider } from "react-query";
-import CreatePatient from "./components/CreatePatient";
+
 import AppTypeCreation from "./components/AppointmentTypes";
-import CreateAppointment from "./components/CreateAppointment";
+
 import PatientPicker from "./components/Pages/PatientPickerPage";
 import PatientPortal from "./components/Pages/PatientPortal";
 import MedicalAid from "./components/MedicalAid";
@@ -36,6 +36,8 @@ import { far } from "@fortawesome/free-regular-svg-icons";
 import "@fontsource/inter";
 
 import ComponentView from "./tailWindSandbox/styleComponents";
+import CreatePatient from "./components/Create Patient component/CreatePatient";
+import CreateAppointment from "./components/Appointment components/CreateAppointment";
 
 const queryClient = new QueryClient();
 

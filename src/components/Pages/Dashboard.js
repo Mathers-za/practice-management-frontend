@@ -5,32 +5,16 @@ import { Outlet } from "react-router-dom";
 import { useFetchData, usePostData } from "../../CustomHooks/serverStateHooks";
 import MainMenuSideBar from "../mainMenuSideBar/MainMenuSideBar";
 import MainMenuTopBar from "../MainMenuTopBar/MainMenuTopBar";
-import {
-  useAppointmentDataFromCreateAppointment,
-  useDashboardComponent,
-} from "../../zustandStore/store";
+import { useGlobalStore } from "../../zustandStore/store";
 import { motion, AnimatePresence } from "framer-motion";
 import axiosRequest from "../../apiRequests/apiRequests";
 
 export default function DashBoard({ profileIdStateSetter }) {
-  const setGlobalProfileData = useAppointmentDataFromCreateAppointment(
-    (state) => state.setProfileData
-  );
-
-  const {
-    profileData,
-    setProfileData,
-    setPracticeDetailsData,
-    practiceDetailsData,
-  } = useDashboardComponent();
-
-  const [errorMessage, setErrorMessage] = useState();
+  const { setProfileData, setPracticeDetails } = useGlobalStore();
 
   const [showSideBar, setShowSideBar] = useState(true);
 
-  const setGlobalPracticeDetailsData = useAppointmentDataFromCreateAppointment(
-    (state) => state.setPracticeDetails
-  );
+  const { setGlobalProfileData, setGlobalPracticeDetails } = useGlobalStore();
   const { data, httpStatus } = useFetchData(
     `/profile/view`,
     "profileDataDashboard"
@@ -79,7 +63,7 @@ export default function DashBoard({ profileIdStateSetter }) {
 
         const { data: practiceDetailsData } =
           await practiceMutation.mutateAsync({ profile_id: data.id });
-        setGlobalPracticeDetailsData(practiceDetailsData);
+        setGlobalPracticeDetails(practiceDetailsData);
         emailNotificationMutation.mutate({ profile_id: data.id });
         sessionStorage.setItem("initialLogin", "false");
       } catch (error) {
@@ -94,12 +78,10 @@ export default function DashBoard({ profileIdStateSetter }) {
     if (httpStatus === 200) {
       setGlobalProfileAndPracticeData(
         data,
-        setProfileData,
-        setPracticeDetailsData
+        setGlobalProfileData,
+        setGlobalPracticeDetails
       );
       profileIdStateSetter(data.id);
-      console.log(profileData);
-      console.log(practiceDetailsData);
     }
   }, [data, httpStatus]);
 

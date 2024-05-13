@@ -3,7 +3,7 @@ import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import { useEffect, useRef, useState } from "react";
 
-import CreateAppointment from "../../CreateAppointment.js";
+import CreateAppointment from "../../Create Patient component/CreatePatient.js";
 
 import MainOptionsMenu from "../../Main Options/MainOptionsMenu.js";
 import {

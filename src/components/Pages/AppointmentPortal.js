@@ -1,8 +1,5 @@
-import AppointmentSearch from "../AppointmentSearch";
-
-import "./appointmentPortal.css";
-
 import { useAppointmentPortalStore } from "../../zustandStore/store.js";
+import AppointmentSearch from "../Appointment components/AppointmentSearch.js";
 export default function AppointmentPortal({ profileId }) {
   const appointmentsThathaveInvoices = useAppointmentPortalStore(
     (state) => state.appointmentsThathaveInvoices

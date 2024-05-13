@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { usePostData } from "../CustomHooks/serverStateHooks";
+import { usePostData } from "../../CustomHooks/serverStateHooks";
 
-import GenericTopBar from "./miscellaneous components/GenericTopBar";
-import FullWithButton from "./miscellaneous components/FullWidthButton";
-import DisplaySingleError from "./miscellaneous components/WarningMessage";
-import { createPatientValidationSchema } from "../form validation Schemas/validationSchemas";
-import { patientCreationGuidance } from "../userGuidanceFunctions/createPatientFns";
+import GenericTopBar from "../miscellaneous components/GenericTopBar";
+import FullWithButton from "../miscellaneous components/FullWidthButton";
+import DisplaySingleError from "../miscellaneous components/WarningMessage";
+import { createPatientValidationSchema } from "../../form validation Schemas/validationSchemas";
+import { patientCreationGuidance } from "../../userGuidanceFunctions/createPatientFns";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, TextField } from "@mui/material";
 import { MuiTelInput } from "mui-tel-input";
