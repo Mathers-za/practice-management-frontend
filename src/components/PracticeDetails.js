@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { useFetchData, usePatchData } from "../CustomHooks/serverStateHooks";
 
-import GenericButton from "./miscellaneous components/SubmitButton";
-import CustomTextArea from "./miscellaneous components/CustomTextArea";
 import { useGlobalStore } from "../zustandStore/store";
 import { Button, TextField } from "@mui/material";
 

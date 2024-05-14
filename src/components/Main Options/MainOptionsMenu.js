@@ -3,17 +3,20 @@ import MenuDivsWithIcon from "../miscellaneous components/MenuListDivsWithIcon";
 import { IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useGlobalStore } from "../../zustandStore/store";
-import { format, setHours, setMinutes } from "date-fns";
+import { format } from "date-fns";
 import { useState } from "react";
 import InvoicePortal from "../Pages/ICD10/InvoicePage";
 import ICD10Table from "../Pages/ICD10/ICD10-Table";
 import PaymentPage from "../Pages/Payments/PaymentPage";
 import GenericTopBar from "../miscellaneous components/GenericTopBar";
+import CreateTreatmentNote from "../Pages/PatientTreatmentNotes/CreateTreatmentNote";
+import TreatmentNoteForm from "../Pages/PatientTreatmentNotes/TreatmentNoteForm";
 
-export default function MainOptionsMenu({ hideComponent }) {
+export default function MainOptionsMenu({ hideComponent, refetchData }) {
   const [showInvoicePage, setShowInvoicePage] = useState(false);
   const [showIcdCodeComponent, setShowIcdCodeComponent] = useState(false);
   const [showPaymentsPage, setShowPaymentsPage] = useState(false);
+  const [showTreatmentNotePage, setShowTreatmentNotePage] = useState(false);
   const {
     globalPatientData,
     globalAppointmentTypeData,
@@ -25,7 +28,7 @@ export default function MainOptionsMenu({ hideComponent }) {
   console.log(globalAppointmentData.id);
   return (
     <>
-      <div className="min-h-1/2 min-w-full border-b bg-slate-600  border-slate-500">
+      <div className=" h-fit min-w-full border-b bg-slate-600  border-slate-500">
         <div className="h-14 pl-4 pr-3 flex font-semibold items-center justify-between  bg-sky-500">
           <p>
             {globalPatientData.first_name +
@@ -96,6 +99,20 @@ export default function MainOptionsMenu({ hideComponent }) {
 
         <div>
           <MenuDivsWithIcon
+            onclick={() => setShowTreatmentNotePage(!showTreatmentNotePage)}
+            text="Add note"
+            icon={
+              <FontAwesomeIcon
+                icon="fa-regular fa-comment"
+                size="lg"
+                style={{ color: "#0284C7" }}
+              />
+            }
+          />
+        </div>
+
+        <div>
+          <MenuDivsWithIcon
             icon={
               <FontAwesomeIcon
                 icon="fa-solid fa-trash"
@@ -109,6 +126,7 @@ export default function MainOptionsMenu({ hideComponent }) {
         {showPaymentsPage && (
           <div>
             <PaymentPage
+              refetchData={refetchData}
               hideComponent={() => setShowPaymentsPage(!showPaymentsPage)}
               appointmentId={globalAppointmentData.id}
               appointmentTypeId={globalAppointmentTypeData.id}
@@ -134,6 +152,17 @@ export default function MainOptionsMenu({ hideComponent }) {
         {showInvoicePage && (
           <div>
             <InvoicePortal />
+          </div>
+        )}
+
+        {showTreatmentNotePage && (
+          <div className="fixed top-0 left-0 z-20 w-full h-screen bg-white overflow-auto">
+            <CreateTreatmentNote
+              hideComponent={() =>
+                setShowTreatmentNotePage(!showTreatmentNotePage)
+              }
+              patientId={globalPatientData.id}
+            />
           </div>
         )}
       </div>

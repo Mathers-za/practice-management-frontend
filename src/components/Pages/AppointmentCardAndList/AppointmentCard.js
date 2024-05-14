@@ -5,8 +5,9 @@ import { Chip } from "@mui/material";
 import MainOptionsMenu from "../../Main Options/MainOptionsMenu";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGlobalStore } from "../../../zustandStore/store";
+import { getChipProperties } from "./appCardHelperfns";
 
-export default function AppointmentCard({ appointmentData }) {
+export default function AppointmentCard({ appointmentData, refetchData }) {
   const [chipProperties, setChipProperties] = useState();
 
   const {
@@ -39,34 +40,15 @@ export default function AppointmentCard({ appointmentData }) {
   }
 
   const [showOptionsMenu, setShowOptionsMenu] = useState(false);
-  function getChipProperties(invoiceStatus) {
-    const properties = {};
-    if (invoiceStatus) {
-      switch (invoiceStatus) {
-        case "In progress":
-          properties.color = "warning";
-          properties.label = "Invoice created";
-
-          break;
-        case "Paid":
-          properties.color = "success";
-          properties.label = "Invoice Paid";
-          break;
-        case "Sent":
-          properties.color = "secondary";
-          properties.label = "Invoice Sent";
-          break;
-      }
-    } else {
-      properties.color = "primary";
-      properties.label = "new";
-    }
-    return properties;
-  }
 
   useEffect(() => {
     if (appointmentData) {
-      setChipProperties(getChipProperties(appointmentData.invoice_status));
+      setChipProperties(
+        getChipProperties(
+          appointmentData.invoice_status,
+          appointmentData.amount_due
+        )
+      );
     }
   }, [appointmentData]);
 
@@ -132,10 +114,11 @@ export default function AppointmentCard({ appointmentData }) {
             <motion.div
               className="w-full h-full"
               initial={{ height: "0%" }}
-              animate={{ height: "50%" }}
+              animate={{ height: "56%" }}
               exit={{ height: "0%" }}
             >
               <MainOptionsMenu
+                refetchData={refetchData}
                 hideComponent={() => setShowOptionsMenu(!showOptionsMenu)}
               />
             </motion.div>

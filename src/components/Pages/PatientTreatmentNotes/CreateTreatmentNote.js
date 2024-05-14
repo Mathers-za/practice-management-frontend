@@ -27,7 +27,7 @@ export default function CreateTreatmentNote({ hideComponent, patientId }) {
     event.preventDefault();
     const response = await createMutation.mutateAsync(treatmentNotePayload);
     createdTreatmentNoteId.current = response.id;
-    setShowEditForm(!showEditForm);
+    hideComponent();
   }
 
   function handleDateChange(date) {
@@ -49,15 +49,6 @@ export default function CreateTreatmentNote({ hideComponent, patientId }) {
         treatmentNoteData={treatmentNotePayload}
         disable={!treatmentNotePayload?.title}
       />
-      {showEditForm && (
-        <div className="fixed left-0 top-0 w-full z-10 bg-white h-screen overflow-auto">
-          {" "}
-          <EditTreatmentNote
-            treatmentNoteId={createdTreatmentNoteId.current}
-            hideComponent={hideComponent}
-          />
-        </div>
-      )}
     </>
   );
 }

@@ -1,7 +1,7 @@
 import GenericTopBar from "../../miscellaneous components/GenericTopBar";
-import { MobileDatePicker } from "@mui/x-date-pickers";
+import { CalendarIcon, MobileDatePicker } from "@mui/x-date-pickers";
 
-import { Button, TextField } from "@mui/material";
+import { Button, InputAdornment, TextField } from "@mui/material";
 
 export default function TreatmentNoteForm({
   treatmentNoteData,
@@ -27,8 +27,8 @@ export default function TreatmentNoteForm({
               name="title"
               value={treatmentNoteData?.title || null}
               label="Title"
-              required={true}
               helperText="Field required"
+              required={true}
             />
           </div>
 
@@ -38,6 +38,15 @@ export default function TreatmentNoteForm({
             value={new Date(treatmentNoteData.date)}
             onAccept={(date) => handleDateChange(date)}
             slotProps={{
+              textField: {
+                InputProps: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <CalendarIcon />
+                    </InputAdornment>
+                  ),
+                },
+              },
               actionBar: { actions: [] },
               toolbar: { sx: { bgcolor: "#38bdf8" } },
             }}
