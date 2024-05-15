@@ -49,7 +49,7 @@ export default function MainOptionsMenu({ hideComponent, refetchData }) {
         <MenuDivsWithIcon
           onclick={() => setShowIcdCodeComponent(!showIcdCodeComponent)}
           text="Manage codes"
-          icon={
+          iconStart={
             <FontAwesomeIcon
               icon="fa-regular fa-file-lines"
               size="xl"
@@ -61,7 +61,7 @@ export default function MainOptionsMenu({ hideComponent, refetchData }) {
 
         <MenuDivsWithIcon
           onclick={() => setShowInvoicePage(!showInvoicePage)}
-          icon={
+          iconStart={
             <FontAwesomeIcon
               icon="fa-regular fa-credit-card"
               size="lg"
@@ -74,7 +74,7 @@ export default function MainOptionsMenu({ hideComponent, refetchData }) {
         <div>
           <MenuDivsWithIcon
             onclick={() => setShowPaymentsPage(!showPaymentsPage)}
-            icon={
+            iconStart={
               <FontAwesomeIcon
                 icon="fa-solid fa-coins"
                 size="lg"
@@ -86,7 +86,7 @@ export default function MainOptionsMenu({ hideComponent, refetchData }) {
         </div>
         <div>
           <MenuDivsWithIcon
-            icon={
+            iconStart={
               <FontAwesomeIcon
                 icon="fa-solid fa-xmark"
                 size="lg"
@@ -101,7 +101,7 @@ export default function MainOptionsMenu({ hideComponent, refetchData }) {
           <MenuDivsWithIcon
             onclick={() => setShowTreatmentNotePage(!showTreatmentNotePage)}
             text="Add note"
-            icon={
+            iconStart={
               <FontAwesomeIcon
                 icon="fa-regular fa-comment"
                 size="lg"
@@ -113,7 +113,7 @@ export default function MainOptionsMenu({ hideComponent, refetchData }) {
 
         <div>
           <MenuDivsWithIcon
-            icon={
+            iconStart={
               <FontAwesomeIcon
                 icon="fa-solid fa-trash"
                 size="lg"
@@ -151,7 +151,9 @@ export default function MainOptionsMenu({ hideComponent, refetchData }) {
         )}
         {showInvoicePage && (
           <div>
-            <InvoicePortal />
+            <InvoicePortal
+              hideComponent={() => setShowInvoicePage(!showInvoicePage)}
+            />
           </div>
         )}
 

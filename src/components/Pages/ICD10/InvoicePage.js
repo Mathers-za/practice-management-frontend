@@ -1,4 +1,3 @@
-import { useLocation } from "react-router-dom";
 import ICD10Table from "./ICD10-Table";
 import { useEffect, useState } from "react";
 import styles from "./invoicePage.module.css";
@@ -9,14 +8,15 @@ import {
   usePostData,
 } from "../../../CustomHooks/serverStateHooks";
 import PaymentPage from "../Payments/PaymentPage";
-import {
-  useAppointmentPortalStore,
-  useGlobalStore,
-  usePaymentsPageStore,
-} from "../../../zustandStore/store";
+import { useGlobalStore } from "../../../zustandStore/store";
 import PaymentReference from "./PaymentReference";
 import { format } from "date-fns";
 import InvoiceSendCard from "./InvoiceSendCard/InvoiceSendCard";
+import { Button, TextField } from "@mui/material";
+import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
+import GenericTopBar from "../../miscellaneous components/GenericTopBar";
+import MenuDivsWithIcon from "../../miscellaneous components/MenuListDivsWithIcon";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 function invoiceCreationValidation(payloadData, financialData) {
   const invoiceErrors = [];
@@ -57,26 +57,29 @@ function invoiceCreationValidation(payloadData, financialData) {
   }
 }
 
-export default function InvoicePortal() {
+export default function InvoicePortal({ hideComponent }) {
   //validation functuion has been made. make sur eyou having mathcing sttae names
-  const location = useLocation();
-  const { state } = location;
-  const [drop, setDrop] = useState(new Array(2).fill(false));
+
+  const {
+    globalProfileData,
+    globalAppointmentData,
+    globalAppointmentTypeData,
+    globalPatientData,
+  } = useGlobalStore();
+
   const { data: financialsData, refetch } = useFetchData(
-    `/financials/view${globalPatientData}`,
+    `/financials/view${globalAppointmentData.id}`,
     "financialsDataInInvoicePage"
   );
 
-  const { globalPatientData } = useGlobalStore();
+  const [showDatePickers, setShowDatePickers] = useState(false);
+  const [showInvoiceTitleDropdown, setShowInvoiceDropdown] = useState(false);
+
+  const [showPaymentsReference, setShowPaymentsReference] = useState(false);
 
   const [showInvoiceSendCard, setShowInvoiceSendCard] = useState(false);
-
-  const invoiceDataObject = useAppointmentPortalStore(
-    (state) => state.appointmentsThathaveInvoices
-  );
-  const addToAppsWithInvoices = useAppointmentPortalStore(
-    (state) => state.setAppsThatHaveInvoices
-  );
+  const [showPaymentsPage, setShowPaymentsPage] = useState(false);
+  const [showIcd10Table, setShowIcd10Table] = useState(false);
 
   const [invoiceExist, setInvoiceExist] = useState();
 
@@ -84,32 +87,22 @@ export default function InvoicePortal() {
     `/financials/update${globalPatientData.id}`
   );
   const [changes, setChanges] = useState({});
-  const [isErrors, setIsErrors] = useState(false);
-  const [errorMessage, setErrorMessage] = useState();
+
   const { data: paymentsData } = useFetchData(
-    `/payments/view${globalPatientData.id}`,
+    `/payments/view${globalAppointmentData.id}`,
     "paymentsDataInInvoices"
   );
 
-  const invoiceData = invoiceDataObject.hasOwnProperty(state.appointmentId)
-    ? invoiceDataObject[state.appointmentId]
-    : undefined;
-
+  const { data: invoiceData } = useFetchData(
+    `/invoices/view${globalAppointmentData.id}`
+  );
   const { patchMutation: invoiceMutation } = usePatchData(
-    `/invoices/update${globalPatientData.id}`
+    `/invoices/update${globalPatientData.id}` //will need to chnage
   );
 
   const { createMutation } = usePostData(
-    `/invoices/create${globalPatientData.id}`
+    `/invoices/create${globalAppointmentData.id}`
   );
-
-  const togglePaymentsPage = usePaymentsPageStore(
-    (state) => state.toggleUniquePaymentsPage
-  );
-  const visibilty = usePaymentsPageStore(
-    (state) => state.paymentsPageDropDownStates
-  );
-  const paymentsPageVisibilty = visibilty[state.appointmentId];
 
   const [mutableFinancialsData, setMutableFinancialsData] = useState({});
   const [invoicePayloadChanges, setInvoicePayloadChanges] = useState({});
@@ -117,26 +110,25 @@ export default function InvoicePortal() {
     invoice_start_date: format(new Date(), "yyyy-MM-dd"),
     invoice_end_date: format(new Date(), "yyyy-MM-dd"),
     paid: false,
-    patient_id: state.patientId,
-    appointment_id: state.appointmentId,
-    profile_id: state.profile_id,
+    patient_id: globalPatientData.id,
+    appointment_id: globalAppointmentData.id,
   });
 
   useEffect(() => {
-    if (state) {
-      checkAndSetIcds(state.appointmentId, state.appointmentTypeId);
-    }
-  }, [state]);
+    checkAndSetIcds(globalAppointmentData.id, globalAppointmentTypeData.id);
+  }, []);
 
   useEffect(() => {
     if (invoiceData) {
-      setInvoicePayload(invoiceData);
+      setInvoicePayload((prev) => ({
+        invoiceData,
+      }));
       setInvoiceExist(true);
     } else if (invoicePayload) {
       setInvoicePayload((prev) => ({
         ...prev,
-        invoice_title: `${state?.patient_first_name} ${
-          state?.patient_last_name ?? ""
+        invoice_title: `${globalPatientData.first_name} ${
+          globalPatientData.last_name ?? ""
         } - ${invoicePayload?.invoice_start_date}`,
       }));
     }
@@ -157,6 +149,7 @@ export default function InvoicePortal() {
   }, [financialsData]);
 
   async function handleSubmission(index) {
+    //dont kniw what this is
     if (invoiceExist) {
       invoiceMutation.mutate(invoicePayloadChanges);
       setInvoicePayloadChanges({});
@@ -197,219 +190,317 @@ export default function InvoicePortal() {
     }
   }
 
-  function handleShow(index) {
-    setDrop((prev) => {
-      const newState = [...prev];
-      newState[index] = !drop[index];
-      return newState;
-    });
-  }
-
   return (
     <>
-      <div className={styles.component}>
-        <div className={styles["nav-top"]}>
-          <div>
-            {state?.patient_first_name} {state?.patient_last_name ?? ""}
-          </div>
-          <div>Close</div>
-        </div>
-        <div className={styles.top}>
-          <div>
-            Appointment Price <br />
-            <input
-              onBlur={async () => {
-                const errors = invoiceCreationValidation(
-                  changes,
-                  financialsData
-                );
-                if (errors && errors.length > 0) {
-                  setIsErrors(true);
-                  setErrorMessage(errors[0]);
-                } else {
-                  await patchMutation.mutateAsync(changes);
-                  refetch();
-                }
-              }}
-              onChange={handleChange}
-              disabled={financialsData?.source_icd}
-              type="number"
-              name="total_amount"
-              value={mutableFinancialsData?.total_amount}
-            />
-          </div>
-          <div>
-            Discount <br />
-            <input
-              disabled={parseFloat(financialsData?.amount_due) <= 0.0}
-              onBlur={async () => {
-                const errors = invoiceCreationValidation(
-                  changes,
-                  financialsData
-                );
-                if (errors && errors.length > 0) {
-                  setIsErrors(true);
-                  setErrorMessage(errors[0]);
-                } else {
-                  await patchMutation.mutateAsync(changes);
-                  refetch();
-                }
-              }}
-              name="discount"
-              onChange={handleChange}
-              type="number"
-              value={mutableFinancialsData?.discount || ""}
-            />
-          </div>
-        </div>
-        <div className={styles["bottom-menu"]}>
-          <div className={styles.row} onClick={() => handleShow(0)}>
-            Invoice Name
-          </div>
-          <div
-            className={
-              drop[0] ? `${styles.show} ${styles.invoiceName}` : styles.hide
-            }
-          >
-            <label>
-              Invoice Name
-              <br />
-              <input
-                onChange={handleChange}
-                type="text"
-                name="invoice_title"
-                value={invoicePayload?.invoice_title ?? ""}
-                id="invoiceData"
-              />
-            </label>
-          </div>
+      <div className="fixed left-0 top-0 w-full  z-20  h-screen overflow-auto  bg-white">
+        <GenericTopBar
+          label="Manage invoices"
+          onclick={() => hideComponent()}
+        />
 
-          <div className={styles.row} onClick={() => handleShow(1)}>
-            Medical Aid Coding
-          </div>
-          <div className={drop[1] ? styles.show : styles.hide}>
-            <ICD10Table
-              appointmentId={state?.appointmentId}
-              appointmentTypeId={state?.appointmentTypeId}
-              financialsDataRefetch={() => refetch()}
-            />
-          </div>
-          <div className={styles.row} onClick={() => handleShow(2)}>
-            Invoice Dates
-          </div>
-          <div
-            className={
-              drop[2] ? ` ${styles.invoiceDates} ${styles.show}` : styles.hide
-            }
-          >
-            {" "}
-            <div>
-              <label>
-                Invoice Start Date <br />
-                <input
-                  onChange={handleChange}
-                  type="date"
-                  name="invoice_start_date"
-                  value={format(
-                    new Date(invoicePayload?.invoice_start_date),
-                    "yyyy-MM-dd"
-                  )}
-                  id="invoiceData"
-                />
-              </label>
-            </div>
-            <div>
-              <label>
-                {" "}
-                Invoice End Date <br />
-                <input
-                  onChange={handleChange}
-                  type="date"
-                  name="invoice_end_date"
-                  value={format(
-                    new Date(invoicePayload?.invoice_end_date),
-                    "yyyy-MM-dd"
-                  )}
-                  id="invoiceData"
-                />
-              </label>
-            </div>
-          </div>
-          <div className={styles.row} onClick={() => handleShow(3)}>
-            Payments
-          </div>
-          <div className={drop[3] ? styles.show : styles.hide}>
-            {paymentsData &&
-              paymentsData.map((payment) => (
-                <>
-                  <div>
-                    <PaymentReference key={payment.id} paymentsData={payment} />
+        <div className="w-full h-screen flex justify-center">
+          <div className="w-[98%] h-fit  ">
+            <div className="w-full ">
+              <div className="h-fit mt-4 mb-4  ">
+                <div className="space-y-2 p-2  w-1/3 shadow-md shadow-black/40  flex flex-col">
+                  <TextField
+                    onChange={handleChange}
+                    label="Appointment Price"
+                    name="total_amount"
+                    value={mutableFinancialsData?.total_amount}
+                    type="number"
+                    variant="standard"
+                    onBlur={async () => {
+                      await patchMutation.mutateAsync(changes);
+                      refetch();
+                    }}
+                    helperText="The price for this appointment that will be used ofr invoicing"
+                    disabled={financialsData?.source_icd}
+                  />
+
+                  <TextField
+                    variant="standard"
+                    label="Add a discount"
+                    onBlur={async () => {
+                      await patchMutation.mutateAsync(changes);
+                      refetch();
+                    }}
+                    name="discount"
+                    type="number"
+                    onChange={handleChange}
+                    value={mutableFinancialsData?.discount || ""}
+                  />
+                </div>
+              </div>
+              <div className="shadow-md border border-slate-200  shadow-black/40">
+                <div className="">
+                  <div className="group">
+                    <MenuDivsWithIcon
+                      iconEnd={
+                        <>
+                          <FontAwesomeIcon
+                            icon={`fa-solid fa-chevron-${
+                              showInvoiceTitleDropdown ? "up" : "down"
+                            }`}
+                            size="lg"
+                            style={{ color: "#090a0c" }}
+                          />
+                        </>
+                      }
+                      text="Invoice Name"
+                      onclick={() =>
+                        setShowInvoiceDropdown(!showInvoiceTitleDropdown)
+                      }
+                    />
                   </div>
-                </>
-              ))}
 
-            <div className={styles.addPaymentButtonPositioning}>
-              <button
-                disabled={parseFloat(financialsData?.amount_due) <= 0}
-                className={
-                  parseFloat(financialsData?.amount_due) <= 0
-                    ? `${styles.addPaymentBtn} ${styles.disableBtn}`
-                    : styles.addPaymentBtn
-                }
-                onClick={() => togglePaymentsPage(state.appointmentId)}
-              >
-                Add Payment
-              </button>
+                  {showInvoiceTitleDropdown && (
+                    <div>
+                      <TextField
+                        fullWidth
+                        onChange={handleChange}
+                        type="text"
+                        name="invoice_title"
+                        value={invoicePayload?.invoice_title ?? ""}
+                        id="invoiceData"
+                        label="Invoice title"
+                        variant="standard"
+                      />
+                    </div>
+                  )}
+
+                  <MenuDivsWithIcon
+                    text="Medical Aid Coding"
+                    onclick={() => setShowIcd10Table(!showIcd10Table)}
+                    iconEnd={
+                      <>
+                        <FontAwesomeIcon
+                          icon={`fa-solid fa-chevron-${
+                            showIcd10Table ? "up" : "down"
+                          }`}
+                          size="lg"
+                          style={{ color: "#090a0c" }}
+                        />
+                      </>
+                    }
+                  />
+
+                  {showIcd10Table && (
+                    <ICD10Table
+                      appointmentId={globalAppointmentData.id}
+                      appointmentTypeId={globalAppointmentTypeData.id}
+                      financialsDataRefetch={() => refetch()}
+                    />
+                  )}
+
+                  <MenuDivsWithIcon
+                    iconEnd={
+                      <>
+                        <FontAwesomeIcon
+                          icon={`fa-solid fa-chevron-${
+                            showDatePickers ? "up" : "down"
+                          }`}
+                          size="lg"
+                          style={{ color: "#090a0c" }}
+                        />
+                      </>
+                    }
+                    text="Invoice Dates"
+                    onclick={() => setShowDatePickers(!showDatePickers)}
+                  />
+
+                  {showDatePickers && (
+                    <div className="flex gap-4 mt-4">
+                      <div>
+                        <MobileDatePicker
+                          value={
+                            format(
+                              new Date(invoicePayload?.invoice_start_date),
+                              "yyyy-MM-dd"
+                            ) ?? new Date()
+                          }
+                          format="yyyy-MM-dd"
+                          label="Invoice Start Date"
+                          closeOnSelect={true}
+                          onAccept={(value) =>
+                            setInvoicePayload((prev) => ({
+                              ...prev,
+                              invoice_start_date: format(
+                                new Date(value),
+                                "yyyy-MM-dd"
+                              ),
+                            }))
+                          }
+                        />
+                      </div>{" "}
+                      <div>
+                        <MobileDatePicker
+                          format="yyyy-MM-dd"
+                          label="Invoice End Date"
+                          name="invoice_end_date"
+                          closeOnSelect={true}
+                          onAccept={(value) =>
+                            setInvoicePayload((prev) => ({
+                              ...prev,
+                              invoice_end_date: format(
+                                new Date(value),
+                                "yyyy-MM-dd"
+                              ),
+                            }))
+                          }
+                          value={
+                            format(
+                              new Date(invoicePayload?.invoice_end_date),
+                              "yyyy-MM-dd"
+                            ) ?? new Date()
+                          }
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  <MenuDivsWithIcon
+                    iconEnd={
+                      <>
+                        <FontAwesomeIcon
+                          icon={`fa-solid fa-chevron-${
+                            showPaymentsReference ? "up" : "down"
+                          }`}
+                          size="lg"
+                          style={{ color: "#090a0c" }}
+                        />
+                      </>
+                    }
+                    text="Payments"
+                    onclick={() =>
+                      setShowPaymentsReference(!showPaymentsReference)
+                    }
+                  />
+
+                  {showPaymentsReference && (
+                    <div className="p-4">
+                      <div>
+                        {paymentsData
+                          ? paymentsData.map((payment) => (
+                              <PaymentReference
+                                key={payment.id}
+                                paymentsData={payment}
+                              />
+                            ))
+                          : "No payments data"}
+                      </div>
+                      <div className="flex justify-end">
+                        <Button
+                          size="small"
+                          disabled={
+                            parseFloat(mutableFinancialsData?.amount_due) <= 0
+                          }
+                          variant="contained"
+                          onClick={() => setShowPaymentsPage(!showPaymentsPage)}
+                        >
+                          Add Payment
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+
+                  {showPaymentsPage && (
+                    <PaymentPage
+                      appointmentTypeId={globalAppointmentTypeData.id}
+                      hideComponent={() =>
+                        setShowPaymentsPage(!showPaymentsPage)
+                      }
+                      appointmentId={globalAppointmentData.id}
+                    />
+                  )}
+
+                  <MenuDivsWithIcon
+                    className={
+                      "  hover:bg-white hover:cursor-default  justify-end pr-7 h-14 py-0 mt-0"
+                    }
+                    text={
+                      <>
+                        <div className="  text-end">
+                          <p>Appointment Price</p>{" "}
+                          <p className="font-semibold">
+                            R{financialsData?.total_amount}
+                          </p>
+                        </div>{" "}
+                      </>
+                    }
+                  />
+                  <MenuDivsWithIcon
+                    className={
+                      " justify-end hover:bg-white hover:cursor-default pr-7 h-14 py-0"
+                    }
+                    text={
+                      <>
+                        <div className="text-end">
+                          <p>Payments</p>{" "}
+                          <p className="font-semibold">
+                            R{financialsData?.amount_paid}
+                          </p>
+                        </div>{" "}
+                      </>
+                    }
+                  />
+                  <MenuDivsWithIcon
+                    className={
+                      "  hover:bg-white hover:cursor-default justify-end  h-14 py-0"
+                    }
+                    text={
+                      <>
+                        <div className="text-end">
+                          <p>Discount</p>{" "}
+                          <p className="font-semibold ">
+                            R{financialsData?.discount}
+                          </p>
+                        </div>{" "}
+                      </>
+                    }
+                  />
+                  <MenuDivsWithIcon
+                    className={
+                      " hover:bg-white hover:cursor-default  justify-end h-14 py-0"
+                    }
+                    text={
+                      <>
+                        <div className="text-end">
+                          <p>Amount due</p>{" "}
+                          <p className="font-semibold ">
+                            R{financialsData?.amount_due}
+                          </p>
+                        </div>{" "}
+                      </>
+                    }
+                  />
+                </div>
+              </div>
+              <div className="flex justify-between   mt-2">
+                <Button
+                  onClick={() => hideComponent()}
+                  variant="contained"
+                  color="inherit"
+                >
+                  Cancel
+                </Button>
+                <Button variant="contained">
+                  {invoiceExist ? "save Changes" : "Create Invoice"}
+                </Button>
+              </div>
             </div>
-
-            {paymentsPageVisibilty && (
-              <PaymentPage
-                appointmentId={state.appointmentId}
-                appointmentTypeId={state.appointmentTypeId}
-              />
-            )}
-          </div>
-
-          <div className={`${styles.amounts} ${styles.row}`}>
-            {" "}
-            Appointment Price <br /> R{financialsData?.total_amount}
-          </div>
-          <div className={`${styles.amounts} ${styles.row}`}>
-            Payments <br /> R{financialsData?.amount_paid}
-          </div>
-          <div className={`${styles.amounts} ${styles.row}`}>
-            Discount <br /> R{financialsData?.discount || "0.00"}{" "}
-          </div>
-          <div className={`${styles.amounts} ${styles.row}`}>
-            Due <br />R{financialsData?.amount_due}
           </div>
         </div>
-        <button
-          disabled={
-            invoiceExist && Object.keys(invoicePayloadChanges).length === 0
-              ? true
-              : false
-          }
-          onClick={() =>
-            invoiceData ? handleSubmission(1) : handleSubmission(0)
-          }
-          className={styles["create-invoice-btn"]}
-        >
-          {invoiceExist ? "Save Changes" : "Create Invoice"}
-        </button>
-        {isErrors && errorMessage ? (
-          <div className={styles.errorMessage}>{errorMessage}</div>
-        ) : null}
       </div>
       {showInvoiceSendCard && (
         <InvoiceSendCard
           patientData={{
-            patientId: state.patientId,
-            patient_first_name: state.patient_first_name,
-            patient_last_name: state.patient_last_name,
+            patientId: globalPatientData.id,
+            patient_first_name: globalPatientData.first_name,
+            patient_last_name: globalPatientData.last_name,
           }}
-          profileId={state.profile_id}
-          appointmentId={state.appointmentId}
+          profileId={globalProfileData.id}
+          appointmentId={globalAppointmentData.id}
           hideComponent={() => setShowInvoiceSendCard(false)}
         />
       )}

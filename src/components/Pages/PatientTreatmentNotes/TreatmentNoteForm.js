@@ -37,7 +37,7 @@ export default function TreatmentNoteForm({
             closeOnSelect={true}
             value={new Date(treatmentNoteData.date)}
             onAccept={(date) => handleDateChange(date)}
-            slotProps={{
+            slotProps={{  
               textField: {
                 InputProps: {
                   startAdornment: (

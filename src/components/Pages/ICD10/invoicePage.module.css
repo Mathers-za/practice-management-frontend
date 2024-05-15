@@ -84,22 +84,6 @@
     box-shadow: 3px 3px 2px rgba(0, 0, 0, 0.5);
   }
   
-  .nav-top {
-    position: relative;
-    top: 0;
-    left: 0; 
-    height: 80px;
-    width: 100%;
-    background-color: rgb(116, 112, 112);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: white;
-    padding: 0 10px;
-    box-sizing: border-box;
-   
-  }
-  
   .nav-top div {
     padding: 0 15px;
   }
