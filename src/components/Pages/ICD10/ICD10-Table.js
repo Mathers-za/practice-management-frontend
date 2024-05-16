@@ -9,6 +9,7 @@ import CodeLineItem from "./LineItemSelection";
 import GenericTopBar from "../../miscellaneous components/GenericTopBar";
 import { Button, IconButton } from "@mui/material";
 import { Delete, Edit } from "@mui/icons-material";
+//TODO add tailwind styles to table. its currenlty using styles
 
 export default function ICD10Table({
   appointmentId,
@@ -16,11 +17,10 @@ export default function ICD10Table({
 
   queryKeyToInvalidate = "",
 }) {
-  console.log(appointmentId);
   const codeDataToEdit = useRef(null);
-  const { data: ICD10Data } = useFetchData(
+  const { data: ICD10Data, refetch: refetchIcd10Data } = useFetchData(
     `/icd10Codes/view${appointmentId}`,
-    "PatientICD10Data"
+    ["financialsControl,page,icd10Table,fetchIcd10Data"]
   );
 
   const { data: predefinedICDCData } = useFetchData(
@@ -35,7 +35,6 @@ export default function ICD10Table({
     queryKeyToInvalidate
   );
   const [showLineItem, setShowLineItem] = useState(false);
-  const [createMode, setCreateMode] = useState();
 
   useEffect(() => {
     if (ICD10Data) {
@@ -44,14 +43,6 @@ export default function ICD10Table({
       setCodesForMapping([]);
     }
   }, [ICD10Data, predefinedICDCData]);
-
-  function toggleLineItemFlag() {
-    setShowLineItem(false);
-  }
-
-  async function postData(data) {
-    await createMutation.mutateAsync(data);
-  }
 
   return (
     <>
@@ -112,7 +103,7 @@ export default function ICD10Table({
               variant="contained"
               onClick={() => {
                 setShowLineItem(true);
-                setCreateMode(true);
+
                 codeDataToEdit.current = undefined;
               }}
             >
@@ -123,9 +114,10 @@ export default function ICD10Table({
         {showLineItem && (
           <div className="fixed w-full h-screen top-0 left-0 z-20  bg-black/40 flex justify-center items-center">
             <CodeLineItem
+              refetchIcd10TableData={refetchIcd10Data}
               codeData={codeDataToEdit.current}
               hideComponent={() => setShowLineItem(!showLineItem)}
-              QueryKeyToInvalidate="PatientICD10Data"
+              QueryKeyToInvalidate={queryKeyToInvalidate}
             />
           </div>
         )}

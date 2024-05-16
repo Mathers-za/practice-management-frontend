@@ -101,11 +101,26 @@ export {
 };
 
 export const useGlobalStore = create((set) => ({
+  globalRefetch: "",
   globalPatientData: {},
   globalAppointmentTypeData: {},
   globalAppointmentData: {},
   globalProfileData: {},
   globalPracticeDetailsData: {},
+  globalFinancialData: {},
+  globalInvoiceData: {},
+  setGlobalInvoiceData: (invoiceDataObj) =>
+    set({
+      globalInvoiceData: invoiceDataObj,
+    }),
+  setGlobalFinancialData: (financialDataObj) =>
+    set({
+      globalInvoiceData: financialDataObj,
+    }),
+  setGlobalRefetch: (callback) =>
+    set({
+      globalRefetch: () => callback(),
+    }),
   setGlobalPatientData: (patientDataObj) =>
     set({ globalPatientData: patientDataObj }),
   setGlobalAppointmentTypeData: (apptypeDataObj) =>

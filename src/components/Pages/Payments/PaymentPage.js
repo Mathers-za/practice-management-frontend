@@ -14,6 +14,7 @@ import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
 import InputAdornment from "@mui/material/InputAdornment";
 
 import { CalendarIcon } from "@mui/x-date-pickers/icons";
+import { useGlobalStore } from "../../../zustandStore/store";
 
 function checkForErrors(paymentPayload, data) {
   const errors = [];
@@ -62,9 +63,13 @@ export default function PaymentPage({
   refetchData = "",
   queryKeyToInvalidate = "",
 }) {
-  const { data, refetch } = useFetchData(
+  const { data, refetch: refreshPaymentsPage } = useFetchData(
     `/financials/view${appointmentId}`,
-    "financialsData"
+    ["financialsControl", "page", "payments"]
+  );
+
+  const refetchAppointmentListData = useGlobalStore(
+    (state) => state.globalRefetch
   );
 
   const [paymentsPayload, setPaymentsPayload] = useState({
@@ -74,18 +79,12 @@ export default function PaymentPage({
     payment_date: format(new Date(), "yyyy-MM-dd"),
   });
 
-  const { createMutation } = usePostData(`/payments/create${appointmentId}`, [
-    "financialsData",
-  ]);
+  const { createMutation } = usePostData(
+    `/payments/create${appointmentId}`,
+    queryKeyToInvalidate
+  );
 
   const isChecked = useRef(false);
-
-  useEffect(() => {
-    const runCheckAndSetIcds = async () => {
-      await checkAndSetIcds(appointmentId, appointmentTypeId);
-    };
-    runCheckAndSetIcds();
-  }, []);
 
   const [chipColorTracker, setChipColorTracker] = useState(
     new Array("success")
@@ -123,7 +122,8 @@ export default function PaymentPage({
       ...prev,
       amount: null,
     }));
-    refetchData && refetchData();
+    refreshPaymentsPage();
+    refetchAppointmentListData && refetchAppointmentListData();
   }
   function handleChange(event) {
     const { name, value } = event.target;

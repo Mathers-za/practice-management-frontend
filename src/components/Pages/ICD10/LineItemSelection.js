@@ -9,7 +9,7 @@ import { useGlobalStore } from "../../../zustandStore/store";
 
 export default function CodeLineItem({
   codeData,
-
+  refetchIcd10TableData,
   hideComponent,
   QueryKeyToInvalidate = "",
 }) {
@@ -51,13 +51,15 @@ export default function CodeLineItem({
     }));
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
     if (codeData) {
-      patchMutation.mutate(changes);
+      await patchMutation.mutateAsync(changes);
+      refetchIcd10TableData();
       setChanges({});
       hideComponent();
     } else {
-      createMutation.mutate(lineItemData);
+      await createMutation.mutateAsync(lineItemData);
+      refetchIcd10TableData();
       hideComponent();
     }
   }
@@ -119,6 +121,7 @@ export default function CodeLineItem({
                   createMutation.mutate(lineItemData);
                   setLineItemData({});
                   setChanges({});
+                  refetchIcd10TableData();
                 }}
                 type="submit"
                 variant="contained"

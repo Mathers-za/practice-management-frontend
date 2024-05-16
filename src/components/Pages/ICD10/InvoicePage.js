@@ -67,11 +67,11 @@ export default function InvoicePortal({ hideComponent }) {
     globalPatientData,
   } = useGlobalStore();
 
-  const { data: financialsData, refetch } = useFetchData(
+  const { data: financialsData, refetch: refetchFinancialsData } = useFetchData(
     `/financials/view${globalAppointmentData.id}`,
-    "financialsDataInInvoicePage"
+    ["financialsControl", "page", "invoice", "fetchFinancialData"]
   );
-
+  console.log(globalProfileData);
   const [showDatePickers, setShowDatePickers] = useState(false);
   const [showInvoiceTitleDropdown, setShowInvoiceDropdown] = useState(false);
 
@@ -81,27 +81,26 @@ export default function InvoicePortal({ hideComponent }) {
   const [showPaymentsPage, setShowPaymentsPage] = useState(false);
   const [showIcd10Table, setShowIcd10Table] = useState(false);
 
-  const [invoiceExist, setInvoiceExist] = useState();
+  const [invoiceExist, setInvoiceExist] = useState(false);
 
   const { patchMutation } = usePatchData(
-    `/financials/update${globalPatientData.id}`
+    `/financials/update${financialsData?.appointment_id}`
   );
-  const [changes, setChanges] = useState({});
 
   const { data: paymentsData } = useFetchData(
     `/payments/view${globalAppointmentData.id}`,
-    "paymentsDataInInvoices"
+    ["financialsControl", "page", "invoice", "fetchPaymentsData"]
   );
 
   const { data: invoiceData } = useFetchData(
-    `/invoices/view${globalAppointmentData.id}`
+    `/invoices/view${globalAppointmentData?.id}`
   );
   const { patchMutation: invoiceMutation } = usePatchData(
-    `/invoices/update${globalPatientData.id}` //will need to chnage
+    `/invoices/update${globalAppointmentData?.id}`
   );
 
   const { createMutation } = usePostData(
-    `/invoices/create${globalAppointmentData.id}`
+    `/invoices/create${globalAppointmentData?.id}`
   );
 
   const [mutableFinancialsData, setMutableFinancialsData] = useState({});
@@ -110,84 +109,88 @@ export default function InvoicePortal({ hideComponent }) {
     invoice_start_date: format(new Date(), "yyyy-MM-dd"),
     invoice_end_date: format(new Date(), "yyyy-MM-dd"),
     paid: false,
-    patient_id: globalPatientData.id,
+
     appointment_id: globalAppointmentData.id,
+    invoice_title: `${
+      globalPatientData.first_name + " " + globalPatientData.last_name ?? " "
+    } - ${format(new Date(), "yyyy-MM-dd")}`,
   });
 
-  useEffect(() => {
-    checkAndSetIcds(globalAppointmentData.id, globalAppointmentTypeData.id);
-  }, []);
+  function determineInvoiceStatus(invoiceStatus, amountDue) {
+    if (invoiceStatus && invoiceStatus !== "Paid") {
+      if (parseFloat(amountDue) <= 0) {
+        return "Paid";
+      } else {
+        return invoiceStatus;
+      }
+    } else {
+      return "Paid";
+    }
+  }
+  function handleFinancialDataChanges(event) {
+    const { name, value } = event.target;
+
+    setMutableFinancialsData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  }
 
   useEffect(() => {
     if (invoiceData) {
-      setInvoicePayload((prev) => ({
-        invoiceData,
-      }));
+      setInvoicePayload(invoiceData);
       setInvoiceExist(true);
     } else if (invoicePayload) {
-      setInvoicePayload((prev) => ({
-        ...prev,
-        invoice_title: `${globalPatientData.first_name} ${
-          globalPatientData.last_name ?? ""
-        } - ${invoicePayload?.invoice_start_date}`,
-      }));
+      setInvoiceExist(false);
+    } else {
+      setInvoiceExist(false);
     }
 
     if (financialsData) {
       setMutableFinancialsData(() => ({
         total_amount: financialsData?.total_amount,
         discount: financialsData?.discount,
+        source_icd: financialsData.source_icd,
       }));
     }
+  }, [financialsData, invoiceData]);
 
-    if (financialsData && parseFloat(financialsData.amount_due) <= 0) {
-      setInvoicePayload((prev) => ({
-        ...prev,
-        paid: true,
-      }));
-    }
-  }, [financialsData]);
-
-  async function handleSubmission(index) {
-    //dont kniw what this is
+  async function handleSubmission() {
     if (invoiceExist) {
-      invoiceMutation.mutate(invoicePayloadChanges);
+      invoiceMutation.mutate({
+        ...invoicePayloadChanges,
+        invoice_status: determineInvoiceStatus(
+          invoicePayload?.invoice_status,
+          mutableFinancialsData?.amount_due
+        ),
+      });
       setInvoicePayloadChanges({});
 
-      setShowInvoiceSendCard(true);
+      setShowInvoiceSendCard(!showInvoiceSendCard);
     } else {
-      await createMutation.mutateAsync(invoicePayload);
-      setShowInvoiceSendCard(true);
-      setInvoiceExist(true);
+      createMutation.mutate({
+        ...invoiceData,
+        invoice_status: determineInvoiceStatus(
+          invoicePayload.invoice_status,
+          financialsData.amount_due
+        ),
+      });
       setInvoicePayloadChanges({});
-      {
-      }
+      setInvoiceExist(true);
+      setShowInvoiceSendCard(true);
     }
   }
 
-  function handleChange(event) {
-    const { name, value, id } = event.target;
-
-    if (id !== "invoiceData") {
-      setMutableFinancialsData((prev) => ({
-        ...prev,
-        [name]: value === "" ? null : value,
-      }));
-
-      setChanges((prev) => ({
-        ...prev,
-        [name]: value === "" ? null : value,
-      }));
-    } else if (id === "invoiceData") {
-      setInvoicePayloadChanges((prev) => ({
-        ...prev,
-        [name]: value === "" ? null : value,
-      }));
-      setInvoicePayload((prev) => ({
-        ...prev,
-        [name]: value === "" ? null : value,
-      }));
-    }
+  function handleInvoiceChanges(event) {
+    const { name, value } = event.target;
+    setInvoicePayload((prev) => ({
+      ...prev,
+      [name]: value === "" ? null : value,
+    }));
+    setInvoicePayloadChanges((prev) => ({
+      ...prev,
+      [name]: value === "" ? null : value,
+    }));
   }
 
   return (
@@ -204,30 +207,36 @@ export default function InvoicePortal({ hideComponent }) {
               <div className="h-fit mt-4 mb-4  ">
                 <div className="space-y-2 p-2  w-1/3 shadow-md shadow-black/40  flex flex-col">
                   <TextField
-                    onChange={handleChange}
+                    onChange={(event) => handleFinancialDataChanges(event)}
                     label="Appointment Price"
                     name="total_amount"
-                    value={mutableFinancialsData?.total_amount}
+                    disabled={mutableFinancialsData?.source_icd}
+                    value={mutableFinancialsData?.total_amount ?? ""}
                     type="number"
                     variant="standard"
                     onBlur={async () => {
-                      await patchMutation.mutateAsync(changes);
-                      refetch();
+                      await patchMutation.mutateAsync(mutableFinancialsData);
+
+                      refetchFinancialsData();
                     }}
-                    helperText="The price for this appointment that will be used ofr invoicing"
-                    disabled={financialsData?.source_icd}
+                    helperText={
+                      mutableFinancialsData?.source_icd
+                        ? "The price for this appointment is set according to the ICD codes"
+                        : "This appointment has no ICD codes, therefore can be edited"
+                    }
                   />
 
                   <TextField
                     variant="standard"
                     label="Add a discount"
                     onBlur={async () => {
-                      await patchMutation.mutateAsync(changes);
-                      refetch();
+                      await patchMutation.mutateAsync(mutableFinancialsData);
+
+                      refetchFinancialsData();
                     }}
                     name="discount"
                     type="number"
-                    onChange={handleChange}
+                    onChange={(event) => handleFinancialDataChanges(event)}
                     value={mutableFinancialsData?.discount || ""}
                   />
                 </div>
@@ -236,6 +245,7 @@ export default function InvoicePortal({ hideComponent }) {
                 <div className="">
                   <div className="group">
                     <MenuDivsWithIcon
+                      className="hover:bg-slate-50"
                       iconEnd={
                         <>
                           <FontAwesomeIcon
@@ -258,11 +268,10 @@ export default function InvoicePortal({ hideComponent }) {
                     <div>
                       <TextField
                         fullWidth
-                        onChange={handleChange}
+                        onChange={(event) => handleInvoiceChanges(event)}
                         type="text"
                         name="invoice_title"
                         value={invoicePayload?.invoice_title ?? ""}
-                        id="invoiceData"
                         label="Invoice title"
                         variant="standard"
                       />
@@ -270,6 +279,7 @@ export default function InvoicePortal({ hideComponent }) {
                   )}
 
                   <MenuDivsWithIcon
+                    className="hover:bg-slate-50"
                     text="Medical Aid Coding"
                     onclick={() => setShowIcd10Table(!showIcd10Table)}
                     iconEnd={
@@ -289,11 +299,18 @@ export default function InvoicePortal({ hideComponent }) {
                     <ICD10Table
                       appointmentId={globalAppointmentData.id}
                       appointmentTypeId={globalAppointmentTypeData.id}
-                      financialsDataRefetch={() => refetch()}
+                      financialsDataRefetch={() => refetchFinancialsData()}
+                      queryKeyToInvalidate={[
+                        "financialsControl",
+                        "page",
+                        "invoice",
+                        "fetchFinancialData",
+                      ]}
                     />
                   )}
 
                   <MenuDivsWithIcon
+                    className="hover:bg-slate-50"
                     iconEnd={
                       <>
                         <FontAwesomeIcon
@@ -313,24 +330,26 @@ export default function InvoicePortal({ hideComponent }) {
                     <div className="flex gap-4 mt-4">
                       <div>
                         <MobileDatePicker
-                          value={
-                            format(
-                              new Date(invoicePayload?.invoice_start_date),
-                              "yyyy-MM-dd"
-                            ) ?? new Date()
-                          }
+                          value={new Date(invoicePayload.invoice_start_date)}
                           format="yyyy-MM-dd"
                           label="Invoice Start Date"
                           closeOnSelect={true}
-                          onAccept={(value) =>
+                          onAccept={(value) => {
                             setInvoicePayload((prev) => ({
                               ...prev,
                               invoice_start_date: format(
                                 new Date(value),
                                 "yyyy-MM-dd"
                               ),
-                            }))
-                          }
+                            }));
+                            setInvoicePayloadChanges((prev) => ({
+                              ...prev,
+                              invoice_start_date: format(
+                                new Date(value),
+                                "yyyy-MM-dd"
+                              ),
+                            }));
+                          }}
                         />
                       </div>{" "}
                       <div>
@@ -339,27 +358,30 @@ export default function InvoicePortal({ hideComponent }) {
                           label="Invoice End Date"
                           name="invoice_end_date"
                           closeOnSelect={true}
-                          onAccept={(value) =>
+                          onAccept={(value) => {
                             setInvoicePayload((prev) => ({
                               ...prev,
                               invoice_end_date: format(
                                 new Date(value),
                                 "yyyy-MM-dd"
                               ),
-                            }))
-                          }
-                          value={
-                            format(
-                              new Date(invoicePayload?.invoice_end_date),
-                              "yyyy-MM-dd"
-                            ) ?? new Date()
-                          }
+                            }));
+                            setInvoicePayloadChanges((prev) => ({
+                              ...prev,
+                              invoice_end_date: format(
+                                new Date(value),
+                                "yyyy-MM-dd"
+                              ),
+                            }));
+                          }}
+                          value={new Date(invoicePayload.invoice_end_date)}
                         />
                       </div>
                     </div>
                   )}
 
                   <MenuDivsWithIcon
+                    className="hover:bg-slate-50"
                     iconEnd={
                       <>
                         <FontAwesomeIcon
@@ -380,7 +402,7 @@ export default function InvoicePortal({ hideComponent }) {
                   {showPaymentsReference && (
                     <div className="p-4">
                       <div>
-                        {paymentsData
+                        {paymentsData && paymentsData.length > 0
                           ? paymentsData.map((payment) => (
                               <PaymentReference
                                 key={payment.id}
@@ -411,6 +433,7 @@ export default function InvoicePortal({ hideComponent }) {
                         setShowPaymentsPage(!showPaymentsPage)
                       }
                       appointmentId={globalAppointmentData.id}
+                      queryKeyToInvalidate={["financialsControl", "page"]}
                     />
                   )}
 
@@ -484,7 +507,7 @@ export default function InvoicePortal({ hideComponent }) {
                 >
                   Cancel
                 </Button>
-                <Button variant="contained">
+                <Button onClick={handleSubmission} variant="contained">
                   {invoiceExist ? "save Changes" : "Create Invoice"}
                 </Button>
               </div>

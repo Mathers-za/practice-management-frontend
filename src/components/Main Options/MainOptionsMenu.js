@@ -21,11 +21,10 @@ export default function MainOptionsMenu({ hideComponent, refetchData }) {
     globalPatientData,
     globalAppointmentTypeData,
     globalAppointmentData,
-    globalProfileData,
-    globalPracticeDetailsData,
+    globalFinancialData,
+    globalInvoiceData,
   } = useGlobalStore();
 
-  console.log(globalAppointmentData.id);
   return (
     <>
       <div className=" h-fit min-w-full border-b bg-slate-600  border-slate-500">
@@ -73,6 +72,7 @@ export default function MainOptionsMenu({ hideComponent, refetchData }) {
 
         <div>
           <MenuDivsWithIcon
+            disabled={true}
             onclick={() => setShowPaymentsPage(!showPaymentsPage)}
             iconStart={
               <FontAwesomeIcon

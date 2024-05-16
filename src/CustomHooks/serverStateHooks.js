@@ -63,7 +63,9 @@ const usePostData = (endpoint = "", queryKey = undefined) => {
       return response.data;
     },
     onSuccess: () => {
-      queryKey && queryClient.invalidateQueries(queryKey);
+      if (queryKey) {
+        queryClient.invalidateQueries({ queryKey: queryKey });
+      }
     },
   });
 
