@@ -115,7 +115,7 @@ export const useGlobalStore = create((set) => ({
     }),
   setGlobalFinancialData: (financialDataObj) =>
     set({
-      globalInvoiceData: financialDataObj,
+      globalFinancialData: financialDataObj,
     }),
   setGlobalRefetch: (callback) =>
     set({

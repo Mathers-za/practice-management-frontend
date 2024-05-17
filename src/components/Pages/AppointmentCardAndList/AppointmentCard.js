@@ -19,11 +19,17 @@ export default function AppointmentCard({ appointmentData, refetchData }) {
   } = useGlobalStore();
 
   function handleOptionsClick() {
+    console.log(appointmentData.amount_due);
     setGlobalAppointmentData({
       appointment_date: appointmentData.appointment_date,
       start_time: appointmentData.start_time,
       end_time: appointmentData.end_time,
       id: appointmentData.appointment_id,
+    });
+    setGlobalFinancialData({
+      amount_due: appointmentData.amount_due,
+      total_amount: appointmentData.total_amount,
+      amount_paid: appointmentData.amount_paid,
     });
 
     setGlobalPatientData({
@@ -36,11 +42,7 @@ export default function AppointmentCard({ appointmentData, refetchData }) {
       appointment_name: appointmentData.appointment_name,
       id: appointmentData.apptype_id,
     });
-    setGlobalFinancialData({
-      amount_due: appointmentData.amount_due,
-      total_amount: appointmentData.total_amount,
-      amount_paid: appointmentData.amount_paid,
-    });
+
     setGlobalInvoiceData({
       invoice_status: appointmentData.invoice_status,
     });
@@ -60,7 +62,6 @@ export default function AppointmentCard({ appointmentData, refetchData }) {
       );
     }
   }, [appointmentData]);
-  console.log(appointmentData?.amount_due);
 
   return (
     <>

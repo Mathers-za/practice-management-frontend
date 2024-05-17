@@ -10,7 +10,6 @@ import ICD10Table from "../Pages/ICD10/ICD10-Table";
 import PaymentPage from "../Pages/Payments/PaymentPage";
 import GenericTopBar from "../miscellaneous components/GenericTopBar";
 import CreateTreatmentNote from "../Pages/PatientTreatmentNotes/CreateTreatmentNote";
-import TreatmentNoteForm from "../Pages/PatientTreatmentNotes/TreatmentNoteForm";
 
 export default function MainOptionsMenu({ hideComponent, refetchData }) {
   const [showInvoicePage, setShowInvoicePage] = useState(false);
@@ -72,13 +71,18 @@ export default function MainOptionsMenu({ hideComponent, refetchData }) {
 
         <div>
           <MenuDivsWithIcon
-            disabled={true}
+            disabled={parseFloat(globalFinancialData.amount_due) <= 0}
             onclick={() => setShowPaymentsPage(!showPaymentsPage)}
             iconStart={
               <FontAwesomeIcon
                 icon="fa-solid fa-coins"
                 size="lg"
-                style={{ color: "#0284C7" }}
+                style={{
+                  color:
+                    parseFloat(globalFinancialData.amount_due) <= 0
+                      ? "#94A3B8"
+                      : "#0284C7",
+                }}
               />
             }
             text="Add payment"

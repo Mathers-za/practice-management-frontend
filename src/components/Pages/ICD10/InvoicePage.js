@@ -68,14 +68,16 @@ export default function InvoicePortal({ hideComponent }) {
   } = useGlobalStore();
 
   const { data: financialsData, refetch: refetchFinancialsData } = useFetchData(
-    `/financials/view${globalAppointmentData.id}`,
-    ["financialsControl", "page", "invoice", "fetchFinancialData"]
+    `/financials/view${globalAppointmentData.id}`
   );
   console.log(globalProfileData);
   const [showDatePickers, setShowDatePickers] = useState(false);
   const [showInvoiceTitleDropdown, setShowInvoiceDropdown] = useState(false);
 
   const [showPaymentsReference, setShowPaymentsReference] = useState(false);
+  const refetchAppointmentSearchList = useGlobalStore(
+    (state) => state.globalRefetch
+  );
 
   const [showInvoiceSendCard, setShowInvoiceSendCard] = useState(false);
   const [showPaymentsPage, setShowPaymentsPage] = useState(false);
@@ -84,7 +86,8 @@ export default function InvoicePortal({ hideComponent }) {
   const [invoiceExist, setInvoiceExist] = useState(false);
 
   const { patchMutation } = usePatchData(
-    `/financials/update${financialsData?.appointment_id}`
+    `/financials/update${financialsData?.appointment_id}`,
+    ["financialsControl", "page", "invoice", "fetchPaymentsData"]
   );
 
   const { data: paymentsData } = useFetchData(
@@ -103,7 +106,14 @@ export default function InvoicePortal({ hideComponent }) {
     `/invoices/create${globalAppointmentData?.id}`
   );
 
-  const [mutableFinancialsData, setMutableFinancialsData] = useState({});
+  const [
+    appointmentTotalAndDiscountDisplay,
+    setAppointmentTotalAndDiscountDisplay,
+  ] = useState({});
+  const [
+    appoinmentTotalAndDiscountChanges,
+    setAppointmentTotalAndDiscountChanges,
+  ] = useState(false);
   const [invoicePayloadChanges, setInvoicePayloadChanges] = useState({});
   const [invoicePayload, setInvoicePayload] = useState({
     invoice_start_date: format(new Date(), "yyyy-MM-dd"),
@@ -130,10 +140,13 @@ export default function InvoicePortal({ hideComponent }) {
   function handleFinancialDataChanges(event) {
     const { name, value } = event.target;
 
-    setMutableFinancialsData((prev) => ({
+    setAppointmentTotalAndDiscountDisplay((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: value === "" ? "0,00" : value,
     }));
+    setAppointmentTotalAndDiscountChanges({
+      [name]: value === "" ? "0.00 " : value,
+    });
   }
 
   useEffect(() => {
@@ -147,7 +160,7 @@ export default function InvoicePortal({ hideComponent }) {
     }
 
     if (financialsData) {
-      setMutableFinancialsData(() => ({
+      setAppointmentTotalAndDiscountDisplay(() => ({
         total_amount: financialsData?.total_amount,
         discount: financialsData?.discount,
         source_icd: financialsData.source_icd,
@@ -161,7 +174,7 @@ export default function InvoicePortal({ hideComponent }) {
         ...invoicePayloadChanges,
         invoice_status: determineInvoiceStatus(
           invoicePayload?.invoice_status,
-          mutableFinancialsData?.amount_due
+          appointmentTotalAndDiscountDisplay?.amount_due
         ),
       });
       setInvoicePayloadChanges({});
@@ -210,17 +223,27 @@ export default function InvoicePortal({ hideComponent }) {
                     onChange={(event) => handleFinancialDataChanges(event)}
                     label="Appointment Price"
                     name="total_amount"
-                    disabled={mutableFinancialsData?.source_icd}
-                    value={mutableFinancialsData?.total_amount ?? ""}
+                    disabled={appointmentTotalAndDiscountDisplay?.source_icd}
+                    value={
+                      appointmentTotalAndDiscountDisplay?.total_amount ?? ""
+                    }
                     type="number"
                     variant="standard"
                     onBlur={async () => {
-                      await patchMutation.mutateAsync(mutableFinancialsData);
-
-                      refetchFinancialsData();
+                      if (
+                        Object.keys(appoinmentTotalAndDiscountChanges).length >
+                        0
+                      ) {
+                        await patchMutation.mutateAsync(
+                          appoinmentTotalAndDiscountChanges
+                        );
+                        refetchFinancialsData();
+                        refetchAppointmentSearchList();
+                        setAppointmentTotalAndDiscountChanges({});
+                      }
                     }}
                     helperText={
-                      mutableFinancialsData?.source_icd
+                      appointmentTotalAndDiscountDisplay?.source_icd
                         ? "The price for this appointment is set according to the ICD codes"
                         : "This appointment has no ICD codes, therefore can be edited"
                     }
@@ -230,14 +253,22 @@ export default function InvoicePortal({ hideComponent }) {
                     variant="standard"
                     label="Add a discount"
                     onBlur={async () => {
-                      await patchMutation.mutateAsync(mutableFinancialsData);
-
-                      refetchFinancialsData();
+                      if (
+                        Object.keys(appoinmentTotalAndDiscountChanges).length >
+                        0
+                      ) {
+                        await patchMutation.mutateAsync(
+                          appoinmentTotalAndDiscountChanges
+                        );
+                        refetchFinancialsData();
+                        refetchAppointmentSearchList();
+                        setAppointmentTotalAndDiscountChanges({});
+                      }
                     }}
                     name="discount"
                     type="number"
                     onChange={(event) => handleFinancialDataChanges(event)}
-                    value={mutableFinancialsData?.discount || ""}
+                    value={appointmentTotalAndDiscountDisplay?.discount || ""}
                   />
                 </div>
               </div>
@@ -414,9 +445,7 @@ export default function InvoicePortal({ hideComponent }) {
                       <div className="flex justify-end">
                         <Button
                           size="small"
-                          disabled={
-                            parseFloat(mutableFinancialsData?.amount_due) <= 0
-                          }
+                          disabled={parseFloat(financialsData.amount_due) <= 0}
                           variant="contained"
                           onClick={() => setShowPaymentsPage(!showPaymentsPage)}
                         >
@@ -439,7 +468,7 @@ export default function InvoicePortal({ hideComponent }) {
 
                   <MenuDivsWithIcon
                     className={
-                      "  hover:bg-white hover:cursor-default  justify-end pr-7 h-14 py-0 mt-0"
+                      "  hover:bg-white  justify-end pr-7 h-14 py-0 mt-0 hover:cursor-auto"
                     }
                     text={
                       <>
@@ -454,7 +483,7 @@ export default function InvoicePortal({ hideComponent }) {
                   />
                   <MenuDivsWithIcon
                     className={
-                      " justify-end hover:bg-white hover:cursor-default pr-7 h-14 py-0"
+                      " justify-end hover:bg-white hover:cursor-auto pr-7 h-14 py-0"
                     }
                     text={
                       <>
@@ -469,7 +498,7 @@ export default function InvoicePortal({ hideComponent }) {
                   />
                   <MenuDivsWithIcon
                     className={
-                      "  hover:bg-white hover:cursor-default justify-end  h-14 py-0"
+                      "  hover:bg-white hover:cursor-auto justify-end  h-14 py-0"
                     }
                     text={
                       <>
@@ -484,7 +513,7 @@ export default function InvoicePortal({ hideComponent }) {
                   />
                   <MenuDivsWithIcon
                     className={
-                      " hover:bg-white hover:cursor-default  justify-end h-14 py-0"
+                      " hover:bg-white hover:cursor-auto  justify-end h-14 py-0"
                     }
                     text={
                       <>
