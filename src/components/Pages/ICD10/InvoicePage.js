@@ -65,6 +65,7 @@ export default function InvoicePortal({ hideComponent }) {
     globalAppointmentData,
     globalAppointmentTypeData,
     globalPatientData,
+    setGlobalInvoiceData,
   } = useGlobalStore();
 
   const { data: financialsData, refetch: refetchFinancialsData } = useFetchData(
@@ -133,8 +134,10 @@ export default function InvoicePortal({ hideComponent }) {
       } else {
         return invoiceStatus;
       }
-    } else {
-      return "Paid";
+    }
+
+    if (!invoiceStatus && parseFloat(amountDue) > 0) {
+      return "In Progress";
     }
   }
   function handleFinancialDataChanges(event) {
@@ -169,7 +172,7 @@ export default function InvoicePortal({ hideComponent }) {
   }, [financialsData, invoiceData]);
 
   async function handleSubmission() {
-    if (invoiceExist) {
+    if (invoiceExist && Object.keys(invoicePayloadChanges).length > 0) {
       invoiceMutation.mutate({
         ...invoicePayloadChanges,
         invoice_status: determineInvoiceStatus(
@@ -178,20 +181,19 @@ export default function InvoicePortal({ hideComponent }) {
         ),
       });
       setInvoicePayloadChanges({});
-
-      setShowInvoiceSendCard(!showInvoiceSendCard);
-    } else {
-      createMutation.mutate({
+    } else if (!invoiceExist) {
+      const { data: reponseData } = await createMutation.mutateAsync({
         ...invoiceData,
         invoice_status: determineInvoiceStatus(
           invoicePayload.invoice_status,
           financialsData.amount_due
         ),
       });
+      setGlobalInvoiceData(reponseData);
       setInvoicePayloadChanges({});
       setInvoiceExist(true);
-      setShowInvoiceSendCard(true);
     }
+    setShowInvoiceSendCard(!showInvoiceSendCard);
   }
 
   function handleInvoiceChanges(event) {

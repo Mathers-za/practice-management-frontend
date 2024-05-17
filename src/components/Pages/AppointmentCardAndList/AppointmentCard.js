@@ -45,6 +45,7 @@ export default function AppointmentCard({ appointmentData, refetchData }) {
 
     setGlobalInvoiceData({
       invoice_status: appointmentData.invoice_status,
+      invoice_title: appointmentData.invoice_title,
     });
 
     setShowOptionsMenu(!showOptionsMenu);

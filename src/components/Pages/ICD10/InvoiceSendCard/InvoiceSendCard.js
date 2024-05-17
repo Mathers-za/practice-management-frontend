@@ -1,8 +1,14 @@
 import axios from "axios";
 
-import styles from "./invoiceSendCard.module.css";
 import { useFetchData } from "../../../../CustomHooks/serverStateHooks";
 import { useNavigate } from "react-router-dom";
+import GenericTopBar from "../../../miscellaneous components/GenericTopBar";
+import MenuDivsWithIcon from "../../../miscellaneous components/MenuListDivsWithIcon";
+import SendIcon from "@mui/icons-material/Send";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import HomeIcon from "@mui/icons-material/Home";
+import { useGlobalStore } from "../../../../zustandStore/store";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 export default function InvoiceSendCard({
   patientData,
@@ -10,6 +16,9 @@ export default function InvoiceSendCard({
   appointmentId,
   hideComponent,
 }) {
+  const { globalInvoiceData } = useGlobalStore();
+  console.log(globalInvoiceData);
+
   const { data: invoiceData } = useFetchData(
     `/invoices/view${appointmentId}`,
     "invDataInSendInvoices"
@@ -53,40 +62,41 @@ export default function InvoiceSendCard({
   }
 
   return (
-    <div className={styles["invSendCard-overlay"]}>
-      <div className={styles["invSendCard-card"]}>
-        <div className={styles["invSendCard-top-bar"]}>
-          {" "}
-          <p>create an invoice</p>
-          <p onClick={() => hideComponent()}>X</p>{" "}
+    <div className="fixed top-0 left-0 bg-black/40 w-full h-screen z-30 flex items-center justify-center">
+      <div className="w-[25%] h-[65%] bg-white flex flex-col shadow-md shadow-black/40  ">
+        <GenericTopBar
+          className="py-1 pl-3 pr-0"
+          label="Next steps"
+          onclick={() => hideComponent()}
+        />
+        <div className=" h-fit mt-3 mb-3 w-full grow flex flex-col justify-center items-center">
+          <CheckCircleIcon
+            sx={{ color: "#4CAF50", fontSize: "60px" }}
+            fontSize="large"
+          />
+
+          <p className="text-lg">Invoice Created</p>
+          <p>{globalInvoiceData.invoice_title}</p>
         </div>
-        <p className={styles["invSendCard-patientName"]}>
-          {patientData?.patient_first_Name || ""}{" "}
-          {patientData?.patient_last_Name || ""}
-        </p>
-        <div className={styles["invSendCard-tile"]}>
-          <p>img</p>
-          <p>{invoiceData?.invoice_title || "Invoice successfuly created."}</p>
-        </div>
-        <div
-          onClick={() =>
+        <MenuDivsWithIcon
+          onclick={() =>
             emailInvoiceStatement(
               profileId,
               invoiceData.appointment_id,
               patientData.patientId
             )
           }
-          className={styles["invSendCard-row"]}
-        >
-          {" "}
-          <p>img</p> <p>Send to Patient</p>
-        </div>
-        <div className={styles["invSendCard-row"]}>
-          <p>img</p>
-          <p>Send to Medical Aid</p>{" "}
-        </div>
-        <div
-          onClick={() =>
+          className="px-1"
+          text="Send to patient"
+          iconStart={<SendIcon sx={{ color: "#0284C7" }} />}
+        />
+        <MenuDivsWithIcon
+          className="px-1"
+          text="Send to medical aid"
+          iconStart={<SendIcon sx={{ color: "#0284C7" }} />}
+        />
+        <MenuDivsWithIcon
+          onclick={() =>
             handleInvoiceStatementGeneration(
               invoiceData.invoice_number,
               invoiceData.appointment_id,
@@ -94,14 +104,15 @@ export default function InvoiceSendCard({
               profileId
             )
           }
-          className={styles["invSendCard-row"]}
-        >
-          <p>img</p> <p>View</p>
-        </div>
-        <div className={styles["invSendCard-row"]}>
-          <p>img</p>
-          <p onClick={() => navigate("/")}>Done</p>
-        </div>
+          className="px-1"
+          text="View invoice"
+          iconStart={<VisibilityIcon sx={{ color: "#0284C7" }} />}
+        />
+        <MenuDivsWithIcon
+          text="Return home"
+          onclick={() => navigate("/")}
+          iconStart={<HomeIcon sx={{ color: "#0284C7" }} />}
+        />
       </div>
     </div>
   );
