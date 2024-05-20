@@ -2,13 +2,18 @@ import styles from "./invoiceProgress.module.css";
 import InvoiceDisplayCard from "./InvoiceDisplayCard";
 import { useFetchData } from "../../../../CustomHooks/serverStateHooks";
 import { useEffect, useState } from "react";
-import { startOfWeek, endOfWeek } from "date-fns";
+import { startOfWeek, endOfWeek, format } from "date-fns";
+import { CalendarIcon } from "@mui/x-date-pickers/icons";
+import InputAdornment from "@mui/material";
 import {
   filterInvoiceData,
   formatDateYearMonthDay,
 } from "./progressUtilFunctions";
 import { filterPastDueInvoices } from "./progressUtilFunctions";
 import { useInvoiceProgessComponent } from "../../../../zustandStore/store";
+import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
+import { TextField } from "@mui/material";
+import Badge from "./Badge";
 
 function setCountAndTotalWhenProgessFlagTrue(
   filterFunction,
@@ -68,6 +73,12 @@ export default function InvoiceColumnList({
     { ...searchDateCriteria, profile_id: profileId }
   );
   const store = useInvoiceProgessComponent();
+  function handleDateChange(date, key) {
+    setSearchDateCriteria((prev) => ({
+      ...prev,
+      [key]: format(new Date(date), "yyyy-MM-dd"),
+    }));
+  }
 
   useEffect(() => {
     if (invoiceData && progressFlag) {
@@ -104,71 +115,58 @@ export default function InvoiceColumnList({
     invoiceDataRefetch();
   }, [searchDateCriteria]);
 
-  function handleChange(event) {
-    const { name, value } = event.target;
-
-    setSearchDateCriteria((prev) => ({
-      ...prev,
-      [name]:
-        value === ""
-          ? formatDateYearMonthDay(startOfWeek(new Date()))
-          : formatDateYearMonthDay(value),
-    }));
-  }
-
   return (
     <>
-      <div className={styles["invoiceProgress-invoice-container"]}>
-        <div className={styles["invoiceProgress-top-bar"]}>
-          <div className={styles["invoiceProgress-top-bar-topHalf"]}>
-            <p>refresh</p>
-            <div>
-              <label> Start Date</label> <br />{" "}
-              <input
-                onChange={handleChange}
-                type="date"
-                value={formatDateYearMonthDay(
-                  searchDateCriteria.invoice_start_date
-                )}
-                name="invoice_start_date"
-              />
-            </div>
-            <div>
-              <label>End Date</label> <br />{" "}
-              <input
-                onChange={handleChange}
-                type="date"
-                value={formatDateYearMonthDay(
-                  searchDateCriteria.invoice_end_date
-                )}
-                name="invoice_end_date"
-              />
-            </div>
-            {progressFlag && (
-              <div className={styles["invoiceProgress-searchBar"]}>
-                Search bar{" "}
-                <input
+      <div className="w-full  h-fit p-2 min-h-full  bg-white">
+        <div className="h-fit border shadow-md shadow-black/40 w-full mb-4 items-start justify-between flex px-3 pt-2 pb-3 ">
+          <div className=" flex flex-col gap-3  h-full w-1/3">
+            <MobileDatePicker
+              label="Start Date"
+              onAccept={(date) => handleDateChange(date, "invoice_start_date")}
+              value={new Date(searchDateCriteria.invoice_start_date)}
+              format="yyyy-MM-dd"
+              closeOnSelect={true}
+              orientation="portrait"
+              slotProps={{ textField: { variant: "standard" } }}
+            />
+            <MobileDatePicker
+              label="End Date"
+              onAccept={(date) => handleDateChange(date, "invoice_end_date")}
+              value={new Date(searchDateCriteria.invoice_end_date)}
+              format="yyyy-MM-dd"
+              closeOnSelect={true}
+              orientation="portrait"
+              slotProps={{ textField: { variant: "standard" } }}
+            />
+            {invoiceData?.length || 0} invoices found
+          </div>
+
+          {progressFlag && (
+            <div className=" w-2/3 flex justify-center ">
+              <div className="">
+                <h2 className="mb-3 select-none border-b  border-slate-400 ">
+                  Search by name/surname, dates, or amount total/due
+                </h2>
+                <TextField
+                  fullWidth={true}
                   type="text"
-                  placeholder="Search"
+                  variant="outlined"
+                  label="Search"
                   value={searchBarInput ?? ""}
                   onChange={(event) => setSearchBarInput(event.target.value)}
                 />
               </div>
-            )}
-          </div>
-          <div className={styles["invoiceProgress-top-bar-bottomhalf"]}>
-            {invoiceData?.length || 0} invoices found
-          </div>
+            </div>
+          )}
         </div>
-
-        <div className={styles["invoiceProgress-invoice-status-headers"]}>
-          <div className={styles["invoiceProgress-header-container"]}>
-            <p className={styles["invoiceProgress-heading"]}>
-              {leftColHeading}{" "}
-              <div className={styles["invoiceProgress-count"]}>
-                {store?.leftColCount || 0}
+        <div className="w-full flex    gap-5 mt-1">
+          <div className="bg-black w-1/3 flex items-center p-3 justify-between  text-white   ">
+            <div className="relative">
+              {leftColHeading}
+              <div className="absolute -right-6 -top-2">
+                <Badge label={store?.leftColCount || 0} />
               </div>
-            </p>
+            </div>
             <p>
               {" "}
               {store?.leftColTotalAmount !== 0
@@ -176,13 +174,13 @@ export default function InvoiceColumnList({
                 : null}
             </p>
           </div>
-          <div className={styles["invoiceProgress-header-container"]}>
-            <p className={styles["invoiceProgress-heading"]}>
-              {middleColHeading}{" "}
-              <div className={styles["invoiceProgress-count"]}>
-                {store?.middleColCount || 0}{" "}
+          <div className="bg-black  w-1/3 flex items-center p-3  justify-between text-white  ">
+            <div className="relative">
+              {middleColHeading}
+              <div className="absolute -right-6 -top-2">
+                <Badge label={store?.middleColCount || 0} />
               </div>
-            </p>{" "}
+            </div>
             <p>
               {" "}
               {store?.middleColTotalAmount !== 0
@@ -190,25 +188,25 @@ export default function InvoiceColumnList({
                 : null}
             </p>
           </div>
-          <div className={styles["invoiceProgress-header-container"]}>
-            <p className={styles["invoiceProgress-heading"]}>
-              {" "}
-              {rightColHeading}{" "}
-              <div className={styles["invoiceProgress-count"]}>
-                {store?.rightColCount || 0}
+          <div className="bg-black  w-1/3 flex items-center p-3 justify-between  text-white   ">
+            <div className="relative">
+              {rightColHeading}
+              <div className="absolute -right-6 -top-2">
+                <Badge label={store?.rightColCount || 0} />
               </div>
-            </p>{" "}
+            </div>
             <p>
+              {" "}
               {store?.rightColTotalAmount !== 0
                 ? "R" + store?.rightColTotalAmount
                 : null}
             </p>
           </div>
         </div>
-        <div
-          className={styles["invoiceProgress-invoice-status-list-container"]}
-        >
-          <div className={styles["invoiceProgress-column"]}>
+        <div></div>
+        <div className="w-full flex  gap-5 ">
+          <div className="w-1/3  h-fit  ">
+            {" "}
             {leftColumnList
               ? leftColumnList.map((invoice) => (
                   <InvoiceDisplayCard
@@ -218,7 +216,8 @@ export default function InvoiceColumnList({
                 ))
               : "No Invoices Found"}
           </div>
-          <div className={styles["invoiceProgress-column"]}>
+          <div className="w-1/3  h-fit ">
+            {" "}
             {middleColumnList
               ? middleColumnList.map((invoice) => (
                   <InvoiceDisplayCard
@@ -228,7 +227,7 @@ export default function InvoiceColumnList({
                 ))
               : "No Invoices Found"}
           </div>
-          <div className={styles["invoiceProgress-column"]}>
+          <div className="w-1/3  h-fit ">
             {rightColumnList
               ? rightColumnList.map((invoice) => (
                   <InvoiceDisplayCard

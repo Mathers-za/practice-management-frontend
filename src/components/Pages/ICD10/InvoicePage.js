@@ -97,7 +97,8 @@ export default function InvoicePortal({ hideComponent }) {
   );
 
   const { data: invoiceData } = useFetchData(
-    `/invoices/view${globalAppointmentData?.id}`
+    `/invoices/view${globalAppointmentData?.id}`,
+    "invoiceDataInInvoicePage"
   );
   const { patchMutation: invoiceMutation } = usePatchData(
     `/invoices/update${globalAppointmentData?.id}`
@@ -173,13 +174,14 @@ export default function InvoicePortal({ hideComponent }) {
 
   async function handleSubmission() {
     if (invoiceExist && Object.keys(invoicePayloadChanges).length > 0) {
-      invoiceMutation.mutate({
+      const { data: responseFromPatch } = await invoiceMutation.mutateAsync({
         ...invoicePayloadChanges,
         invoice_status: determineInvoiceStatus(
           invoicePayload?.invoice_status,
           appointmentTotalAndDiscountDisplay?.amount_due
         ),
       });
+      setGlobalInvoiceData(responseFromPatch);
       setInvoicePayloadChanges({});
     } else if (!invoiceExist) {
       const { data: reponseData } = await createMutation.mutateAsync({

@@ -2,6 +2,11 @@ import styles from "./invoiceCard.module.css";
 import { formatDateYearMonthDay } from "./progressUtilFunctions";
 import InvoiceListDropdown from "./InvoiceListDropDown";
 import { useState } from "react";
+import { IconButton } from "@mui/material";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import Badge from "./Badge";
+import { format } from "date-fns";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function InvoiceDisplayCard({ invoiceData }) {
   const {
@@ -16,45 +21,57 @@ export default function InvoiceDisplayCard({ invoiceData }) {
 
   const [showDropDown, setShowDropDown] = useState(false);
 
-  function toggleDropdown() {
-    setShowDropDown(!showDropDown);
-  }
-
   return (
     <>
-      <div className={styles["invoiceCard-container"]}>
-        <div className={styles["invoiceCard-left"]}>
-          <div
+      <div className="border-b w-full h-hit flex text-sm py-2 pr-4  border-black  border-l border-r ">
+        <div className="w-fit  flex items-center">
+          <IconButton
             onClick={() => setShowDropDown(!showDropDown)}
-            className={styles["invoiceCard-dropdown-elipsis"]}
+            size="small"
           >
-            :
-          </div>
-          {showDropDown && (
-            <InvoiceListDropdown
-              toggleDropdown={toggleDropdown}
-              invoiceData={invoiceData}
-            />
-          )}
-          <div className={styles["invoiceCard-middleContent"]}>
-            <p>
-              {invoice_title}
-              <span className={styles["invoiceCard-invNum"]}>
-                {invoice_number}
-              </span>
-            </p>
-            <p>
-              Date: {formatDateYearMonthDay(invoice_start_date)}/Due:{" "}
-              {formatDateYearMonthDay(invoice_end_date)}
-            </p>
-            <div className={styles["invoiceCard-amountsContent"]}>
-              <p>Total: R{total_amount}</p> <p>Paid: R{amount_paid}</p>
+            <MoreVertIcon fontSize="medium" />
+          </IconButton>
+        </div>
+        <div className="w-full  ">
+          {" "}
+          <p className="flex gap-2 items-center">
+            {invoice_title}
+            <div className=" text-xs border-2 p-[1px] border-slate-400  rounded-md">
+              {invoice_number}
             </div>
+          </p>
+          <p>
+            {" "}
+            Date: {format(new Date(invoice_start_date), "yyyy-MM-dd")}/ Due:{" "}
+            {format(new Date(invoice_end_date), "yyyy-MM-dd")}
+          </p>
+          <div className=" flex gap-12">
+            <p>Total: {total_amount}</p> <p>Due: {amount_paid} </p>
           </div>
         </div>
-        <div className={styles["invoiceCard-amountDue"]}>
-          Due: R{amount_due}{" "}
+        <div className="  flex  flex-col items-end  justify-center ">
+          {" "}
+          <p>R{amount_due ?? "0,00"}</p>
+          <p>Due</p>
         </div>
+        <AnimatePresence>
+          {showDropDown && (
+            <div className="fixed z-10 top-0 left-0 w-full h-screen bg-black/30 flex items-end">
+              <motion.div
+                className="w-full h-fit "
+                initial={{ height: "0%" }}
+                animate={{ height: "46%" }}
+                exit={{ height: "0%" }}
+              >
+                <InvoiceListDropdown
+                  hideComponent={() => setShowDropDown(!showDropDown)}
+                  invoiceData={invoiceData}
+                  toggleDropdown={() => setShowDropDown(!showDropDown)}
+                />
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
       </div>
     </>
   );

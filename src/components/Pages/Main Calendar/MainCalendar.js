@@ -56,6 +56,8 @@ export default function MainCalendar({ profileId }) {
     );
   }
 
+  console.log(selectedEvent);
+
   return (
     <>
       <div>
