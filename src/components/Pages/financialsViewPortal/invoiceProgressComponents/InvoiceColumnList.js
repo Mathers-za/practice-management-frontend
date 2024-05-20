@@ -69,7 +69,7 @@ export default function InvoiceColumnList({
 
   const { data: invoiceData, refetch: invoiceDataRefetch } = useFetchData(
     `/invoices/filteredView`,
-    "invoiceDataInvoiceProgressPage",
+    ["invoiceProgressPage", searchDateCriteria],
     { ...searchDateCriteria, profile_id: profileId }
   );
   const store = useInvoiceProgessComponent();
@@ -210,6 +210,10 @@ export default function InvoiceColumnList({
             {leftColumnList
               ? leftColumnList.map((invoice) => (
                   <InvoiceDisplayCard
+                    queryKeyToInvalidate={[
+                      "invoiceProgressPage",
+                      searchDateCriteria,
+                    ]}
                     key={invoice.invoice_id}
                     invoiceData={invoice}
                   />
@@ -221,6 +225,10 @@ export default function InvoiceColumnList({
             {middleColumnList
               ? middleColumnList.map((invoice) => (
                   <InvoiceDisplayCard
+                    queryKeyToInvalidate={[
+                      "invoiceProgressPage",
+                      searchDateCriteria,
+                    ]}
                     key={invoice.invoice_id}
                     invoiceData={invoice}
                   />
@@ -231,6 +239,10 @@ export default function InvoiceColumnList({
             {rightColumnList
               ? rightColumnList.map((invoice) => (
                   <InvoiceDisplayCard
+                    queryKeyToInvalidate={[
+                      "invoiceProgressPage",
+                      searchDateCriteria,
+                    ]}
                     key={invoice.invoice_id}
                     invoiceData={invoice}
                   />

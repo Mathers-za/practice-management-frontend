@@ -8,7 +8,10 @@ import Badge from "./Badge";
 import { format } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function InvoiceDisplayCard({ invoiceData }) {
+export default function InvoiceDisplayCard({
+  invoiceData,
+  queryKeyToInvalidate,
+}) {
   const {
     amount_due,
     amount_paid,
@@ -46,7 +49,7 @@ export default function InvoiceDisplayCard({ invoiceData }) {
             {format(new Date(invoice_end_date), "yyyy-MM-dd")}
           </p>
           <div className=" flex gap-12">
-            <p>Total: {total_amount}</p> <p>Due: {amount_paid} </p>
+            <p>Total: {total_amount}</p> <p>Paid: {amount_paid} </p>
           </div>
         </div>
         <div className="  flex  flex-col items-end  justify-center ">
@@ -64,6 +67,7 @@ export default function InvoiceDisplayCard({ invoiceData }) {
                 exit={{ height: "0%" }}
               >
                 <InvoiceListDropdown
+                  querkyKeyToInvalidate={queryKeyToInvalidate}
                   hideComponent={() => setShowDropDown(!showDropDown)}
                   invoiceData={invoiceData}
                   toggleDropdown={() => setShowDropDown(!showDropDown)}

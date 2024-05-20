@@ -1,5 +1,8 @@
 import axios from "axios";
-
+import {
+  handleInvoiceStatementGeneration,
+  emailInvoiceStatement,
+} from "../../../../InvoiceApiRequestFns/invoiceApiHelperFns";
 import { useFetchData } from "../../../../CustomHooks/serverStateHooks";
 import { useNavigate } from "react-router-dom";
 import GenericTopBar from "../../../miscellaneous components/GenericTopBar";
@@ -26,42 +29,6 @@ export default function InvoiceSendCard({
     "invDataInSendInvoices" // take this out. set invoicedatat global in invoice page during api request and make sure you captur chnages in the patch and post routes. then pass diretcly and save an api request
   );
   const navigate = useNavigate();
-  async function handleInvoiceStatementGeneration(
-    invoiceNumber,
-    appointmentId,
-    patientId,
-    profileId
-  ) {
-    try {
-      const { data } = await axios.get(
-        `http://localhost:4000/invoices/retrieveInvoiceStatement`,
-        {
-          withCredentials: true,
-          params: {
-            invoiceNumber: invoiceNumber,
-            profileId: profileId,
-            patientId: patientId,
-            appointmentId: appointmentId,
-          },
-          responseType: "arraybuffer",
-        }
-      );
-
-      const pdfBlob = new Blob([data], { type: "application/pdf" });
-      const pdfUrl = URL.createObjectURL(pdfBlob);
-      window.open(pdfUrl, "_blank");
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  async function emailInvoiceStatement(profileId, appointmentId, patientId) {
-    await axios.post(
-      `http://localhost:4000/invoices//sendInvoiceStatment`,
-      { profileId, appointmentId, patientId },
-      { withCredentials: true }
-    );
-  }
 
   return (
     <div className="fixed top-0 left-0 bg-black/40 w-full h-screen z-30 flex items-center justify-center">

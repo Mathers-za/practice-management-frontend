@@ -1,36 +1,37 @@
-import styles from "./invoiceDropdown.module.css";
-import { usePaymentsPageStore } from "../../../../zustandStore/store";
+import {
+  useGlobalStore,
+  usePaymentsPageStore,
+} from "../../../../zustandStore/store";
 import PaymentPage from "../../Payments/PaymentPage";
 import MenuDivsWithIcon from "../../../miscellaneous components/MenuListDivsWithIcon";
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import GenericTopBar from "../../../miscellaneous components/GenericTopBar";
+import {
+  handleInvoiceStatementGeneration,
+  emailInvoiceStatement,
+} from "../../../../InvoiceApiRequestFns/invoiceApiHelperFns";
 
 export default function InvoiceListDropdown({
-  toggleDropdown,
+  querkyKeyToInvalidate,
   invoiceData,
   hideComponent,
 }) {
-  const { invoice_title, appointment_id, appointment_type_id, invoice_id } =
-    invoiceData;
-  const togglePaymentsPageDisplay = usePaymentsPageStore(
-    (state) => state.toggleUniquePaymentsPage
-  );
+  const {
+    invoice_title,
+    appointment_id,
+    appointment_type_id,
+
+    invoice_number,
+    patient_id,
+    amount_due,
+  } = invoiceData;
+
+  const { globalProfileData } = useGlobalStore();
   const [showPaymentsPage, setShowPaymentsPage] = useState(false);
-  const paymentPageVisible = usePaymentsPageStore(
-    (state) => state.paymentsPageDropDownStates
-  );
-  const visibilty = paymentPageVisible[appointment_id];
 
   return (
     <>
-      {visibilty && (
-        <PaymentPage
-          appointmentId={appointment_id}
-          appointmentTypeId={appointment_type_id}
-        />
-      )}
-
       <div className="h-fit w-full text-base  ">
         <GenericTopBar
           label={invoice_title}
@@ -38,6 +39,17 @@ export default function InvoiceListDropdown({
           onclick={() => hideComponent()}
         />
         <MenuDivsWithIcon
+          text="View client"
+          iconStart={
+            <FontAwesomeIcon
+              icon="fa-solid fa-user"
+              size="lg"
+              style={{ color: "#0284C7" }}
+            />
+          }
+        />
+        <MenuDivsWithIcon
+          disabled={parseFloat(amount_due) <= 0}
           onclick={() => setShowPaymentsPage(!showPaymentsPage)}
           text="Add payment"
           iconStart={
@@ -45,12 +57,19 @@ export default function InvoiceListDropdown({
               icon="fa-solid fa-coins"
               size="lg"
               style={{
-                color: "#0284C7",
+                color: parseFloat(amount_due) <= 0 ? "#94A3B8" : "#0284C7",
               }}
             />
           }
         />
         <MenuDivsWithIcon
+          onclick={async () =>
+            await emailInvoiceStatement(
+              globalProfileData.id,
+              appointment_id,
+              patient_id
+            )
+          }
           text="Send to client"
           iconStart={
             <FontAwesomeIcon
@@ -72,6 +91,14 @@ export default function InvoiceListDropdown({
         />
         <MenuDivsWithIcon
           text="View invoice"
+          onclick={async () =>
+            await handleInvoiceStatementGeneration(
+              invoice_number,
+              appointment_id,
+              patient_id,
+              globalProfileData.id
+            )
+          }
           iconStart={
             <FontAwesomeIcon
               icon="fa-solid fa-envelope-open-text"
@@ -95,6 +122,7 @@ export default function InvoiceListDropdown({
       {showPaymentsPage && (
         <div className="z-20">
           <PaymentPage
+            queryKeyToInvalidate={querkyKeyToInvalidate}
             hideComponent={() => setShowPaymentsPage(!showPaymentsPage)}
             appointmentId={appointment_id}
             appointmentTypeId={appointment_type_id}
