@@ -90,10 +90,17 @@ export default function InvoicePortal({ hideComponent }) {
     `/financials/update${financialsData?.appointment_id}`,
     ["financialsControl", "page", "invoice", "fetchPaymentsData"]
   );
+  console.log(globalAppointmentData.id);
 
   const { data: paymentsData } = useFetchData(
     `/payments/view${globalAppointmentData.id}`,
-    ["financialsControl", "page", "invoice", "fetchPaymentsData"]
+    [
+      "financialsControl",
+      "page",
+      "invoice",
+      "fetchPaymentsData",
+      globalAppointmentData.id,
+    ]
   );
 
   const { data: invoiceData } = useFetchData(
@@ -117,16 +124,7 @@ export default function InvoicePortal({ hideComponent }) {
     setAppointmentTotalAndDiscountChanges,
   ] = useState(false);
   const [invoicePayloadChanges, setInvoicePayloadChanges] = useState({});
-  const [invoicePayload, setInvoicePayload] = useState({
-    invoice_start_date: format(new Date(), "yyyy-MM-dd"),
-    invoice_end_date: format(new Date(), "yyyy-MM-dd"),
-    paid: false,
-
-    appointment_id: globalAppointmentData.id,
-    invoice_title: `${
-      globalPatientData.first_name + " " + globalPatientData.last_name ?? " "
-    } - ${format(new Date(), "yyyy-MM-dd")}`,
-  });
+  const [invoicePayload, setInvoicePayload] = useState({});
 
   function determineInvoiceStatus(invoiceStatus, amountDue) {
     if (invoiceStatus && invoiceStatus !== "Paid") {
@@ -138,7 +136,9 @@ export default function InvoicePortal({ hideComponent }) {
     }
 
     if (!invoiceStatus && parseFloat(amountDue) > 0) {
-      return "In Progress";
+      return "In progress";
+    } else if (parseFloat(amountDue) <= 0) {
+      return "Paid";
     }
   }
   function handleFinancialDataChanges(event) {
@@ -152,14 +152,22 @@ export default function InvoicePortal({ hideComponent }) {
       [name]: value === "" ? "0.00 " : value,
     });
   }
+  console.log("invoice title " + invoicePayload.invoice_title);
 
   useEffect(() => {
     if (invoiceData) {
       setInvoicePayload(invoiceData);
       setInvoiceExist(true);
-    } else if (invoicePayload) {
-      setInvoiceExist(false);
-    } else {
+    } else if (!invoiceData) {
+      setInvoicePayload({
+        invoice_start_date: new Date(),
+        invoice_end_date: new Date(),
+        invoice_title: `${
+          globalPatientData.first_name + " " + globalPatientData?.last_name ||
+          ""
+        } - ${format(globalAppointmentData.appointment_date, "yyyy-MM-dd")}`,
+        invoice_status: "In progress",
+      });
       setInvoiceExist(false);
     }
 
@@ -174,24 +182,29 @@ export default function InvoicePortal({ hideComponent }) {
 
   async function handleSubmission() {
     if (invoiceExist && Object.keys(invoicePayloadChanges).length > 0) {
-      const { data: responseFromPatch } = await invoiceMutation.mutateAsync({
+      const invoiceStatus = determineInvoiceStatus(
+        invoicePayload.invoice_status,
+        financialsData.amount_due
+      );
+      console.log("invoice status in update " + invoiceStatus);
+      const responseFromPatch = await invoiceMutation.mutateAsync({
         ...invoicePayloadChanges,
-        invoice_status: determineInvoiceStatus(
-          invoicePayload?.invoice_status,
-          appointmentTotalAndDiscountDisplay?.amount_due
-        ),
+        invoice_status: invoiceStatus,
       });
       setGlobalInvoiceData(responseFromPatch);
       setInvoicePayloadChanges({});
     } else if (!invoiceExist) {
-      const { data: reponseData } = await createMutation.mutateAsync({
-        ...invoiceData,
-        invoice_status: determineInvoiceStatus(
-          invoicePayload.invoice_status,
-          financialsData.amount_due
-        ),
+      const invoiceStatus = determineInvoiceStatus(
+        invoicePayload.invoice_status,
+        financialsData.amount_due
+      );
+      console.log("invoice status in create mutation " + invoiceStatus);
+      const responseData = await createMutation.mutateAsync({
+        ...invoicePayload,
+        invoice_status: invoiceStatus,
       });
-      setGlobalInvoiceData(reponseData);
+      console.log("reponse datta from create mututation " + responseData);
+      setGlobalInvoiceData(responseData);
       setInvoicePayloadChanges({});
       setInvoiceExist(true);
     }

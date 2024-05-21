@@ -20,7 +20,6 @@ export default function InvoiceSendCard({
   hideComponent,
 }) {
   const { globalInvoiceData } = useGlobalStore();
-  console.log(globalInvoiceData);
 
   //TODO add flow step if patient email isnt present. ideally the option to edit the patients email
 
@@ -45,7 +44,7 @@ export default function InvoiceSendCard({
           />
 
           <p className="text-lg">Invoice Created</p>
-          <p>{globalInvoiceData.invoice_title}</p>
+          <p>{globalInvoiceData?.invoice_title}</p>
         </div>
         <MenuDivsWithIcon
           onclick={() =>

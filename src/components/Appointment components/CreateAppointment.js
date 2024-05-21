@@ -41,12 +41,14 @@ export default function CreateAppointment({
   const [showPatientPicker, setShowPatientPicker] = useState(false);
   const { formattedCurrentDate, currentTime, endTime } = setDateAndTimes();
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const setGlobalPatientData = useGlobalStore((state) => state.setPatientData);
+  const setGlobalPatientData = useGlobalStore(
+    (state) => state.setGlobalPatientData
+  );
   const setGlobalAppointmentTypeData = useGlobalStore(
-    (state) => state.setAppointmentTypeData
+    (state) => state.setGlobalAppointmentTypeData
   );
   const setGlobalAppointmentData = useGlobalStore(
-    (state) => state.setAppointmentData
+    (state) => state.setGlobalAppointmentData
   );
   const navigate = useNavigate();
   const [appointment, setAppointment] = useState({

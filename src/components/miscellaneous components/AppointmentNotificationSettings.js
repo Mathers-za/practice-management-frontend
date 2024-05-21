@@ -5,12 +5,14 @@ import { useGlobalStore } from "../../zustandStore/store";
 import { format } from "date-fns";
 
 export default function ({ onchange, onsubmit, onExit }) {
-  const profileData = useGlobalStore((state) => state.profileData);
-  const patientData = useGlobalStore((state) => state.patientData);
+  const profileData = useGlobalStore((state) => state.globalProfileData);
+  const patientData = useGlobalStore((state) => state.globalPatientData);
   const appointmentTypeData = useGlobalStore(
-    (state) => state.appointmentTypeData
+    (state) => state.globalAppointmentTypeData
   );
-  const appointmentData = useGlobalStore((state) => state.appointmentData);
+  const appointmentData = useGlobalStore(
+    (state) => state.globalAppointmentData
+  );
   //TODO mostly done. make componenet for pathing pts once they create appoitnment
   //TODO needs error handling and validation
 
@@ -19,11 +21,11 @@ export default function ({ onchange, onsubmit, onExit }) {
       <div className="w-2/6 min-h-96 relative  border-slate-400 outline-slate-400 outline-offset-2 bg-white rounded-md shadow-lg  ">
         <GenericTopBar label={"Please Confirm"} onclick={() => onExit()} />
         <div className="bg-black bg-opacity-70 text-white font-medium px-3 py-2  select-none ">
-          <p>{patientData.first_name || "" + " " + patientData.last_name}</p>
-          <p>{appointmentTypeData.appointment_name}</p>
+          <p>{patientData?.first_name || "" + " " + patientData?.last_name}</p>
+          <p>{appointmentTypeData?.appointment_name}</p>
           <p>
-            {format(new Date(appointmentData.appointment_date), "eee dd MMM")}{" "}
-            at {appointmentData.start_time} - {appointmentData.end_time}
+            {format(new Date(appointmentData?.appointment_date), "eee dd MMM")}{" "}
+            at {appointmentData?.start_time} - {appointmentData.end_time}
           </p>
         </div>
         <div className="border-b  bg-white  hover:bg-slate-400 px-3 py-4  select-none flex items-center font-medium  ">

@@ -77,7 +77,10 @@ export default function MainMenuSideBar({ itemsArray }) {
           linkTo={"invoiceProgress"}
           icon={<FontAwesomeIcon icon="fa-solid fa-receipt" size="lg" />}
         />
-        <SideBarItemsWithIconDiv linkText={"invoicesPastDue"} />
+        <SideBarItemsWithIconDiv
+          linkTo={"invoicesPastDue"}
+          linkText={"Invoice past due"}
+        />
       </div>
     </>
   );

@@ -3,6 +3,7 @@ import { checkAndSetIcds } from "../../../apiRequests/apiRequests";
 import { useEffect, useRef, useState } from "react";
 import {
   useFetchData,
+  usePatchData,
   usePostData,
 } from "../../../CustomHooks/serverStateHooks";
 import { format } from "date-fns";
@@ -15,6 +16,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 
 import { CalendarIcon } from "@mui/x-date-pickers/icons";
 import { useGlobalStore } from "../../../zustandStore/store";
+import { checkAndSetInvoiceStatusToPaidOnFullPayment } from "./paymentsHelperFns";
 
 function checkForErrors(paymentPayload, data) {
   const errors = [];
@@ -63,13 +65,18 @@ export default function PaymentPage({
   refetchData = "",
   queryKeyToInvalidate = "",
 }) {
-  const { data, refetch: refreshPaymentsPage } = useFetchData(
+  const { data: financialData, refetch: refreshPaymentsPage } = useFetchData(
     `/financials/view${appointmentId}`,
     ["financialsControl", "page", "payments"]
   );
+  const { data: invoiceData } = useFetchData(`/invoices/view${appointmentId}`);
 
   const refetchAppointmentListData = useGlobalStore(
     (state) => state.globalRefetch
+  );
+  const { patchMutation: invoicePatchData } = usePatchData(
+    `/invoices/update${appointmentId}`,
+    queryKeyToInvalidate
   );
 
   const [paymentsPayload, setPaymentsPayload] = useState({
@@ -106,7 +113,7 @@ export default function PaymentPage({
     if (isChecked.current) {
       setPaymentsPayload((prev) => ({
         ...prev,
-        amount: data?.amount_due,
+        amount: financialData?.amount_due,
       }));
     } else {
       setPaymentsPayload((prev) => ({
@@ -118,6 +125,11 @@ export default function PaymentPage({
 
   async function handleSubmit() {
     await createMutation.mutateAsync(paymentsPayload);
+    checkAndSetInvoiceStatusToPaidOnFullPayment(
+      invoiceData.invoice_status,
+      financialData.amount_due,
+      () => invoicePatchData.mutate()
+    );
     setPaymentsPayload((prev) => ({
       ...prev,
       amount: null,
@@ -156,10 +168,10 @@ export default function PaymentPage({
             </div>
 
             <div>
-              <p>Appointment Total: R{data?.total_amount}</p>
-              <p>Discounts: R{data?.discount}</p>
-              <p>Payments: R{data?.amount_paid}</p>
-              <p>Amount outstanding: R {data?.amount_due}</p>
+              <p>Appointment Total: R{financialData?.total_amount}</p>
+              <p>Discounts: R{financialData?.discount}</p>
+              <p>Payments: R{financialData?.amount_paid}</p>
+              <p>Amount outstanding: R {financialData?.amount_due}</p>
             </div>
           </div>
         </div>
@@ -288,7 +300,7 @@ export default function PaymentPage({
               Cancel
             </Button>
             <Button
-              disabled={parseFloat(data?.amount_due) <= 0}
+              disabled={parseFloat(financialData?.amount_due) <= 0}
               onClick={handleSubmit}
               variant="contained"
               color="primary"

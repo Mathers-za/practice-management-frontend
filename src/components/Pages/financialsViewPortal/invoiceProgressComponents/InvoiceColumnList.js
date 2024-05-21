@@ -118,7 +118,7 @@ export default function InvoiceColumnList({
   return (
     <>
       <div className="w-full  h-fit p-2 min-h-full  bg-white">
-        <div className="h-fit border shadow-md shadow-black/40 w-full mb-4 items-start justify-between flex px-3 pt-2 pb-3 ">
+        <div className="h-fit border shadow-md shadow-black/40 w-full mb-2 items-start justify-between flex px-3 pt-2 pb-3 ">
           <div className=" flex flex-col gap-3  h-full w-1/3">
             <MobileDatePicker
               label="Start Date"
@@ -144,7 +144,7 @@ export default function InvoiceColumnList({
           {progressFlag && (
             <div className=" w-2/3 flex justify-center ">
               <div className="">
-                <h2 className="mb-3 select-none border-b  border-slate-400 ">
+                <h2 className="mb-2 select-none border-b  border-slate-400 ">
                   Search by name/surname, dates, or amount total/due
                 </h2>
                 <TextField
@@ -159,7 +159,7 @@ export default function InvoiceColumnList({
             </div>
           )}
         </div>
-        <div className="w-full flex    gap-5 mt-1">
+        <div className="w-full flex    gap-5 ">
           <div className="bg-black w-1/3 flex items-center p-3 justify-between  text-white   ">
             <div className="relative">
               {leftColHeading}
