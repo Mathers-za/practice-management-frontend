@@ -1,25 +1,14 @@
-import styles from "./paymentsList.module.css";
 import PaymentsListItem from "./PaymentListItem";
 import { useEffect, useState } from "react";
 import { usePagination } from "../../../../CustomHooks/serverStateHooks";
 import { formatDateYearMonthDay } from "../invoiceProgressComponents/progressUtilFunctions";
-import axios from "axios";
 
-async function fetchData(pageInt, pageSizeInt, filterCriteriaObj) {
-  const response = await axios.get(
-    `http://localhost:4000/payments/filterview`,
-    {
-      params: {
-        page: pageInt,
-        pageSize: pageSizeInt,
-        filterCriteria: filterCriteriaObj,
-      },
-      withCredentials: true,
-    }
-  );
-
-  return response.data;
-}
+import { filterPaymentsData } from "./paymentsListHelperFns";
+import { MobileDatePicker } from "@mui/x-date-pickers";
+import { format } from "date-fns";
+import { TextField } from "@mui/material";
+import Pagination from "@mui/material/Pagination";
+import { fetchData } from "./paymentsListHelperFns";
 
 export default function PaymentsList({ profileId }) {
   const [searchDateCriteria, setSearchDateCriteria] = useState({
@@ -30,12 +19,10 @@ export default function PaymentsList({ profileId }) {
   const [page, setPage] = useState(1);
   const [searchBarInput, setSearchBarInput] = useState(null);
   const [mapPaymentData, setMapPaymentData] = useState([]);
-  const {
-    data: paymentsData,
-    refetch: refetchPaymentsData,
-    metadata,
-  } = usePagination("paymentData", page, () =>
-    fetchData(page, 14, { ...searchDateCriteria, profile_id: profileId })
+  const { data: paymentsData } = usePagination(
+    ["paymentData", searchDateCriteria, page],
+    page,
+    () => fetchData(page, 14, { ...searchDateCriteria, profile_id: profileId })
   );
 
   useEffect(() => {
@@ -44,107 +31,91 @@ export default function PaymentsList({ profileId }) {
 
   useEffect(() => {
     if (searchBarInput) {
-      function filterPaymentsData(paymentsData) {
-        const filteredData = paymentsData.filter((payment) => {
-          const values = Object.values(payment);
-          return values.some((value) => {
-            if (value === null || value === undefined) {
-              return false;
-            } else if (typeof value !== "string") {
-              return value
-                .toString()
-                .toLowerCase()
-                .includes(searchBarInput.toLowerCase());
-            } else {
-              return value
-                .toLocaleLowerCase()
-                .includes(searchBarInput.toLocaleLowerCase());
-            }
-          });
-        });
-        return filteredData;
-      }
-      setMapPaymentData(filterPaymentsData(paymentsData?.data));
+      setMapPaymentData(filterPaymentsData(paymentsData?.data, searchBarInput));
     }
   }, [searchBarInput, paymentsData?.data]);
 
   useEffect(() => {
     setMapPaymentData([]);
-    refetchPaymentsData();
     setPage(1);
-
     setSearchBarInput("");
   }, [searchDateCriteria]);
 
-  function handleChange(event) {
-    const { name, value } = event.target;
-
+  function handleDateChange(date, key) {
     setSearchDateCriteria((prev) => ({
       ...prev,
-      [name]: value === "" ? formatDateYearMonthDay(new Date()) : value,
+      [key]: format(date, "yyyy-MM-dd"),
     }));
   }
 
   return (
     <>
-      <div className={styles["invoice-container"]}>
-        <div className={styles["top-bar"]}>
-          <div className={styles["top-half"]}>
-            <div className={styles["top-half-content-left"]}>
-              <h2>Payments</h2>
-              <div>
-                <label>Start Date</label> <br />
-                <input
-                  onChange={handleChange}
-                  type="date"
-                  name="start_date"
-                  value={searchDateCriteria.start_date}
+      <div className="w-full min-h-full h-fit p-3 bg-white">
+        <div className="border border-slate-500 shadow-md shadow-black/40 rounded-sm p-4">
+          <div>
+            <div className="flex gap-5">
+              <div className="w-2/4">
+                <h2 className=" text-lg">Payments</h2>
+                <div className="  flex gap-2 ">
+                  <MobileDatePicker
+                    onAccept={(date) => handleDateChange(date, "start_date")}
+                    orientation="portrait"
+                    closeOnSelect={true}
+                    value={new Date(searchDateCriteria?.start_date)}
+                    slotProps={{
+                      textField: { variant: "standard" },
+                      actionBar: { actions: [] },
+                    }}
+                    label="Start date"
+                  />
+
+                  <MobileDatePicker
+                    onAccept={(date) => handleDateChange(date, "end_date")}
+                    orientation="portrait"
+                    closeOnSelect={true}
+                    value={new Date(searchDateCriteria?.end_date)}
+                    slotProps={{
+                      textField: { variant: "standard" },
+                      actionBar: { actions: [] },
+                    }}
+                    label="End date"
+                  />
+                </div>
+              </div>
+
+              <div className="w-2/4 ">
+                <h2 className="border-b w-fit border-black pb-1 mb-2">
+                  Search by name/date/appointment type or payment method
+                </h2>
+                <TextField
+                  size="small"
+                  label="Search"
+                  onChange={(event) => setSearchBarInput(event.target.value)}
+                  value={searchBarInput || ""}
+                  variant="outlined"
                 />
               </div>
-              <div>
-                <label> End Date</label> <br />
-                <input
-                  onChange={handleChange}
-                  type="date"
-                  name="end_date"
-                  value={searchDateCriteria.end_date}
-                />
-              </div>
-            </div>
-            <div className={styles["top-half-content-right"]}>
-              <label>Search</label>
-              <input
-                onChange={(event) => setSearchBarInput(event.target.value)}
-                className={styles.searchBar}
-                type="text"
-                value={searchBarInput || ""}
-              />
             </div>
           </div>
-          <div className={styles["bottom-half"]}>
+          <div className="flex mt-4 items-end justify-between">
             <div>
               {paymentsData?.metadata?.totalResults ?? 0} payments found
             </div>
-            <div className={styles.pageNav}>
-              <button
-                disabled={!paymentsData?.data}
-                onClick={() => {
-                  setPage((prev) => Math.max(prev - 1, 1));
-                }}
-              >
-                prev page
-              </button>
-              {page} of {paymentsData?.metadata?.totalPages ?? 1}
-              <button
-                disabled={!paymentsData?.data}
-                onClick={() => {
-                  setPage((prev) =>
-                    Math.min(prev + 1, paymentsData?.metadata?.totalPages)
-                  );
-                }}
-              >
-                next page
-              </button>
+            <div>
+              <h2 className="text-start">Pages</h2>
+              <div className="mt-1">
+                {" "}
+                <Pagination
+                  shape="rounded"
+                  showFirstButton
+                  showLastButton
+                  variant="outlined"
+                  size="small"
+                  onChange={(event, page) => setPage(page)}
+                  count={paymentsData?.metadata?.totalPages ?? 1}
+                  color="primary"
+                />
+              </div>
             </div>
           </div>
         </div>

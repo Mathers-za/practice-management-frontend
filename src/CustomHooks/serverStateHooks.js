@@ -142,6 +142,8 @@ const usePagination = (queryString, queryID, fetchData) => {
     queryKey: [queryString, queryID],
     queryFn: fetchData,
     refetchOnWindowFocus: false,
+    keepPreviousData: true,
+
     select: (data) => ({
       data: data?.data,
       metadata: data?.metadata,
