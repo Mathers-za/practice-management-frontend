@@ -4,13 +4,17 @@ import {
   usePostData,
 } from "../../../../CustomHooks/serverStateHooks";
 import { TextField, Button } from "@mui/material";
+import { defaultNotfications } from "./defaultNotifications";
 
 import TemplateOptions from "../templatingOptions/TemplateOptions";
+import { getSaveButtonDisabledState } from "../email customization page/emailNotificationHelperFns";
 
-export default function TextContent({ columnName, data, refetch }) {
+export default function TextContent({ columnName, data, refetch, label }) {
   const [content, setContent] = useState({
     id: data.id,
   });
+
+  const [isResetToDefault, setIsResetToDefault] = useState(false);
 
   const [error, setError] = useState();
 
@@ -28,14 +32,11 @@ export default function TextContent({ columnName, data, refetch }) {
     `/emailNotifications//customizationErrorCheck`
   );
 
-  const [isUpdate, setIsUpdate] = useState(true);
-
   const [changes, setChanges] = useState({});
 
   useEffect(() => {
     if (data) {
       setContent(data);
-      setIsUpdate(true);
     }
   }, [data, columnName]);
 
@@ -53,28 +54,38 @@ export default function TextContent({ columnName, data, refetch }) {
     }));
   }
 
+  function handleResetToDefault() {
+    setIsResetToDefault(true);
+    setContent((prev) => ({
+      ...prev,
+      [columnName]: defaultNotfications[columnName],
+    }));
+
+    setChanges((prev) => ({
+      ...prev,
+      id: data.id,
+      [columnName]: defaultNotfications[columnName],
+    }));
+  }
+
+  //TODO handle empty customizations thrigh validation.
+
   async function handleSubmission() {
-    if (isUpdate) {
-      try {
-        await errorCheck.mutateAsync(changes);
-        setError();
-      } catch (error) {
-        console.error(error);
-        setError(error.response.data);
-        setChanges({});
-        return;
-      }
-
-      await patchMutation.mutateAsync(changes);
-
-      await refetch();
+    try {
+      await errorCheck.mutateAsync(changes);
+      setError();
+    } catch (error) {
+      console.error(error);
+      setError(error.response.data);
       setChanges({});
+      return;
     }
+    setChanges({});
+    setIsResetToDefault(false);
 
-    if (!isUpdate) {
-      createMutation.mutate(content);
-      setChanges({});
-    }
+    await patchMutation.mutateAsync(changes);
+
+    await refetch();
   }
 
   function addToStringFn(string) {
@@ -93,22 +104,32 @@ export default function TextContent({ columnName, data, refetch }) {
       <div>
         <div className="flex gap-3  mt-3  ">
           <div className="w-3/4 space-y-3 ">
-            <TextField
-              fullWidth
-              label={columnName}
-              multiline
-              rows={10}
-              value={content?.[columnName] || ""}
-              name={columnName}
-              onChange={handleChange}
-              sx={{ ".MuiInputBase-input": { boxShadow: "none" } }}
-            />
-            <div className="text-end">
+            <div className="shadow-md">
+              <TextField
+                fullWidth
+                label={label}
+                multiline
+                rows={10}
+                value={content?.[columnName] || ""}
+                name={columnName}
+                onChange={handleChange}
+                sx={{ ".MuiInputBase-input": { boxShadow: "none" } }}
+              />
+            </div>
+
+            <div className="flex justify-between">
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleResetToDefault}
+              >
+                Reset to default
+              </Button>
               <Button
                 variant="contained"
                 color="primary"
                 onClick={handleSubmission}
-                disabled={Object.keys(changes).length === 0}
+                disabled={getSaveButtonDisabledState(changes, isResetToDefault)}
               >
                 Save Changes
               </Button>

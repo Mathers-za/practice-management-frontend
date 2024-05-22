@@ -24,7 +24,7 @@ export default function EmailCustomizationPage({ profileId }) {
 
   return (
     <>
-      <div className="h-full w-full p-4 bg-white">
+      <div className="min-h-full w-full p-4 bg-white">
         <div className="flex justify-evenly gap-5 min-h-[20%]">
           <EmailNotificationTypeTile
             id={0}

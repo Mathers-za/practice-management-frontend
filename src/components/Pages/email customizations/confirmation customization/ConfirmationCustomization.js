@@ -1,6 +1,7 @@
 import { useState } from "react";
-import TemplateOptions from "../templatingOptions/TemplateOptions";
 
+import MenuDivsWithIcon from "../../../miscellaneous components/MenuListDivsWithIcon";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import TextContent from "../TextContentComponent/TextContent";
 
 export default function ConfirmationCustomization({
@@ -13,10 +14,23 @@ export default function ConfirmationCustomization({
 
   return (
     <>
-      <div className="min-h-full w-full ">
-        <div onClick={() => setShowSubjectContent(!showSubjectContent)}>
-          Email Subject
-        </div>
+      <div className="h-full w-full  mt-3  ">
+        <MenuDivsWithIcon
+          className="pr-10"
+          text=" Customize Subject"
+          onclick={() => {
+            setShowSubjectContent(!showSubjectContent);
+            setShowBodyContent(false);
+          }}
+          iconEnd={
+            <FontAwesomeIcon
+              icon={`fa-solid fa-circle-chevron-${
+                showSubjectContent ? "up" : "down"
+              }`}
+              size="xl"
+            />
+          }
+        />
 
         {showSubjectContent && (
           <TextContent
@@ -27,12 +41,26 @@ export default function ConfirmationCustomization({
             }}
             columnName="confirmation_subject"
             profileId={profileId}
+            label="subject"
           />
         )}
+        <MenuDivsWithIcon
+          className="pr-10"
+          text=" Customizae Body"
+          onclick={() => {
+            setShowSubjectContent(false);
+            setShowBodyContent(!showBodyContent);
+          }}
+          iconEnd={
+            <FontAwesomeIcon
+              icon={`fa-solid fa-circle-chevron-${
+                showBodyContent ? "up" : "down"
+              }`}
+              size="xl"
+            />
+          }
+        />
 
-        <div onClick={() => setShowBodyContent(!showBodyContent)}>
-          Email body
-        </div>
         {showBodyContent && (
           <TextContent
             refetch={() => refetch()}
@@ -42,6 +70,7 @@ export default function ConfirmationCustomization({
             }}
             profileId={profileId}
             columnName="confirmation_body"
+            label="body"
           />
         )}
       </div>
