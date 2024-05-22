@@ -3,9 +3,9 @@ import {
   usePatchData,
   usePostData,
 } from "../../../../CustomHooks/serverStateHooks";
+import { TextField, Button } from "@mui/material";
 
 import TemplateOptions from "../templatingOptions/TemplateOptions";
-import { set } from "date-fns";
 
 export default function TextContent({ columnName, data, refetch }) {
   const [content, setContent] = useState({
@@ -91,32 +91,37 @@ export default function TextContent({ columnName, data, refetch }) {
   return (
     <>
       <div>
-        <textarea
-          onChange={handleChange}
-          name={columnName}
-          cols="80"
-          rows="10"
-          value={content?.[columnName] || ""}
-        ></textarea>
-
-        <button
-          disabled={Object.keys(changes).length === 0}
-          onClick={handleSubmission}
-        >
-          {" "}
-          Save
-        </button>
+        <div className="flex gap-3  mt-3  ">
+          <div className="w-3/4 space-y-3 ">
+            <TextField
+              fullWidth
+              label={columnName}
+              multiline
+              rows={10}
+              value={content?.[columnName] || ""}
+              name={columnName}
+              onChange={handleChange}
+              sx={{ ".MuiInputBase-input": { boxShadow: "none" } }}
+            />
+            <div className="text-end">
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSubmission}
+                disabled={Object.keys(changes).length === 0}
+              >
+                Save Changes
+              </Button>
+            </div>
+          </div>
+          <TemplateOptions addToStringFn={(string) => addToStringFn(string)} />
+        </div>
       </div>
+
       {error && (
         <div>
           <textarea value={error || ""} cols="80" rows="10"></textarea>
         </div>
-      )}
-      <div onClick={() => setShowTemPlateOptions(!showTemplateOptions)}>
-        Click to access variables to customize your email
-      </div>
-      {showTemplateOptions && (
-        <TemplateOptions addToStringFn={(string) => addToStringFn(string)} />
       )}
     </>
   );
