@@ -3,11 +3,14 @@ import {
   usePatchData,
   usePostData,
 } from "../../../../CustomHooks/serverStateHooks";
-import { TextField, Button } from "@mui/material";
+import { TextField, Button, Chip } from "@mui/material";
 import { defaultNotfications } from "./defaultNotifications";
 
 import TemplateOptions from "../templatingOptions/TemplateOptions";
-import { getSaveButtonDisabledState } from "../email customization page/emailNotificationHelperFns";
+import {
+  getSaveButtonDisabledState,
+  showDefaultLabel,
+} from "../email customization page/emailNotificationHelperFns";
 
 export default function TextContent({ columnName, data, refetch, label }) {
   const [content, setContent] = useState({
@@ -102,9 +105,9 @@ export default function TextContent({ columnName, data, refetch, label }) {
   return (
     <>
       <div>
-        <div className="flex gap-3  mt-3  ">
+        <div className="flex gap-3  mt-4  ">
           <div className="w-3/4 space-y-3 ">
-            <div className="shadow-md">
+            <div className="shadow-md relative">
               <TextField
                 fullWidth
                 label={label}
@@ -115,6 +118,16 @@ export default function TextContent({ columnName, data, refetch, label }) {
                 onChange={handleChange}
                 sx={{ ".MuiInputBase-input": { boxShadow: "none" } }}
               />
+              {showDefaultLabel(content[columnName], defaultNotfications) && (
+                <div className="absolute select-none bg-white rounded-full h-fit w-fit z-10 -top-3.5 right-1">
+                  <Chip
+                    label="Default Message"
+                    variant="outlined"
+                    color="secondary"
+                    size="small"
+                  />
+                </div>
+              )}
             </div>
 
             <div className="flex justify-between">

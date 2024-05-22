@@ -12,3 +12,12 @@ export function getSaveButtonDisabledState(changesObj, resetState) {
     return false;
   } else return true;
 }
+
+export function showDefaultLabel(inputMessage, defaultMessagesObj) {
+  if (inputMessage) {
+    const booleanResult = Object.values(defaultMessagesObj).some((message) => {
+      return inputMessage === message;
+    });
+    return booleanResult;
+  }
+}
