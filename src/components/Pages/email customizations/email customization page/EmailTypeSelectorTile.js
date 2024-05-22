@@ -7,7 +7,6 @@ export default function EmailNotificationTypeTile({
   onclick = undefined,
   id,
 }) {
-  console.log("fired");
   return (
     <>
       <div

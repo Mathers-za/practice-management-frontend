@@ -17,7 +17,7 @@ export default function ConfirmationCustomization({
       <div className="h-full w-full  mt-3  ">
         <MenuDivsWithIcon
           className="pr-10"
-          text=" Customize Subject"
+          text=" Customize confirmation email subject"
           onclick={() => {
             setShowSubjectContent(!showSubjectContent);
             setShowBodyContent(false);
@@ -26,6 +26,22 @@ export default function ConfirmationCustomization({
             <FontAwesomeIcon
               icon={`fa-solid fa-circle-chevron-${
                 showSubjectContent ? "up" : "down"
+              }`}
+              size="xl"
+            />
+          }
+        />
+        <MenuDivsWithIcon
+          className="pr-10"
+          text=" Customize confirmation email body"
+          onclick={() => {
+            setShowSubjectContent(false);
+            setShowBodyContent(!showBodyContent);
+          }}
+          iconEnd={
+            <FontAwesomeIcon
+              icon={`fa-solid fa-circle-chevron-${
+                showBodyContent ? "up" : "down"
               }`}
               size="xl"
             />
@@ -44,22 +60,6 @@ export default function ConfirmationCustomization({
             label="subject"
           />
         )}
-        <MenuDivsWithIcon
-          className="pr-10"
-          text=" Customizae Body"
-          onclick={() => {
-            setShowSubjectContent(false);
-            setShowBodyContent(!showBodyContent);
-          }}
-          iconEnd={
-            <FontAwesomeIcon
-              icon={`fa-solid fa-circle-chevron-${
-                showBodyContent ? "up" : "down"
-              }`}
-              size="xl"
-            />
-          }
-        />
 
         {showBodyContent && (
           <TextContent

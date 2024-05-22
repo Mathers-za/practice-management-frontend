@@ -18,8 +18,14 @@ export default function EmailCustomizationPage({ profileId }) {
 
   function handleTileClick(id) {
     setTileColor(handleTileColorChange(id, "bg-sky-400"));
-    id == 0 && setShowConfirmationCustomization(!showConfirmationCustomization);
-    id == 1 && setShowReminderCustomization(!showReminderCustomization);
+    if (id == 0) {
+      setShowConfirmationCustomization(!showConfirmationCustomization);
+      setShowReminderCustomization(false);
+    }
+    if (id == 1) {
+      setShowReminderCustomization(!showReminderCustomization);
+      setShowConfirmationCustomization(false);
+    }
   }
 
   return (
