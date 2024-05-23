@@ -3,17 +3,23 @@ import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import { useEffect, useRef, useState } from "react";
 
-import CreateAppointment from "../../Create Patient component/CreatePatient.js";
+import CreateAppointment from "../../Appointment components/CreateAppointment.js";
+import { AnimatePresence, motion } from "framer-motion";
 
 import MainOptionsMenu from "../../Main Options/MainOptionsMenu.js";
 import {
+  fetchAppointmentDataForCalendar,
   getStartAndEndDatesOfCurrentWeek,
   populateEventsArrayForCalendarDisplay,
 } from "./mainCalendarHelperFns.js";
+import { fetchData } from "../financialsViewPortal/paymentsList/paymentsListHelperFns.js";
+import { useFetchData } from "../../../CustomHooks/serverStateHooks.js";
 
 export default function MainCalendar({ profileId }) {
+  const {} = useFetchData(`/appointments/filter${profileId}`, ["mainCalendar"]);
   const { startOfWeekDate, endOfWeekDate } =
     getStartAndEndDatesOfCurrentWeek("yyyy-MM-dd");
+
   const [selectedEvent, setSelectedEvent] = useState();
   const [jsDateString, setJsDateString] = useState();
   const selectEventRef = useRef();
@@ -84,20 +90,39 @@ export default function MainCalendar({ profileId }) {
           allDaySlot={false}
         />
       </div>
-      {showDropDownMenu && (
-        <MainOptionsMenu
-          hideComponent={() => setShowDropDownMenu(!showDropDownMenu)}
-          profileId={profileId}
-          patientId={selectedEvent.patientId}
-          appointment_id={selectedEvent.appointmentId}
-          appointmentTypeId={selectedEvent.appointmentTypeId}
-        />
-      )}
+      <AnimatePresence>
+        {showDropDownMenu && (
+          <motion.div
+            initial={{ height: "0%" }}
+            animate={{ height: "auto" }}
+            exit={{ height: "0%" }}
+            className="fixed bottom-0 left-0 w-full h-fit z-10"
+          >
+            <MainOptionsMenu
+              hideComponent={() => setShowDropDownMenu(!showDropDownMenu)}
+              profileId={profileId}
+              patientId={selectedEvent.patientId}
+              appointment_id={selectedEvent.appointmentId}
+              appointmentTypeId={selectedEvent.appointmentTypeId}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
       {showShowAppointmentCreationComponent && (
-        <CreateAppointment
-          profileId={profileId}
-          calendarSelectedJsDateTimeString={jsDateString}
-        />
+        <div className="z-10 fixed top-0 left-0 w-full h-screen bg-black/30 flex justify-center items-center">
+          {" "}
+          <div className="w-full h-full">
+            <CreateAppointment
+              hideComponent={() =>
+                setShowAppointmentCreationComponent(
+                  !showShowAppointmentCreationComponent
+                )
+              }
+              profileId={profileId}
+              calendarSelectedJsDateTimeString={jsDateString}
+            />
+          </div>
+        </div>
       )}
     </>
   );

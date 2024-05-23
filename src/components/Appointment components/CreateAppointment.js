@@ -16,6 +16,7 @@ import PatientPicker from "../miscellaneous components/PatientPicker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useGlobalStore } from "../../zustandStore/store";
 import AppointmentNotificationSettings from "../miscellaneous components/AppointmentNotificationSettings";
+import { Button } from "@mui/material";
 
 function checkForSelectedKeys(ArrayOfkeys, dataobj) {
   return ArrayOfkeys.every((key) => dataobj.hasOwnProperty(key));
@@ -34,6 +35,7 @@ function setDateAndTimes() {
 export default function CreateAppointment({
   profileId,
   calendarSelectedJsDateTimeString,
+  hideComponent,
 }) {
   const [showNotificationSettings, setShowNotificationSettings] =
     useState(false);
@@ -141,8 +143,8 @@ export default function CreateAppointment({
 
   return (
     <>
-      <div className="relative min-h-full border shadow-md shadow-slate-300">
-        <GenericTopBar label="Create Appointment" />
+      <div className="relative min-h-full w-full bg-white border ">
+        <GenericTopBar label="Create Appointment" onclick={hideComponent} />
 
         <DivSvgDisplayCombo
           icon={
@@ -315,12 +317,8 @@ export default function CreateAppointment({
           </div>
         )}
 
-        <div className="absolute bottom-0 left-0 w-full mb-1">
-          <FullWithButton
-            contentText="Confirm and Create Appointment"
-            onclick={() => {
-              setShowNotificationSettings(true);
-            }}
+        <div className="absolute bottom-0 left-0 w-full ">
+          <Button
             disabled={
               !checkForSelectedKeys(
                 [
@@ -333,7 +331,14 @@ export default function CreateAppointment({
                 appointment
               )
             }
-          />
+            fullWidth
+            size="large"
+            color="primary"
+            onClick={() => setShowNotificationSettings(true)}
+            variant="contained"
+          >
+            Confirm and Create Appointment
+          </Button>
         </div>
         {showNotificationSettings && (
           <div className="fixed left-0 top-0 w-full min-h-screen flex justify-center items-center bg-black bg-opacity-50 z-10 ">

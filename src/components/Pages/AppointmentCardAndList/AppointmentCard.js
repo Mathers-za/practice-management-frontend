@@ -126,7 +126,7 @@ export default function AppointmentCard({ appointmentData, refetchData }) {
             <motion.div
               className="w-full h-full"
               initial={{ height: "0%" }}
-              animate={{ height: "56%" }}
+              animate={{ height: "auto" }}
               exit={{ height: "0%" }}
             >
               <MainOptionsMenu
