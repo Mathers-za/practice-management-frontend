@@ -1,28 +1,46 @@
 import interactionPlugin from "@fullcalendar/interaction";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import { useEffect, useRef, useState } from "react";
+import dayGridPlugin from "@fullcalendar/daygrid";
+
+import { useEffect, useState } from "react";
 
 import CreateAppointment from "../../Appointment components/CreateAppointment.js";
 import { AnimatePresence, motion } from "framer-motion";
 
 import MainOptionsMenu from "../../Main Options/MainOptionsMenu.js";
 import {
-  fetchAppointmentDataForCalendar,
+  getCombinedDateAndTime,
   getStartAndEndDatesOfCurrentWeek,
-  populateEventsArrayForCalendarDisplay,
 } from "./mainCalendarHelperFns.js";
-import { fetchData } from "../financialsViewPortal/paymentsList/paymentsListHelperFns.js";
+import { useGlobalStore } from "../../../zustandStore/store.js";
 import { useFetchData } from "../../../CustomHooks/serverStateHooks.js";
 
 export default function MainCalendar({ profileId }) {
-  const {} = useFetchData(`/appointments/filter${profileId}`, ["mainCalendar"]);
   const { startOfWeekDate, endOfWeekDate } =
     getStartAndEndDatesOfCurrentWeek("yyyy-MM-dd");
+  const [searchDates, setSearchDates] = useState({
+    start_date: startOfWeekDate,
+    end_date: endOfWeekDate,
+  });
+
+  const { data: appointmentData } = useFetchData(
+    `/appointments/filter${profileId}`,
+    ["mainCalendar", searchDates],
+    searchDates
+  );
+
+  const {
+    setGlobalAppointmentData,
+    setGlobalPatientData,
+    setGlobalAppointmentTypeData,
+    setGlobalFinancialData,
+    setGlobalInvoiceData,
+  } = useGlobalStore();
 
   const [selectedEvent, setSelectedEvent] = useState();
   const [jsDateString, setJsDateString] = useState();
-  const selectEventRef = useRef();
+
   const [showDropDownMenu, setShowDropDownMenu] = useState(false);
   const [
     showShowAppointmentCreationComponent,
@@ -31,15 +49,32 @@ export default function MainCalendar({ profileId }) {
   const [calendarEvents, setCalendarEvents] = useState([]);
 
   useEffect(() => {
-    (async () => {
-      await populateEventsArrayForCalendarDisplay(
-        profileId,
-        startOfWeekDate,
-        endOfWeekDate,
-        setCalendarEvents
-      );
-    })();
-  }, []);
+    if (appointmentData) {
+      const calendarEventsArray = appointmentData.map((appointment) => {
+        return {
+          title: `${appointment.patient_first_name} ${
+            appointment.patient_last_name || ""
+          }`,
+
+          id: appointment.appointment_id,
+
+          start: getCombinedDateAndTime(
+            appointment.appointment_date,
+            appointment.start_time
+          ),
+
+          end: getCombinedDateAndTime(
+            appointment.appointment_date,
+            appointment.end_time
+          ),
+
+          appointmentData: appointment,
+        };
+      });
+
+      setCalendarEvents(calendarEventsArray);
+    }
+  }, [appointmentData]);
 
   function handleEmptyCellClick(dateAndTimeOfClickedCell) {
     setJsDateString(dateAndTimeOfClickedCell);
@@ -47,28 +82,74 @@ export default function MainCalendar({ profileId }) {
   }
   function handleEventClick(eventId) {
     const event = calendarEvents.find(
-      (event) => event.appointmentId === parseInt(eventId)
+      (event) => event.id === parseInt(eventId)
     );
+    setGlobalAppointmentData({
+      appointment_date: event.appointmentData.appointment_date,
+      start_time: event.appointmentData.start_time,
+      end_time: event.appointmentData.end_time,
+      id: event.appointmentData.appointment_id,
+    });
+    setGlobalFinancialData({
+      amount_due: event.appointmentData.amount_due,
+      total_amount: event.appointmentData.total_amount,
+      amount_paid: event.appointmentData.amount_paid,
+    });
+
+    setGlobalPatientData({
+      first_name: event.appointmentData.patient_first_name,
+      last_name: event.appointmentData.patient_last_name,
+      id: event.appointmentData.patient_id,
+    });
+
+    setGlobalAppointmentTypeData({
+      appointment_name: event.appointmentData.appointment_name,
+      id: event.appointmentData.apptype_id,
+    });
+
+    setGlobalInvoiceData({
+      invoice_status: event.appointmentData.invoice_status,
+      invoice_title: event.appointmentData.invoice_title,
+    });
+
     setSelectedEvent(event);
     setShowDropDownMenu(!showDropDownMenu);
   }
 
   async function handleDateSet(dateSetInfoObj) {
-    await populateEventsArrayForCalendarDisplay(
-      profileId,
-      dateSetInfoObj.start,
-      dateSetInfoObj.end,
-      setCalendarEvents
+    setSearchDates({
+      start_date: dateSetInfoObj.startStr,
+      end_date: dateSetInfoObj.endStr,
+    });
+  }
+
+  function handleEventCssCustomization(eventInfo) {
+    const amountDue = eventInfo.event.extendedProps.appointmentData.amount_due;
+    console.log(amountDue);
+
+    return (
+      <div
+        className={`flex h-full ${
+          parseFloat(amountDue) <= 0 ? "bg-green-500" : null
+        } w-full gap-1 px-1 text-xs m-0 p-0 text-white  `}
+      >
+        <p>{eventInfo.timeText}</p>
+        <p> {eventInfo.event.title}</p>
+      </div>
     );
   }
 
-  console.log(selectedEvent);
-
   return (
     <>
-      <div>
+      <div className="bg-white p-3 ">
         <FullCalendar
-          plugins={[timeGridPlugin, interactionPlugin]}
+          eventContent={(eventInfo) => handleEventCssCustomization(eventInfo)}
+          displayEventEnd={true}
+          displayEventTime={true}
+          buttonHints={true}
+          eventColor="#0284C7"
+          nowIndicator={true}
+          plugins={[timeGridPlugin, interactionPlugin, dayGridPlugin]}
           initialView="timeGridWeek"
           events={calendarEvents && calendarEvents}
           dayHeaderFormat={{
@@ -99,11 +180,12 @@ export default function MainCalendar({ profileId }) {
             className="fixed bottom-0 left-0 w-full h-fit z-10"
           >
             <MainOptionsMenu
+              queryKeyToInvalidate={["mainCalendar", searchDates]}
               hideComponent={() => setShowDropDownMenu(!showDropDownMenu)}
               profileId={profileId}
-              patientId={selectedEvent.patientId}
-              appointment_id={selectedEvent.appointmentId}
-              appointmentTypeId={selectedEvent.appointmentTypeId}
+              patientId={selectedEvent.appointmentData.patient_id}
+              appointment_id={selectedEvent.appointmentData.appointment_id}
+              appointmentTypeId={selectedEvent.appointmentData.apptype_id}
             />
           </motion.div>
         )}
@@ -113,6 +195,7 @@ export default function MainCalendar({ profileId }) {
           {" "}
           <div className="w-full h-full">
             <CreateAppointment
+              querykeyToInvalidate={["mainCalendar", searchDates]}
               hideComponent={() =>
                 setShowAppointmentCreationComponent(
                   !showShowAppointmentCreationComponent

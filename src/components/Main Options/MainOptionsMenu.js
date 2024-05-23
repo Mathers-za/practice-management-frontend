@@ -11,7 +11,11 @@ import PaymentPage from "../Pages/Payments/PaymentPage";
 import GenericTopBar from "../miscellaneous components/GenericTopBar";
 import CreateTreatmentNote from "../Pages/PatientTreatmentNotes/CreateTreatmentNote";
 
-export default function MainOptionsMenu({ hideComponent, refetchData }) {
+export default function MainOptionsMenu({
+  hideComponent,
+  refetchData,
+  queryKeyToInvalidate,
+}) {
   const [showInvoicePage, setShowInvoicePage] = useState(false);
   const [showIcdCodeComponent, setShowIcdCodeComponent] = useState(false);
   const [showPaymentsPage, setShowPaymentsPage] = useState(false);
@@ -130,6 +134,7 @@ export default function MainOptionsMenu({ hideComponent, refetchData }) {
         {showPaymentsPage && (
           <div>
             <PaymentPage
+              queryKeyToInvalidate={queryKeyToInvalidate}
               refetchData={refetchData}
               hideComponent={() => setShowPaymentsPage(!showPaymentsPage)}
               appointmentId={globalAppointmentData.id}

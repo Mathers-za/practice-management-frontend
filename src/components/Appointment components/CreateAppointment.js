@@ -11,7 +11,7 @@ import TimestartAndEndDisplay from "../miscellaneous components/TimeStartAndEndD
 import AppointmentTypePicker from "../miscellaneous components/AppointmentTypePicker";
 import { StaticTimePicker } from "@mui/x-date-pickers/StaticTimePicker";
 import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
-import FullWithButton from "../miscellaneous components/FullWidthButton";
+
 import PatientPicker from "../miscellaneous components/PatientPicker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useGlobalStore } from "../../zustandStore/store";
@@ -36,6 +36,7 @@ export default function CreateAppointment({
   profileId,
   calendarSelectedJsDateTimeString,
   hideComponent,
+  querykeyToInvalidate,
 }) {
   const [showNotificationSettings, setShowNotificationSettings] =
     useState(false);
@@ -70,7 +71,10 @@ export default function CreateAppointment({
   const { createMutation: emailNotificationMutation } = usePostData(
     `/emailNotifications/sendConfirmationEmail`
   );
-  const { createMutation } = usePostData("/appointments/createAppointment");
+  const { createMutation } = usePostData(
+    "/appointments/createAppointment",
+    querykeyToInvalidate && querykeyToInvalidate
+  );
   const [patientSelectionDisplay, setPatientSelectionDisplay] = useState("");
 
   function handleAppointmentTypeSelect(appTypeData) {
@@ -167,6 +171,7 @@ export default function CreateAppointment({
         {showDatePicker && (
           <div className="fixed left-0 top-0 min-w-full h-screen z-10 bg-slate-300 bg-opacity-50 flex items-center justify-center ">
             <StaticDatePicker
+              orientation="portrait"
               value={new Date(appointment.appointment_date) || new Date()}
               onAccept={(value) => {
                 setAppointment((prev) => ({
@@ -206,6 +211,7 @@ export default function CreateAppointment({
             <div className="fixed left-0 top-0 min-w-full min-h-screen bg-slate-400 bg-opacity-50 flex items-center justify-center">
               <div className="w-1/3 h-fit ">
                 <StaticTimePicker
+                  orientation="portrait"
                   ampm={false}
                   slotProps={{
                     actionBar: {
@@ -236,6 +242,8 @@ export default function CreateAppointment({
             <div className="fixed left-0 top-0 min-w-full min-h-screen bg-slate-400 bg-opacity-50 flex items-center justify-center">
               <div className="w-1/3 h-fit ">
                 <StaticTimePicker
+                  orientation="portrait"
+                  ampm={false}
                   value={
                     appointment?.end_time
                       ? new Date(appointment.end_time)
