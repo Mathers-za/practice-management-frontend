@@ -1,13 +1,19 @@
 import axios from "axios";
 
-export default async function axiosRequest(method, endpoint, payload = null) {
+export default async function axiosRequest(
+  method,
+  endpoint,
+  payload = null,
+  params = null
+) {
   try {
     const response = await axios(endpoint, {
       baseURL: "http://localhost:4000",
       method: method,
       url: endpoint,
       withCredentials: true,
-      data: payload,
+      data: payload && payload,
+      params: params && params,
     });
 
     return response;

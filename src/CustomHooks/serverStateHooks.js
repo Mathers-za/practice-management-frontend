@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "react-query";
+import axiosRequest from "../apiRequests/apiRequests";
 
 const useFetchData = (
   endpoint = "",
@@ -150,4 +151,38 @@ const usePagination = (queryString, queryID, fetchData) => {
     }),
   });
 };
-export { useDeleteData, usePagination, useBatchDeleteData };
+
+const usePagination1 = (endpoint, queryKey, pageNumber, pageSize) => {
+  const {
+    data,
+    isError,
+    error,
+    isFetching,
+    isLoading,
+    isFetched,
+    refetch,
+    isSuccess,
+  } = useQuery({
+    queryKey: queryKey,
+    queryFn: async () => {
+      const { data } = await axiosRequest("get", endpoint, undefined, {
+        pageNumber: pageNumber,
+        pageSize: pageSize,
+      });
+      return data;
+    },
+    keepPreviousData: true,
+  });
+  return {
+    data,
+    isError,
+    error,
+    isFetched,
+    isFetching,
+    isLoading,
+    refetch,
+    isSuccess,
+  };
+};
+
+export { useDeleteData, usePagination, useBatchDeleteData, usePagination1 };
