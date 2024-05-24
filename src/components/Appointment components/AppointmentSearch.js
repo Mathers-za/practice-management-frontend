@@ -44,7 +44,7 @@ export default function AppointmentSearch({ profileId }) {
                 }));
               }}
               value={searchParams?.start_date}
-            />{" "}
+            />
             <CustomDatePicker
               label="End Date"
               onchange={(endDate) => {
@@ -66,8 +66,8 @@ export default function AppointmentSearch({ profileId }) {
               onChange={handleSearchBarChange}
               type="text"
               label="search"
-              value={searchParams?.searchSubString || ""}
-              name="searchSubString"
+              value={searchParams?.search || ""}
+              name="search"
               helperText="Search by first name,last name, email or phone number. Search is case sensitive"
             />
           </div>

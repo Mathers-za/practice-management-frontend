@@ -152,7 +152,13 @@ const usePagination = (queryString, queryID, fetchData) => {
   });
 };
 
-const usePagination1 = (endpoint, queryKey, pageNumber, pageSize) => {
+const usePagination1 = (
+  endpoint,
+  queryKey,
+  pageNumber = 1,
+  pageSize = 10,
+  filterParams
+) => {
   const {
     data,
     isError,
@@ -168,6 +174,7 @@ const usePagination1 = (endpoint, queryKey, pageNumber, pageSize) => {
       const { data } = await axiosRequest("get", endpoint, undefined, {
         pageNumber: pageNumber,
         pageSize: pageSize,
+        filterParams: filterParams,
       });
       return data;
     },
