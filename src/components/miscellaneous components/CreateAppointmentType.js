@@ -1,11 +1,12 @@
 import { useState } from "react";
-import Input from "./DisplayTextInput";
+
 import { usePostData } from "../../CustomHooks/serverStateHooks";
 
 import SubmitButton from "./SubmitButton";
 import { createAppointmentTypeValidationSchema } from "../../form validation Schemas/validationSchemas";
 import DisplaySingleError from "./WarningMessage";
 import CancelButton from "./CancelButton";
+import { TextField, Button } from "@mui/material";
 
 export default function CreateAppointmentType({
   profileId,
@@ -65,45 +66,56 @@ export default function CreateAppointmentType({
           </div>
 
           <div className="flex gap-3">
-            <Input
-              labelText="Appointment Type name"
-              type="text"
+            <TextField
+              fullWidth
+              variant="standard"
               name="appointment_name"
               onChange={handleChange}
-              value={appointmentTypeDataPayload.appointment_name ?? ""}
-              placeholder="Appointment Type name"
-              required={false}
+              label="Appointment Type name"
+              value={appointmentTypeDataPayload.appointment_name || ""}
+              required={true}
             />
-            <Input
+            <TextField
+              fullWidth
               labelText="Duration"
               required={true}
               type="number"
               onChange={handleChange}
               name="duration"
               value={appointmentTypeDataPayload.duration ?? ""}
-              placeholder="Duration"
-              dynamicBottomInfo="The duration of this appointment type in minutes"
+              label="Duration"
+              variant="standard"
             />
-            <Input
+
+            <TextField
+              fullWidth
               labelText="Price"
               type="number"
               name="price"
               onChange={handleChange}
               value={appointmentTypeDataPayload.price ?? ""}
-              placeholder="Price"
+              label="Price"
               required={true}
-              dynamicBottomInfo="If not automated Icd10 codes are set, then the appointment will default to this price"
+              variant="standard"
             />
           </div>
           <div className="flex justify-between items-end">
-            <CancelButton
-              onclick={() => hideComponent()}
-              textContent="Cancel"
-            />
-            <SubmitButton
-              text="Save"
-              disable={Object.keys(appointmentTypeDataPayload).length != 3}
-            />
+            <Button
+              type="button"
+              onClick={() => hideComponent()}
+              variant="contained"
+              color="inherit"
+            >
+              Cancel
+            </Button>
+            <Button
+              color="primary"
+              variant="contained"
+              type="submit"
+              disabled={Object.keys(appointmentTypeDataPayload).length != 3}
+            >
+              Save
+            </Button>
           </div>
 
           {errorMessage && <DisplaySingleError errorMessage={errorMessage} />}

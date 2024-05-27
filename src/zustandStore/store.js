@@ -130,7 +130,7 @@ export const useGlobalStore = create((set) => ({
   setGlobalProfileData: (profileDataObj) =>
     set({ globalProfileData: profileDataObj }),
   setGlobalPracticeDetails: (practiceDataObj) =>
-    set({ GlobalPracticeDetails: practiceDataObj }),
+    set({ globalPracticeDetailsData: practiceDataObj }),
 }));
 
 export const useAppointmentTypeAndIcdAutomationsPage = create(

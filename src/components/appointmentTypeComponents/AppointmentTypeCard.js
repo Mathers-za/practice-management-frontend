@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import {
   useGlobalStore,
   useAppointmentTypeAndIcdAutomationsPage,
@@ -10,11 +11,12 @@ export default function AppointmentTypeCard({
   appointmentTypeData,
   predefinedIcdcodes,
 }) {
-  const globalPracticeData = useGlobalStore((state) => state.practiceDetails);
+  console.log(predefinedIcdcodes);
+  const { globalPracticeDetailsData } = useGlobalStore();
   const resetAppointmentTypeUpdateAndAutomationsZustandStore =
     useAppointmentTypeAndIcdAutomationsPage((state) => state.resetAll);
   const [showApptypeEdit, setShowAppTypeEdit] = useState(false);
-
+  console.log(globalPracticeDetailsData);
   const [total, setTotal] = useState();
 
   useEffect(() => {
@@ -30,7 +32,7 @@ export default function AppointmentTypeCard({
 
   return (
     <>
-      <div className=" h-97 overflow-auto  w-1/4 bg-white border shadow-md shadow-gray-600/75  ">
+      <div className=" h-97 overflow-auto  min-w-full bg-white border shadow-md shadow-gray-600/75  ">
         <div className="relative">
           {" "}
           <img src="../images/qb0FeYn.jpeg" alt="working" />
@@ -67,42 +69,40 @@ export default function AppointmentTypeCard({
               </p>
             </div>
           </div>
-          {globalPracticeData.address && (
+          {globalPracticeDetailsData.practice_address && (
             <div className="space-y-2">
               <p className="  px-2 py-1 bg-slate-400   ">Location</p>
               <div className="px-1 rounded-md bg-slate-400 w-3/4 mx-auto text-white text-sm text-center">
-                {globalPracticeData.address}
+                {globalPracticeDetailsData.practice_address}
               </div>
-              {predefinedIcdcodes && (
-                <div>
-                  <p className="p-1 bg-slate-400 ">Coding</p>
-                  <table className="  w-full ">
-                    <tbody className="border-none">
-                      {predefinedIcdcodes.map((code) => (
-                        <div className="flex justify-around columns-3 border-b border-slate-500 py-1">
-                          {" "}
-                          <td className="border-none  ">
-                            {code.icd10_code || ""}
-                          </td>
-                          <td className="border-none">
-                            {code?.procedural_code || ""}
-                          </td>
-                          <td className="border-none ">
-                            {code.price ? `R${code.price}` : ""}
-                          </td>
-                        </div>
-                      ))}
-                    </tbody>
-                  </table>
-                  {total || total === 0 ? (
-                    <p className="text-end px-2">
-                      <span className="font-bold">Total</span>: R{total || "0"}
-                    </p>
-                  ) : null}
-                </div>
-              )}
             </div>
           )}
+          {predefinedIcdcodes && predefinedIcdcodes.length > 0 ? (
+            <div>
+              <p className="p-1 bg-slate-400 ">Coding</p>
+              <table className="  w-full ">
+                <tbody className="border-none">
+                  {predefinedIcdcodes.map((code) => (
+                    <div className="flex justify-around columns-3 border-b border-slate-500 py-1">
+                      {" "}
+                      <td className="border-none  ">{code.icd10_code || ""}</td>
+                      <td className="border-none">
+                        {code?.procedural_code || ""}
+                      </td>
+                      <td className="border-none ">
+                        {code.price ? `R${code.price}` : ""}
+                      </td>
+                    </div>
+                  ))}
+                </tbody>
+              </table>
+              {total || total === 0 ? (
+                <p className="text-end px-2">
+                  <span className="font-bold">Total</span>: R{total || "0"}
+                </p>
+              ) : null}
+            </div>
+          ) : null}
         </div>
         {showApptypeEdit && (
           <div className="z-10 fixed left-0 top-0 w-full h-screen max-h-screen overflow-auto bg-black bg-opacity-80 ">

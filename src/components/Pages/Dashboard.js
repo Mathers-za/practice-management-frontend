@@ -10,11 +10,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import axiosRequest from "../../apiRequests/apiRequests";
 
 export default function DashBoard({ profileIdStateSetter }) {
-  const { setProfileData, setPracticeDetails } = useGlobalStore();
-
   const [showSideBar, setShowSideBar] = useState(true);
 
-  const { setGlobalProfileData, setGlobalPracticeDetails } = useGlobalStore();
+  const {
+    setGlobalProfileData,
+    setGlobalPracticeDetails,
+    globalPracticeDetailsData,
+  } = useGlobalStore();
   const { data, httpStatus } = useFetchData(
     `/profile/view`,
     "profileDataDashboard"
@@ -27,11 +29,12 @@ export default function DashBoard({ profileIdStateSetter }) {
   ) {
     try {
       profileDataSetterFn(userProfileData);
-      const { data: practiceDataResponse } = await axiosRequest(
+      const { data: practiceDetailsData } = await axiosRequest(
         "get",
         `/practiceDetails/view${userProfileData.id}`
       );
-      practiceDetailsSetterFn(practiceDataResponse);
+
+      practiceDetailsSetterFn(practiceDetailsData);
     } catch (error) {
       console.error(error);
 

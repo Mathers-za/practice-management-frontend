@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useFetchData } from "../CustomHooks/serverStateHooks";
-
+import { usePagination } from "../CustomHooks/serverStateHooks";
+import { Pagination } from "@mui/material";
 import AppointmentTypeCard from "./appointmentTypeComponents/AppointmentTypeCard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -13,12 +14,16 @@ export default function AppointmentTypeList({ profileId }) {
   const [showCreateAppointmentType, setShowCreateAppointmentType] =
     useState(false);
 
+  const [page, setPage] = useState(1);
   const globalPracticeDetailsData = useGlobalStore(
     (state) => state.practiceDetails
   );
-  const { data: apptypeAndIcdData, refetch } = useFetchData(
+
+  const { data: appTypeAndIcdData, refetch } = usePagination(
     `/appointmentTypes/getAppTypesAndThierIcds${profileId}`,
-    "viewAllAppointmentTypes"
+    ["appointmentTypeList", page],
+    page,
+    8
   );
   const setRefetchAppointmentDataGlobal = useAppointmentTypeListComponenet(
     (state) => state.setRefetchAppointmentListTypeData
@@ -30,7 +35,7 @@ export default function AppointmentTypeList({ profileId }) {
   return (
     <>
       <div className="flex justify-center">
-        <div className="w-11/12 bg-white min-h-screen  ">
+        <div className="w-full bg-white min-h-screen  ">
           <div className="py-5 px-3 bg-purple-500 text-white mb-4 relative  ">
             {globalPracticeDetailsData?.appointment_name || "Appointment types"}
             <div
@@ -51,22 +56,23 @@ export default function AppointmentTypeList({ profileId }) {
               }
             />
           )}
-          {apptypeAndIcdData &&
-          apptypeAndIcdData?.appointmentTypeData.length > 0 ? (
-            <div className="flex justify-around gap-2 gap-y-6 flex-wrap">
-              {apptypeAndIcdData.appointmentTypeData
+          {appTypeAndIcdData?.data ? (
+            <div className="flex  min-w-full h-full  gap-5  gap-y-6 flex-wrap">
+              {appTypeAndIcdData.data.appointmentTypeData
                 .sort((a, b) => a.id - b.id)
                 .map((type) => (
-                  <AppointmentTypeCard
-                    appointmentTypeData={type}
-                    predefinedIcdcodes={apptypeAndIcdData.predefinedIcd10Data.find(
-                      (arr) => {
-                        return arr.some(
-                          (icddata) => icddata.appointment_type_id === type.id
-                        );
-                      }
-                    )}
-                  />
+                  <div className="w-1/4">
+                    <AppointmentTypeCard
+                      appointmentTypeData={type}
+                      predefinedIcdcodes={appTypeAndIcdData.data.predefinedIcd10Data.find(
+                        (arr) => {
+                          return arr.some(
+                            (icdData) => icdData.appointment_type_id === type.id
+                          );
+                        }
+                      )}
+                    />
+                  </div>
                 ))}
             </div>
           ) : (
@@ -75,6 +81,12 @@ export default function AppointmentTypeList({ profileId }) {
               you to edit.
             </div>
           )}
+          <div className="flex-grow-1 flex justify-end items-end mt-4 pb-3">
+            <Pagination
+              count={appTypeAndIcdData?.metaData?.totalPages}
+              onChange={(event, newPageNumber) => setPage(newPageNumber)}
+            />
+          </div>
         </div>
       </div>
     </>

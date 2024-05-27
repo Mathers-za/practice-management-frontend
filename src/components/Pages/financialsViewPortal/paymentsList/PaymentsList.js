@@ -8,7 +8,7 @@ import { MobileDatePicker } from "@mui/x-date-pickers";
 import { format } from "date-fns";
 import { TextField } from "@mui/material";
 import Pagination from "@mui/material/Pagination";
-import { fetchData } from "./paymentsListHelperFns";
+import { useGlobalStore } from "../../../../zustandStore/store";
 
 export default function PaymentsList({ profileId }) {
   const [searchDateCriteria, setSearchDateCriteria] = useState({
@@ -16,13 +16,20 @@ export default function PaymentsList({ profileId }) {
     end_date: formatDateYearMonthDay(new Date()),
   });
 
+  const { globalProfileData } = useGlobalStore();
+
   const [page, setPage] = useState(1);
   const [searchBarInput, setSearchBarInput] = useState(null);
   const [mapPaymentData, setMapPaymentData] = useState([]);
   const { data: paymentsData } = usePagination(
-    ["paymentData", searchDateCriteria, page],
+    `/payments/getAllProfilePayments${globalProfileData.id}`,
+    ["paymentsDataList", searchDateCriteria, page],
     page,
-    () => fetchData(page, 14, { ...searchDateCriteria, profile_id: profileId })
+    14,
+    {
+      start_date: searchDateCriteria.start_date,
+      end_date: searchDateCriteria.end_date,
+    }
   );
 
   useEffect(() => {
@@ -112,7 +119,7 @@ export default function PaymentsList({ profileId }) {
                   variant="outlined"
                   size="small"
                   onChange={(event, page) => setPage(page)}
-                  count={paymentsData?.metadata?.totalPages ?? 1}
+                  count={paymentsData?.metaData?.totalPages ?? 1}
                   color="primary"
                 />
               </div>

@@ -10,7 +10,7 @@ export default function PracticeDetails({ profileId }) {
     "practiceDetailsInPracticeComponent"
   );
   const setGlobalPracticeDetailsData = useGlobalStore(
-    (state) => state.setPracticeDetails
+    (state) => state.setGlobalPracticeDetails
   );
 
   const [practiceData, setPracticeData] = useState({});

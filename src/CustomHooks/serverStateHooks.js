@@ -138,24 +138,10 @@ const useBatchDeleteData = (endpoint = "", queryKey = undefined) => {
   return { deleteMutation };
 };
 
-const usePagination = (queryString, queryID, fetchData) => {
-  return useQuery({
-    queryKey: [queryString, queryID],
-    queryFn: fetchData,
-    refetchOnWindowFocus: false,
-    keepPreviousData: true,
-
-    select: (data) => ({
-      data: data?.data,
-      metadata: data?.metadata,
-    }),
-  });
-};
-
-const usePagination1 = (
+const usePagination = (
   endpoint,
   queryKey,
-  pageNumber = 1,
+  page = 1,
   pageSize = 10,
   filterParams
 ) => {
@@ -172,9 +158,9 @@ const usePagination1 = (
     queryKey: queryKey,
     queryFn: async () => {
       const { data } = await axiosRequest("get", endpoint, undefined, {
-        pageNumber: pageNumber,
+        page: page,
         pageSize: pageSize,
-        filterParams: filterParams,
+        ...filterParams,
       });
       return data;
     },
@@ -192,4 +178,9 @@ const usePagination1 = (
   };
 };
 
-export { useDeleteData, usePagination, useBatchDeleteData, usePagination1 };
+export {
+  useDeleteData,
+  usePagination,
+  useBatchDeleteData,
+  usePagination as usePagination1,
+};
