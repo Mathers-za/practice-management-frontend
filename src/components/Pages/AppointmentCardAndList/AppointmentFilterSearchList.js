@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { usePagination1 } from "../../../CustomHooks/serverStateHooks.js";
+import {
+  usePagination,
+  usePagination1,
+} from "../../../CustomHooks/serverStateHooks.js";
 import { useGlobalStore } from "../../../zustandStore/store.js";
 import AppointmentCard from "./AppointmentCard.js";
 import Pagination from "@mui/material/Pagination";
@@ -10,27 +13,15 @@ export default function AppointmentFilterSearchList({ params, profileId }) {
   );
 
   const [page, setPage] = useState(1);
-  const [pageNumber, setPageNumber] = useState();
 
-  const [appointmentData, setAppointmentData] = useState();
-
-  const {
-    data: appointmentDataAndMetaData,
-    refetch: refetchInAppointmentFilterList,
-  } = usePagination1(
-    `/appointments/appointmentsPagination${profileId}`,
-    ["appointmentsFilter", params, page],
-    page,
-    10,
-    params
-  );
-
-  useEffect(() => {
-    if (appointmentDataAndMetaData) {
-      setAppointmentData(appointmentDataAndMetaData.dataChunk);
-      setPageNumber(appointmentDataAndMetaData?.metaData?.totalPages);
-    }
-  }, [appointmentDataAndMetaData]);
+  const { data: appointmentData, refetch: refetchInAppointmentFilterList } =
+    usePagination(
+      `/appointments/appointmentsPagination${profileId}`,
+      ["appointmentsFilter", params, page],
+      page,
+      10,
+      params
+    );
 
   useEffect(() => {
     setGlobalApppointmentFilterResultRefetch(refetchInAppointmentFilterList);
@@ -39,8 +30,8 @@ export default function AppointmentFilterSearchList({ params, profileId }) {
   return (
     <>
       <div className="flex flex-col w-full h-full">
-        {appointmentData && appointmentData.length > 0 ? (
-          appointmentData.map((appointment) => {
+        {appointmentData?.data?.length > 0 ? (
+          appointmentData.data.map((appointment) => {
             return (
               <div key={appointment.appointment_id}>
                 <AppointmentCard
@@ -58,7 +49,7 @@ export default function AppointmentFilterSearchList({ params, profileId }) {
             <h2 className="self-start">Pages</h2>
             <Pagination
               shape="rounded"
-              count={pageNumber}
+              count={appointmentData?.metaData?.totalPages}
               color="primary"
               variant="outlined"
               onChange={(event, page) => {

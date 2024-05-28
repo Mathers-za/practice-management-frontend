@@ -10,9 +10,7 @@ export default function UpdateAppointmentType({
   appointmentTypeId,
   hideComponent,
 }) {
-  const icd10PricesTotal = useAppointmentTypeAndIcdAutomationsPage(
-    (state) => state.icdPriceTotal
-  );
+  const { icdPriceTotal } = useAppointmentTypeAndIcdAutomationsPage();
   const { data: appointmentTypeData } = useFetchData(
     `/appointmentTypes/view${appointmentTypeId}`
   );
@@ -56,7 +54,7 @@ export default function UpdateAppointmentType({
     } catch (error) {
       setErrorMessage(error.message);
     }
-    console.log("the parse float value is " + icd10PricesTotal);
+    console.log("the parse float value is " + icdPriceTotal);
   }
   return (
     <>
@@ -93,16 +91,16 @@ export default function UpdateAppointmentType({
                 label="Price"
                 type="number"
                 name="price"
-                onChange={icd10PricesTotal ? null : handleChange}
+                onChange={icdPriceTotal ? null : handleChange}
                 value={
-                  icd10PricesTotal
-                    ? icd10PricesTotal.toFixed(2)
+                  icdPriceTotal
+                    ? icdPriceTotal.toFixed(2)
                     : displayAppointmentData?.price ?? ""
                 }
-                disable={icd10PricesTotal}
+                disabled={icdPriceTotal}
                 required
                 helperText={
-                  icd10PricesTotal
+                  icdPriceTotal
                     ? "Pricing for this product is automatically set according to the automated icd-10 codes and cannot be edited"
                     : "Set the price for this appointment type"
                 }

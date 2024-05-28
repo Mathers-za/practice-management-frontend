@@ -4,10 +4,10 @@ import {
   usePostData,
 } from "../CustomHooks/serverStateHooks";
 import { useEffect, useState } from "react";
-import Input from "./miscellaneous components/DisplayTextInput";
+
 import DeleteDustbin from "./miscellaneous components/DeleteDustbin";
 import { useAppointmentTypeAndIcdAutomationsPage } from "../zustandStore/store";
-import GenericButton from "./miscellaneous components/SubmitButton";
+
 import { validatepreDefinedICD10CodeCreation } from "../form validation Schemas/validationSchemas";
 import DisplaySingleError from "./miscellaneous components/WarningMessage";
 import { Button, TextField } from "@mui/material";
@@ -25,7 +25,7 @@ export default function PreDefinedIcdCoding({ appTypeId, hideComponent }) {
     icd10List,
     arrayOfIcdIdsToDelete,
     arrayOfIcdsToUpdate,
-    copyOfOrginalIcdData,
+
     resetAll,
     updateIcdList,
     incrementTotal,

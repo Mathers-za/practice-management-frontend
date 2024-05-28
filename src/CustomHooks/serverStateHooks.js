@@ -165,6 +165,7 @@ const usePagination = (
       return data;
     },
     keepPreviousData: true,
+    refetchOnWindowFocus: false,
   });
   return {
     data,

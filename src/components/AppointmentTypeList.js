@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useFetchData } from "../CustomHooks/serverStateHooks";
+
 import { usePagination } from "../CustomHooks/serverStateHooks";
 import { Pagination } from "@mui/material";
 import AppointmentTypeCard from "./appointmentTypeComponents/AppointmentTypeCard";
