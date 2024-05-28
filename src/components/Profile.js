@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { useFetchData, usePatchData } from "../CustomHooks/serverStateHooks";
 import { useGlobalStore } from "../zustandStore/store";
-import Input from "./miscellaneous components/DisplayTextInput";
-
-import GenericButton from "./miscellaneous components/SubmitButton";
+import { profileValidationSchema } from "../form validation Schemas/validationSchemas";
 import { Button, TextField } from "@mui/material";
+import Alert from "@mui/material/Alert";
 
 export default function Profile() {
   const { data } = useFetchData("/profile/view", "profileData");
@@ -13,7 +12,7 @@ export default function Profile() {
 
     setGlobalProfileData,
   } = useGlobalStore();
-
+  const [error, setError] = useState();
   const [profileData, setProfileData] = useState({});
   const [changes, setChanges] = useState({});
 
@@ -42,11 +41,14 @@ export default function Profile() {
   async function handleSubmit(event) {
     event.preventDefault();
     try {
+      await profileValidationSchema.validate(profileData);
+
       const { data } = await patchMutation.mutateAsync(changes);
       setGlobalProfileData(data);
+      setError();
       setChanges({});
     } catch (error) {
-      console.log(error);
+      setError(error.message);
     }
   }
 
@@ -73,6 +75,7 @@ export default function Profile() {
                   type="text"
                   onChange={handleChange}
                   value={profileData?.first_name || ""}
+                  helperText="First name is required"
                 />
                 <TextField
                   fullWidth
@@ -94,6 +97,7 @@ export default function Profile() {
                   type="email"
                   onChange={handleChange}
                   value={profileData?.profile_email || ""}
+                  helperText="Valid email fomrmat expected ie example@mail.com"
                 />
                 <TextField
                   fullWidth
@@ -104,6 +108,7 @@ export default function Profile() {
                   pattern="^\+27\d{9}$"
                   onChange={handleChange}
                   value={profileData?.contact_num || ""}
+                  helperText="Valid format expected ie +27716489364"
                 />
               </div>
 
@@ -120,6 +125,7 @@ export default function Profile() {
                   type="text"
                   onChange={handleChange}
                   value={profileData?.council_reg_num || ""}
+                  helperText="Your council registration number if applicable"
                 />
               </div>
               <div>
@@ -133,6 +139,7 @@ export default function Profile() {
                   value={profileData?.profession || ""}
                 />
               </div>
+              {error && <Alert severity="error">{error}</Alert>}
               <div className="col-span-2 flex justify-end items-end ">
                 <Button
                   color="primary"

@@ -57,11 +57,11 @@ export default function AppointmentTypeList({ profileId }) {
             />
           )}
           {appTypeAndIcdData?.data ? (
-            <div className="flex  min-w-full h-full  gap-5  gap-y-6 flex-wrap">
+            <div className="flex  min-w-full min-h-full bg-white  gap-16 justify-center   gap-y-2 flex-wrap">
               {appTypeAndIcdData.data.appointmentTypeData
                 .sort((a, b) => a.id - b.id)
                 .map((type) => (
-                  <div className="w-1/4">
+                  <div className=" w-1/4 h-fit  bg-pink-500 ">
                     <AppointmentTypeCard
                       appointmentTypeData={type}
                       predefinedIcdcodes={appTypeAndIcdData.data.predefinedIcd10Data.find(
@@ -81,7 +81,7 @@ export default function AppointmentTypeList({ profileId }) {
               you to edit.
             </div>
           )}
-          <div className="flex-grow-1 flex justify-end items-end mt-4 pb-3">
+          <div className=" flex bg-white justify-end items-end  pb-3">
             <Pagination
               count={appTypeAndIcdData?.metaData?.totalPages}
               onChange={(event, newPageNumber) => setPage(newPageNumber)}

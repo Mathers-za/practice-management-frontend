@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useFetchData, usePatchData } from "../CustomHooks/serverStateHooks";
-
+import { practiceDetailsValidationSchema } from "../form validation Schemas/validationSchemas";
 import { useGlobalStore } from "../zustandStore/store";
 import { Button, TextField } from "@mui/material";
+import Alert from "@mui/material/Alert";
 
 export default function PracticeDetails({ profileId }) {
   const { data: practiceDetailsData } = useFetchData(
@@ -12,7 +13,7 @@ export default function PracticeDetails({ profileId }) {
   const setGlobalPracticeDetailsData = useGlobalStore(
     (state) => state.setGlobalPracticeDetails
   );
-
+  const [error, setError] = useState();
   const [practiceData, setPracticeData] = useState({});
   const [changes, setChanges] = useState({});
 
@@ -22,9 +23,15 @@ export default function PracticeDetails({ profileId }) {
 
   async function handleSubmit(event) {
     event.preventDefault();
-    const { data } = await patchMutation.mutateAsync(changes);
-    setGlobalPracticeDetailsData(data);
-    setChanges({});
+    try {
+      await practiceDetailsValidationSchema.validate(practiceData);
+      const { data } = await patchMutation.mutateAsync(changes);
+      setGlobalPracticeDetailsData(data);
+      setChanges({});
+      setError();
+    } catch (error) {
+      setError(error.message);
+    }
   }
 
   useEffect(() => {
@@ -116,6 +123,7 @@ export default function PracticeDetails({ profileId }) {
                 />
               </div>
             </div>
+            {error && <Alert severity="warning">{error}</Alert>}
 
             <div className="col-span-6 flex justify-end items-end ">
               <Button

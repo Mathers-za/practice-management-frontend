@@ -6,6 +6,7 @@ import {
 } from "../../zustandStore/store";
 
 import ApptypeEditsAndIcdAutomationsPage from "./ApptypeUpdateAndIcdAutomations{age";
+import { Button } from "@mui/material";
 
 export default function AppointmentTypeCard({
   appointmentTypeData,
@@ -36,15 +37,29 @@ export default function AppointmentTypeCard({
         <div className="relative">
           {" "}
           <img src="../images/qb0FeYn.jpeg" alt="working" />
-          <button
-            onClick={() => {
-              setShowAppTypeEdit(!showApptypeEdit);
-              resetAppointmentTypeUpdateAndAutomationsZustandStore();
-            }}
-            className="px-2 py-1 bg-slate-300 text-back hover:bg-slate-400 absolute top-1 right-1"
-          >
-            Edit
-          </button>
+          <div className="absolute top-1 right-1">
+            <Button
+              size="small"
+              sx={{
+                fontWeight: "normal",
+
+                borderRadius: "0px",
+                padding: "2px 0px",
+                backgroundColor: "#475569",
+                color: "white",
+                "&:hover": {
+                  backgroundColor: "#6b7280",
+                },
+              }}
+              variant="contained"
+              onClick={() => {
+                setShowAppTypeEdit(!showApptypeEdit);
+                resetAppointmentTypeUpdateAndAutomationsZustandStore();
+              }}
+            >
+              Edit
+            </Button>
+          </div>
         </div>
 
         <div>
@@ -79,7 +94,7 @@ export default function AppointmentTypeCard({
           )}
           {predefinedIcdcodes && predefinedIcdcodes.length > 0 ? (
             <div>
-              <p className="p-1 bg-slate-400 ">Coding</p>
+              <p className="p-1 bg-slate-400 mt-2 ">Coding</p>
               <table className="  w-full ">
                 <tbody className="border-none">
                   {predefinedIcdcodes.map((code) => (

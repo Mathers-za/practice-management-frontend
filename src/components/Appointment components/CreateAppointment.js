@@ -1,8 +1,9 @@
 import { useNavigate } from "react-router-dom";
-import { useFetchData, usePostData } from "../../CustomHooks/serverStateHooks";
+import { usePostData } from "../../CustomHooks/serverStateHooks";
 import { useEffect, useState } from "react";
-import { format, add, set, parse } from "date-fns";
-
+import { format, add } from "date-fns";
+import Alert from "@mui/material/Alert";
+import { createAppointmentValidationSchema } from "../../form validation Schemas/validationSchemas";
 import { checkAndSetIcds } from "../../apiRequests/apiRequests";
 import GenericTopBar from "../miscellaneous components/GenericTopBar";
 import DivSvgDisplayCombo from "../miscellaneous components/DivSvgLabelCombo";
@@ -38,6 +39,7 @@ export default function CreateAppointment({
   hideComponent,
   querykeyToInvalidate,
 }) {
+  const [error, setError] = useState();
   const [showNotificationSettings, setShowNotificationSettings] =
     useState(false);
   const [showStartTimePicker, setShowStartTimePicker] = useState(false);
@@ -53,7 +55,7 @@ export default function CreateAppointment({
   const setGlobalAppointmentData = useGlobalStore(
     (state) => state.setGlobalAppointmentData
   );
-  const navigate = useNavigate();
+
   const [appointment, setAppointment] = useState({
     appointment_date: calendarSelectedJsDateTimeString
       ? format(calendarSelectedJsDateTimeString, "yyyy-MM-dd")
@@ -123,10 +125,34 @@ export default function CreateAppointment({
     setGlobalAppointmentData(appointment);
   }, [appointment]);
 
+  async function handleConfirmAndCreateButtonClick() {
+    try {
+      await createAppointmentValidationSchema.validate(appointment);
+      setError();
+      setShowNotificationSettings(!showNotificationSettings);
+    } catch (error) {
+      setError(error.message);
+    }
+  }
+
   async function handleSubmission() {
     try {
-      const result = await createMutation.mutateAsync(appointment);
+      const validatedData = await createAppointmentValidationSchema.validate(
+        appointment
+      );
+      console.log(validatedData);
+      const result = await createMutation.mutateAsync(validatedData);
       await checkAndSetIcds(result.id, result.appointment_type_id);
+      setAppointment({
+        sent_confirmation: false,
+        send_reminder: false,
+        appointment_date: calendarSelectedJsDateTimeString
+          ? format(calendarSelectedJsDateTimeString, "yyyy-MM-dd")
+          : formattedCurrentDate,
+      });
+
+      setAppointmentTypeSelectionDisplay("");
+      setPatientSelectionDisplay("");
       if (result.sent_confirmation) {
         emailNotificationMutation.mutate({
           profileId: profileId,
@@ -134,7 +160,12 @@ export default function CreateAppointment({
           patientId: result.patient_id,
         });
       }
+      setError();
     } catch (error) {
+      setError(error.message);
+      setAppointmentTypeSelectionDisplay("");
+      setPatientSelectionDisplay("");
+
       setAppointment({
         appointment_date: calendarSelectedJsDateTimeString
           ? format(calendarSelectedJsDateTimeString, "yyyy-MM-dd")
@@ -198,8 +229,8 @@ export default function CreateAppointment({
             }
             displayText={
               <TimestartAndEndDisplay
-                endTimeValue={appointment.end_time}
-                startTimeValue={appointment.start_time}
+                endTimeValue={appointment?.end_time}
+                startTimeValue={appointment?.start_time}
                 onclickStartTime={() =>
                   setShowStartTimePicker(!showStartTimePicker)
                 }
@@ -325,24 +356,22 @@ export default function CreateAppointment({
           </div>
         )}
 
+        {error && (
+          <Alert
+            sx={{ height: "4rem", display: "flex", alignItems: "center" }}
+            severity="warning"
+          >
+            {error}
+          </Alert>
+        )}
+
         <div className="absolute bottom-0 left-0 w-full ">
           <Button
-            disabled={
-              !checkForSelectedKeys(
-                [
-                  "appointment_date",
-                  "start_time",
-                  "end_time",
-                  "patient_id",
-                  "appointment_type_id",
-                ],
-                appointment
-              )
-            }
             fullWidth
             size="large"
             color="primary"
-            onClick={() => setShowNotificationSettings(true)}
+            type="button"
+            onClick={handleConfirmAndCreateButtonClick}
             variant="contained"
           >
             Confirm and Create Appointment
@@ -353,7 +382,7 @@ export default function CreateAppointment({
             <AppointmentNotificationSettings
               onchange={handleEmailNotificationChanges}
               onsubmit={handleSubmission}
-              onExit={() =>
+              hideComponent={() =>
                 setShowNotificationSettings(!showNotificationSettings)
               }
             />
