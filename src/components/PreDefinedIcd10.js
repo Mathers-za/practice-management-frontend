@@ -10,8 +10,9 @@ import { useAppointmentTypeAndIcdAutomationsPage } from "../zustandStore/store";
 import GenericButton from "./miscellaneous components/SubmitButton";
 import { validatepreDefinedICD10CodeCreation } from "../form validation Schemas/validationSchemas";
 import DisplaySingleError from "./miscellaneous components/WarningMessage";
+import { Button, TextField } from "@mui/material";
 
-export default function PreDefinedIcdCoding({ appTypeId }) {
+export default function PreDefinedIcdCoding({ appTypeId, hideComponent }) {
   const { data: originalICDData } = useFetchData(
     `/predefinedIcd10/view${appTypeId}`,
     "icd10Data",
@@ -41,9 +42,6 @@ export default function PreDefinedIcdCoding({ appTypeId }) {
   const { deleteMutation } = useBatchDeleteData(
     `/predefinedIcd10/batchDeletion`
   );
-  console.log("orginal icd data " + JSON.stringify(copyOfOrginalIcdData));
-  console.log("active icd10data " + JSON.stringify(icd10List));
-  console.log("array of icds to update " + JSON.stringify(arrayOfIcdsToUpdate));
 
   useEffect(() => {
     if (originalICDData && originalICDData.length > 0) {
@@ -109,41 +107,49 @@ export default function PreDefinedIcdCoding({ appTypeId }) {
       <div className="bg-white space-y-4">
         <div className="flex gap-5 w-full flex-1 flex-wrap">
           <div className="grow">
-            <Input
+            <TextField
+              label="Icd10-code"
+              fullWidth
               onChange={handleIcdInputChange}
-              placeholder="ICD-10 code"
               type="text"
               name="icd10_code"
               value={preDefinedIcdInputData?.icd10_code ?? ""}
+              variant="standard"
             />
           </div>
           <div className="flex-1">
-            {" "}
-            <Input
+            <TextField
+              fullWidth
               onChange={handleIcdInputChange}
-              placeholder="Procedural-Code"
+              label="Procedural-code"
               type="text"
               name="procedural_code"
               value={preDefinedIcdInputData?.procedural_code ?? ""}
+              variant="standard"
             />
           </div>
           <div className="flex-1">
-            <Input
+            <TextField
               onChange={handleIcdInputChange}
-              placeholder="Price"
+              fullWidth
+              variant="standard"
+              label="Price"
               type="number"
               name="price"
               value={preDefinedIcdInputData?.price ?? ""}
             />
           </div>
-
-          <button
-            className="flex-1"
-            disabled={Object.keys(preDefinedIcdInputData).length === 0}
-            onClick={addIcdToList}
-          >
-            Add
-          </button>
+          <div className="self-center">
+            <Button
+              variant="contained"
+              sx={{ height: "fit-content" }}
+              color="primary"
+              onClick={addIcdToList}
+              disabled={Object.keys(preDefinedIcdInputData).length === 0}
+            >
+              Add
+            </Button>
+          </div>
         </div>
 
         <table className=" w-full h-fit  ">
@@ -180,16 +186,27 @@ export default function PreDefinedIcdCoding({ appTypeId }) {
         </table>
 
         {errorMessage && <DisplaySingleError errorMessage={errorMessage} />}
-        <div className="flex justify-end">
-          <GenericButton
-            text="Save"
-            onclick={handleSubmit}
-            disable={
+        <div className="flex justify-between">
+          <Button
+            type="button"
+            variant="contained"
+            color="inherit"
+            onClick={() => hideComponent()}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            type="submit"
+            disabled={
               arrayOfIcdIdsToDelete.length === 0 &&
               arrayOfIcdsToUpdate.length === 0
             }
-            type="submit"
-          />
+            onClick={handleSubmit}
+          >
+            Save
+          </Button>
         </div>
       </div>
     </>

@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { useFetchData, usePatchData } from "../../CustomHooks/serverStateHooks";
 import { updateAppointmentTypeValidatiionSchema } from "../../form validation Schemas/validationSchemas";
-import Input from "../miscellaneous components/DisplayTextInput";
-import GenericButton from "../miscellaneous components/SubmitButton";
-import CancelButton from "../miscellaneous components/CancelButton";
+
 import DisplaySingleError from "../miscellaneous components/WarningMessage";
 import { useAppointmentTypeAndIcdAutomationsPage } from "../../zustandStore/store";
+import { Button, TextField } from "@mui/material";
 
 export default function UpdateAppointmentType({
   appointmentTypeId,
@@ -63,33 +62,35 @@ export default function UpdateAppointmentType({
     <>
       <div className="w-full h-fit bg-white p-3  pt-4  font-medium  ">
         <form className="space-y-5" onSubmit={handleSubmit}>
-          <Input
-            labelText="Appointment Type name"
-            type="text"
+          <TextField
+            required
+            fullWidth
+            label="Appointment Type name"
+            variant="standard"
             name="appointment_name"
             onChange={handleChange}
             value={displayAppointmentData.appointment_name ?? ""}
-            placeholder="Appointment Type name"
-            required={false}
-            staticBottomInfo={"eg: intial consultation, follow-up etc"}
           />
+
           <div className="flex gap-3 flex-wrap  ">
             <div className="flex-1">
-              <Input
-                labelText="Duration"
-                required={true}
+              <TextField
+                fullWidth
+                variant="standard"
+                label="Duration"
+                required
                 type="number"
                 onChange={handleChange}
                 name="duration"
                 value={displayAppointmentData.duration ?? ""}
-                placeholder="Duration"
-                staticBottomInfo="The duration of this appointment type in minutes"
-              />{" "}
+                helperText="The length of the appointment"
+              />
             </div>
             <div className="flex-1">
-              {" "}
-              <Input
-                labelText="Price"
+              <TextField
+                fullWidth
+                variant="standard"
+                label="Price"
                 type="number"
                 name="price"
                 onChange={icd10PricesTotal ? null : handleChange}
@@ -99,9 +100,8 @@ export default function UpdateAppointmentType({
                     : displayAppointmentData?.price ?? ""
                 }
                 disable={icd10PricesTotal}
-                placeholder="Price"
-                required={true}
-                staticBottomInfo={
+                required
+                helperText={
                   icd10PricesTotal
                     ? "Pricing for this product is automatically set according to the automated icd-10 codes and cannot be edited"
                     : "Set the price for this appointment type"
@@ -111,12 +111,23 @@ export default function UpdateAppointmentType({
           </div>
 
           <div className="flex justify-between items-end">
-            <CancelButton textContent="Cancel" onclick={hideComponent} />
-            <GenericButton
-              text="Save"
-              disable={Object.keys(changes).length === 0}
+            <Button
+              variant="contained"
+              color="inherit"
+              onClick={() => hideComponent()}
+              type="button"
+            >
+              Cancel
+            </Button>
+
+            <Button
               type="submit"
-            />
+              variant="contained"
+              color="primary"
+              disabled={Object.keys(changes).length === 0}
+            >
+              Save
+            </Button>
           </div>
 
           {errorMessage && <DisplaySingleError errorMessage={errorMessage} />}
