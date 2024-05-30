@@ -5,6 +5,7 @@ import { updateAppointmentTypeValidatiionSchema } from "../../form validation Sc
 import DisplaySingleError from "../miscellaneous components/WarningMessage";
 import { useAppointmentTypeAndIcdAutomationsPage } from "../../zustandStore/store";
 import { Button, TextField } from "@mui/material";
+import Alert from "@mui/material/Alert";
 
 export default function UpdateAppointmentType({
   appointmentTypeId,
@@ -44,12 +45,9 @@ export default function UpdateAppointmentType({
     event.preventDefault();
 
     try {
-      const cleanedChangesData = updateAppointmentTypeValidatiionSchema.cast(
-        changes,
-        { assert: false }
-      );
-      await updateAppointmentTypeValidatiionSchema.validate(cleanedChangesData);
-      await patchMutation.mutateAsync(cleanedChangesData);
+      const validatedData =
+        await updateAppointmentTypeValidatiionSchema.validate(changes);
+      await patchMutation.mutateAsync(validatedData);
       setChanges({});
     } catch (error) {
       setErrorMessage(error.message);
@@ -73,10 +71,10 @@ export default function UpdateAppointmentType({
           <div className="flex gap-3 flex-wrap  ">
             <div className="flex-1">
               <TextField
+                required
                 fullWidth
                 variant="standard"
                 label="Duration"
-                required
                 type="number"
                 onChange={handleChange}
                 name="duration"
@@ -86,6 +84,7 @@ export default function UpdateAppointmentType({
             </div>
             <div className="flex-1">
               <TextField
+                required
                 fullWidth
                 variant="standard"
                 label="Price"
@@ -98,7 +97,6 @@ export default function UpdateAppointmentType({
                     : displayAppointmentData?.price ?? ""
                 }
                 disabled={icdPriceTotal}
-                required
                 helperText={
                   icdPriceTotal
                     ? "Pricing for this product is automatically set according to the automated icd-10 codes and cannot be edited"
@@ -128,7 +126,7 @@ export default function UpdateAppointmentType({
             </Button>
           </div>
 
-          {errorMessage && <DisplaySingleError errorMessage={errorMessage} />}
+          {errorMessage && <Alert severity="warning">{errorMessage}</Alert>}
         </form>
       </div>
     </>

@@ -1,5 +1,18 @@
-import { boolean, date, number, object, ref, string } from "yup";
+import {
+  Schema,
+  addMethod,
+  boolean,
+  date,
+  number,
+  object,
+  ref,
+  string,
+} from "yup";
 import axiosRequest from "../apiRequests/apiRequests";
+
+addMethod(Schema, "stripEmptyString", function () {
+  return this.transform((value) => (value === "" ? undefined : value));
+});
 
 export const loginFormSchema = object({
   email: string("Invalid format")
@@ -51,7 +64,9 @@ export const createPatientValidationSchema = object({
 });
 
 export const createAppointmentTypeValidationSchema = object({
-  appointment_name: string().required("Appointment name required"),
+  appointment_name: string("Invalid format").required(
+    "Appointment name required"
+  ),
   duration: number("invalid format- needs to be a number")
     .min(0, "Duration must be 0 minutes at a minimum")
 
@@ -72,23 +87,29 @@ export const createAppointmentTypeValidationSchema = object({
 });
 
 export const updateAppointmentTypeValidatiionSchema = object({
-  appointment_name: string().nonNullable("Appointment name cannot be empty"),
-  duration: number("invalid format- needs to be a number")
-    .min(0, "")
+  appointment_name: string("Invalid format")
+    .min(1, "A name for the appointment type is required")
+    .nonNullable("A name for the appointment type is required"),
+  duration: number("Invalid format")
+    .transform((value) => (isNaN(value) ? null : value))
+
+    .min(0, "Duration must be a minimum of 0")
     .nonNullable("Duration is required")
     .integer("Duration must be a whole number, not a decimal"),
-
   price: number("Must be a valid number")
-    .min(0, "price cannot be negative")
-    .nonNullable()
+    .min(0, "Price must be a minimum of 0")
 
+    .transform((value) => (isNaN(value) ? null : value))
+    .nonNullable("Price is required")
     .test(
       "2Decimals",
       "Invalid price. Cannot exceed 2 decimal places",
-      (value, context) => {
-        const regEx = /^\d+(\.\d{1,2})?$/;
-        console.log(context);
-        return regEx.test(value);
+      (value) => {
+        if (value) {
+          const regEx = /^\d+(\.\d{1,2})?$/;
+
+          return regEx.test(value);
+        } else return true;
       }
     ),
 });
@@ -97,21 +118,24 @@ export const validatepreDefinedICD10CodeCreation = object({
   icd10_code: string().nullable(),
   procedural_code: string().nullable(),
   price: number()
+    .transform((value) => (isNaN(value) ? null : value))
     .nullable()
     .min(0, "Price cannot be less than 0")
     .test(
       "2Decimals",
       "Invalid price. Cannot exceed 2 decimal places",
       (value, context) => {
-        const regEx = /^\d+(\.\d{1,2})?$/;
-        console.log(context);
-        return regEx.test(value);
+        if (value) {
+          const regEx = /^\d+(\.\d{1,2})?$/;
+          console.log(context);
+          return regEx.test(value);
+        } else return false;
       }
     ),
 });
 
 export const profileValidationSchema = object({
-  first_name: string("invalid format").required("First name is required"),
+  first_name: string("invalid format").nonNullable("First name is required"),
   last_name: string("Invalid format").nullable(),
   profile_email: string("Invalid format").email("Invalid email").nullable(),
   council_reg_num: string("Invalid format").nullable(),

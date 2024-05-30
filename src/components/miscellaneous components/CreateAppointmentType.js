@@ -56,16 +56,15 @@ export default function CreateAppointmentType({
 
   return (
     <>
-      <div className="w-full h-fit bg-white p-3  pt-4  font-medium  ">
-        <form className="space-y-4" onSubmit={handleSubmit}>
+      <div className="w-full h-fit bg-white p-5  pt-4  font-medium pb-4  mb-6 border border-black shadow-lg shadow-black/50 ">
+        <form className="space-y-6" onSubmit={handleSubmit}>
           <div className=" border-b border-slate-700 h-10 flex justify-between ">
             <h1 className="font-semibold text-lg">
               Add a new Appointment Type
             </h1>
-            <p onClick={() => hideComponent()}>X</p>
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex gap-3 ">
             <TextField
               fullWidth
               variant="standard"
@@ -99,7 +98,7 @@ export default function CreateAppointmentType({
               variant="standard"
             />
           </div>
-          <div className="flex justify-between items-end">
+          <div className="flex justify-between items-end ">
             <Button
               type="button"
               onClick={() => hideComponent()}

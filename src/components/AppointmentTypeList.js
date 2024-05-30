@@ -48,13 +48,15 @@ export default function AppointmentTypeList({ profileId }) {
             </div>
           </div>
           {showCreateAppointmentType && (
-            <CreateAppointmentType
-              refetchFn={refetch}
-              profileId={profileId}
-              hideComponent={() =>
-                setShowCreateAppointmentType(!showCreateAppointmentType)
-              }
-            />
+            <div className="w-[95%] flex mx-auto">
+              <CreateAppointmentType
+                refetchFn={refetch}
+                profileId={profileId}
+                hideComponent={() =>
+                  setShowCreateAppointmentType(!showCreateAppointmentType)
+                }
+              />
+            </div>
           )}
           {appTypeAndIcdData?.data ? (
             <div className="flex  min-w-full min-h-full bg-white  gap-16 justify-center   gap-y-2 flex-wrap">

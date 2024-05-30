@@ -68,6 +68,7 @@ export default function Profile() {
 
               <div className="flex gap-3 ">
                 <TextField
+                  required
                   fullWidth
                   variant="standard"
                   name="first_name"
@@ -139,7 +140,7 @@ export default function Profile() {
                   value={profileData?.profession || ""}
                 />
               </div>
-              {error && <Alert severity="error">{error}</Alert>}
+              {error && <Alert severity="warning">{error}</Alert>}
               <div className="col-span-2 flex justify-end items-end ">
                 <Button
                   color="primary"
