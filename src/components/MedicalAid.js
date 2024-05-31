@@ -7,9 +7,10 @@ import {
 } from "../CustomHooks/serverStateHooks";
 import { useQueryClient } from "react-query";
 import { TextField, Checkbox, Button, FormControlLabel } from "@mui/material";
+import { usePatientPortalStore } from "../zustandStore/store";
 
-export default function MedicalAid({ patientId }) {
-  const queryClient = useQueryClient();
+export default function MedicalAid() {
+  const { patientId } = usePatientPortalStore();
   const { data, isSuccess } = useFetchData(
     `/medicalAid/view${patientId}`,
     "medicalAidData"

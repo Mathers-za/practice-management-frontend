@@ -46,13 +46,17 @@ export default function CreatePatient({ profileId, hideComponent }) {
   return (
     <>
       <PatientContactDetailsForm
-        showTopBar={true}
         errorMessage={errorMessage}
         handleChange={handleChange}
         handleSubmit={handleSubmit}
         patientInfo={patientInfo}
         guidanceMessage={guidanceMessage}
-        hideComponent={hideComponent}
+        showTopBar={{
+          label: "Create a new patient",
+          show: true,
+          showCloseOption: true,
+          onclick: hideComponent,
+        }}
       />
     </>
   );

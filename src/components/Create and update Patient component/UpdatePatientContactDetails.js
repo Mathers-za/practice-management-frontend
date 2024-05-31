@@ -2,14 +2,17 @@ import { useEffect, useState } from "react";
 import { useFetchData, usePatchData } from "../../CustomHooks/serverStateHooks";
 import PatientContactDetailsForm from "./PatientContactDetailsForm";
 import { createPatientValidationSchema } from "../../form validation Schemas/validationSchemas";
+import { usePatientPortalStore } from "../../zustandStore/store";
 
-export default function UpdatePatientContactDetails({ patientId }) {
+export default function UpdatePatientContactDetails() {
+  const { patientId } = usePatientPortalStore();
+  console.log("global patient portal id  is " + patientId);
   const { data: patientContactDetailsData } = useFetchData(
-    `/patients/viewPatient:${patientId}`,
+    `/patients/viewPatient${patientId}`,
     ["patientContactDetails", patientId]
   );
 
-  const { patchMutation } = usePatchData(`/patients/update:${patientId}`);
+  const { patchMutation } = usePatchData(`/patients/update${patientId}`);
   const [errorMessage, setErrorMessage] = useState();
   const [patientInfo, setPatientInfo] = useState({});
   const [changes, setChanges] = useState();
@@ -31,9 +34,12 @@ export default function UpdatePatientContactDetails({ patientId }) {
     }));
   }
 
-  async function handleSubmit() {
+  async function handleSubmit(event) {
+    event.preventDefault();
     try {
-      const validatedData = await createPatientValidationSchema(changes);
+      const validatedData = await createPatientValidationSchema.validate(
+        changes
+      );
       patchMutation.mutate(validatedData);
       setChanges({});
       setErrorMessage();
