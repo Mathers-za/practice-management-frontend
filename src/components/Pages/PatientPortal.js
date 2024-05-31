@@ -6,13 +6,14 @@ export default function PatientPortal({ patientId }) {
 
   return (
     <>
-      <div className=" text-white h-16 w-full flex justify-evenly items-center bg-slate-500">
-        <Link to="medicalAid"> Medical Aid</Link>
+      <div className=" text-white font-semibold h-16 w-full flex justify-evenly items-center bg-slate-500">
+        <Link to="clientInfo">Client Information</Link>
         <Link to="treatmentNotes"> Treatment Notes</Link>
+        <Link>Appointments</Link>
+        <Link>Invoices</Link>
       </div>
 
-      <h1>This is the pateint portal</h1>
-      <div className="w-full max-w-full overflow-clip">
+      <div className="w-full h-full bg-white overflow-auto">
         <Outlet />
       </div>
     </>

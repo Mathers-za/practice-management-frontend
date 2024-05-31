@@ -34,10 +34,12 @@ import { fab } from "@fortawesome/free-brands-svg-icons";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
 import "@fontsource/inter";
-
+import PatientPickerComponent from "./components/miscellaneous components/PatientPicker";
 import ComponentView from "./tailWindSandbox/styleComponents";
-import CreatePatient from "./components/Create Patient component/CreatePatient";
+import CreatePatient from "./components/Create and update Patient component/CreatePatient";
 import CreateAppointment from "./components/Appointment components/CreateAppointment";
+import ClientInfoPortal from "./components/Patient PortalComponents/ClientInfoPortal";
+import UpdatePatientContactDetails from "./components/Create and update Patient component/UpdatePatientContactDetails";
 
 const queryClient = new QueryClient();
 
@@ -70,8 +72,9 @@ function App() {
     setProfileId(id);
   }
 
-  function setPatientIdProp(id) {
-    patientIdRef.current = id;
+  function setPatientIdProp(patientDataObj) {
+    patientIdRef.current = patientDataObj.id;
+    console.log(patientIdRef.current);
   }
 
   return (
@@ -119,7 +122,7 @@ function App() {
                   path="patientPortal"
                   element={
                     <PatientPortal
-                      patientId={patientIdRef}
+                      patientId={patientIdRef.current}
                       profileId={profileId}
                     />
                   }
@@ -132,15 +135,36 @@ function App() {
                       />
                     }
                   />
-
                   <Route
                     index
-                    element={<Patient patientId={patientIdRef.current} />}
+                    element={
+                      <UpdatePatientContactDetails
+                        patientId={patientIdRef.current}
+                      />
+                    }
                   />
-                  <Route
-                    path="medicalAid"
-                    element={<MedicalAid patientId={patientIdRef.current} />}
-                  />
+                  <Route path="clientInfo" element={<ClientInfoPortal />}>
+                    <Route
+                      index
+                      element={
+                        <UpdatePatientContactDetails
+                          patientId={patientIdRef.current}
+                        />
+                      }
+                    />
+                    <Route
+                      path="patientContactDetails"
+                      element={
+                        <UpdatePatientContactDetails
+                          patientId={patientIdRef.current}
+                        />
+                      }
+                    />
+                    <Route
+                      path="medicalAid"
+                      element={<MedicalAid patientId={patientIdRef.current} />}
+                    />
+                  </Route>
                 </Route>
                 <Route
                   path="appointmentTypePortal"

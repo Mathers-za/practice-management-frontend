@@ -1,17 +1,23 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFetchData } from "../../CustomHooks/serverStateHooks";
 import GenericTopBar from "./GenericTopBar";
 import { TextField } from "@mui/material";
 
-export default function PatientPicker({ profileId, hideComponent, onclick }) {
+export default function PatientPickerComponent({
+  profileId,
+  hideComponent,
+  onclick,
+  showTopBar = true,
+}) {
   const { data: patientData } = useFetchData(
     `/patients/viewAll${profileId}`,
     "listOfPatients"
   );
-
+  const [forceRerender, setForceRender] = useState(false);
   const [searchBarInput, setSearchBarInput] = useState("");
   const [filteredSearch, setFilteredSearch] = useState([]);
-  const [showLength, setShowLength] = useState(10);
+
+  const showLength = useRef(10);
 
   useEffect(() => {
     if (patientData) {
@@ -36,7 +42,9 @@ export default function PatientPicker({ profileId, hideComponent, onclick }) {
 
   return (
     <>
-      <GenericTopBar label="Choose a Patient" onclick={hideComponent} />
+      {showTopBar && (
+        <GenericTopBar label="Choose a Patient" onclick={hideComponent} />
+      )}
       <div className="p-3 overflow-y-scroll ">
         <TextField
           variant="filled"
@@ -54,7 +62,7 @@ export default function PatientPicker({ profileId, hideComponent, onclick }) {
           {filteredSearch.length > 0
             ? filteredSearch
                 .sort((a, b) => a.first_name - b.first_name)
-                .slice(0, showLength)
+                .slice(0, showLength.current)
                 .map((patient) => (
                   <div
                     key={patient.id}
@@ -68,14 +76,14 @@ export default function PatientPicker({ profileId, hideComponent, onclick }) {
                   </div>
                 ))
             : "No content to display. Please create a patient"}
-          {filteredSearch.length > showLength ? (
+          {filteredSearch.length > showLength.current ? (
             <div
-              onClick={() => setShowLength((prev) => prev + 10)}
+              onClick={() => {
+                showLength.current = showLength.current + 10;
+                setForceRender(!forceRerender);
+              }}
               className="text-center text-lg hover:bg-slate-200"
-            >
-              Load More //FIXME async problem with this. fix with useref and
-              force render
-            </div>
+            ></div>
           ) : null}
         </div>
       </div>

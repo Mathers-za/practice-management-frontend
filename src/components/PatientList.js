@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import PatientSearch from "./PatientSearch";
+
+import PatientPickerComponent from "./miscellaneous components/PatientPicker";
 export default function PatientList({ profileId, setPatientId }) {
   const navigate = useNavigate();
 
@@ -10,7 +11,13 @@ export default function PatientList({ profileId, setPatientId }) {
 
   return (
     <>
-      <PatientSearch profileId={profileId} onclick={handleClickProp} />
+      <div className="h-full w-full">
+        <PatientPickerComponent
+          showTopBar={false}
+          profileId={profileId}
+          onclick={handleClickProp}
+        />
+      </div>
     </>
   );
 }

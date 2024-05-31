@@ -261,3 +261,11 @@ export const useAppointmentCard = create((set) => ({
       patientData: patientData,
     }),
 }));
+
+export const usePatientPortalStore = create((set) => ({
+  patientId: "",
+  setPatientId: (id) =>
+    set({
+      patientId: id,
+    }),
+}));

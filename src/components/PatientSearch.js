@@ -39,29 +39,31 @@ export default function PatientSearch({ profileId, onclick }) {
 
   return (
     <>
-      <input
-        onChange={handleSearchBarChange}
-        type="text"
-        placeholder="SearchBar"
-        value={input}
-      />
+      <div className="bg-pink-300">
+        <input
+          onChange={handleSearchBarChange}
+          type="text"
+          placeholder="SearchBar"
+          value={input}
+        />
 
-      {filteredList && !isLoading && filteredList.length > 0 ? (
-        filteredList.slice(0, incrementByFive + 1).map((patient) => (
-          <div
-            onClick={() => {
-              onclick(patient.id, patient.first_name, patient.last_name);
-            }}
-            key={patient.id}
-          >
-            {patient.first_name} {patient.last_name} {patient.id}
-          </div>
-        ))
-      ) : (
-        <div>No data to display - try creating some patients</div>
-      )}
+        {filteredList && !isLoading && filteredList.length > 0 ? (
+          filteredList.slice(0, incrementByFive + 1).map((patient) => (
+            <div
+              onClick={() => {
+                onclick(patient.id, patient.first_name, patient.last_name);
+              }}
+              key={patient.id}
+            >
+              {patient.first_name} {patient.last_name} {patient.id}
+            </div>
+          ))
+        ) : (
+          <div>No data to display - try creating some patients</div>
+        )}
 
-      <div onClick={loadMore}>LoadMore</div>
+        <div onClick={loadMore}>LoadMore</div>
+      </div>
     </>
   );
 }
