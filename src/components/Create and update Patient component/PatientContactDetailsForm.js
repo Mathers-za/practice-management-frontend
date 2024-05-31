@@ -22,7 +22,10 @@ export default function PatientContactDetailsForm({
 }) {
   return (
     <>
-      <form className="bg-white rounded-md shadow-md " onSubmit={handleSubmit}>
+      <form
+        className="bg-white rounded-sm shadow-md shadow-black/30 "
+        onSubmit={handleSubmit}
+      >
         {showTopBar.show && (
           <GenericTopBar
             className={showTopBar.className}

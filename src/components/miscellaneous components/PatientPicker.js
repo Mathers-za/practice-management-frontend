@@ -45,7 +45,7 @@ export default function PatientPickerComponent({
       {showTopBar && (
         <GenericTopBar label="Choose a Patient" onclick={hideComponent} />
       )}
-      <div className="p-3 overflow-y-scroll ">
+      <div className="p-3">
         <TextField
           variant="filled"
           label="search"
@@ -58,7 +58,7 @@ export default function PatientPickerComponent({
           helperText=" Search according to name,surname,email or phone number"
         />
 
-        <div className="mt-6 select-none overflow-y-scroll ">
+        <div className="mt-1 select-none  ">
           {filteredSearch.length > 0
             ? filteredSearch
                 .sort((a, b) => a.first_name - b.first_name)
@@ -82,8 +82,10 @@ export default function PatientPickerComponent({
                 showLength.current = showLength.current + 10;
                 setForceRender(!forceRerender);
               }}
-              className="text-center text-lg hover:bg-slate-200"
-            ></div>
+              className="text-center text-lg  mt-1 hover:bg-slate-200"
+            >
+              Show More
+            </div>
           ) : null}
         </div>
       </div>

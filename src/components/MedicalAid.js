@@ -58,7 +58,7 @@ export default function MedicalAid() {
   return (
     <>
       <form
-        className="bg-white p-5  "
+        className="bg-white p-5    shadow-md shadow-black/20 rounded-sm   "
         onSubmit={(e) => {
           e.preventDefault();
           if (isFirstTimeCreatingPost) {

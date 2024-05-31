@@ -15,7 +15,7 @@ export default function PatientList({ profileId, setPatientId }) {
 
   return (
     <>
-      <div className="h-full w-full">
+      <div className="h-full overflow-y-scroll bg-white w-full">
         <PatientPickerComponent
           showTopBar={false}
           profileId={profileId}
