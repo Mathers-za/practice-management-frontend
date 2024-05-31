@@ -9,11 +9,17 @@ import {
 import { format } from "date-fns";
 
 import GenericTopBar from "../../miscellaneous components/GenericTopBar";
-import { Button, Chip, FormControlLabel, TextField } from "@mui/material";
+import {
+  Button,
+  Chip,
+  FormControlLabel,
+  TextField,
+  Alert,
+} from "@mui/material";
 import Checkbox from "@mui/material/Checkbox";
 import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
 import InputAdornment from "@mui/material/InputAdornment";
-
+import { createPaymentValidationSchema } from "../../../form validation Schemas/validationSchemas";
 import { CalendarIcon } from "@mui/x-date-pickers/icons";
 import { useGlobalStore } from "../../../zustandStore/store";
 import { checkAndSetInvoiceStatusToPaidOnFullPayment } from "./paymentsHelperFns";
@@ -65,6 +71,7 @@ export default function PaymentPage({
   refetchData = "",
   queryKeyToInvalidate = "",
 }) {
+  const [error, setError] = useState();
   const { data: financialData, refetch: refreshPaymentsPage } = useFetchData(
     `/financials/view${appointmentId}`,
     ["financialsControl", "page", "payments"]
@@ -124,18 +131,27 @@ export default function PaymentPage({
   }
 
   async function handleSubmit() {
-    await createMutation.mutateAsync(paymentsPayload);
-    checkAndSetInvoiceStatusToPaidOnFullPayment(
-      invoiceData.invoice_status,
-      financialData.amount_due,
-      () => invoicePatchData.mutate()
-    );
-    setPaymentsPayload((prev) => ({
-      ...prev,
-      amount: null,
-    }));
-    refreshPaymentsPage();
-    refetchAppointmentListData && refetchAppointmentListData();
+    try {
+      const validatedData = await createPaymentValidationSchema.validate(
+        paymentsPayload,
+        { amount_due: financialData?.amount_due }
+      );
+      setError();
+      await createMutation.mutateAsync(validatedData);
+      checkAndSetInvoiceStatusToPaidOnFullPayment(
+        invoiceData.invoice_status,
+        financialData.amount_due,
+        () => invoicePatchData.mutate()
+      );
+      setPaymentsPayload((prev) => ({
+        ...prev,
+        amount: null,
+      }));
+      refreshPaymentsPage();
+      refetchAppointmentListData && refetchAppointmentListData();
+    } catch (error) {
+      setError(error.message);
+    }
   }
   function handleChange(event) {
     const { name, value } = event.target;
@@ -148,7 +164,7 @@ export default function PaymentPage({
 
   return (
     <>
-      <div className="fixed left-0 top-0 bg-white h-screen w-full  flex flex-col  ">
+      <div className="fixed left-0 top-0 overflow-auto bg-white h-screen w-full  flex flex-col  ">
         <div>
           <GenericTopBar onclick={hideComponent} label="Payments" />
         </div>
@@ -295,6 +311,7 @@ export default function PaymentPage({
               />
             </div>
           </div>
+          {error && <Alert severity="warning">{error}</Alert>}
           <div className="flex justify-between">
             <Button onClick={hideComponent} color="inherit" variant="contained">
               Cancel

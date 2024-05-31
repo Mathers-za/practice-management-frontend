@@ -2,10 +2,9 @@ import { useState } from "react";
 
 import { usePostData } from "../../CustomHooks/serverStateHooks";
 
-import SubmitButton from "./SubmitButton";
 import { createAppointmentTypeValidationSchema } from "../../form validation Schemas/validationSchemas";
 import DisplaySingleError from "./WarningMessage";
-import CancelButton from "./CancelButton";
+
 import { TextField, Button } from "@mui/material";
 
 export default function CreateAppointmentType({

@@ -12,50 +12,12 @@ import { useGlobalStore } from "../../../zustandStore/store";
 import PaymentReference from "./PaymentReference";
 import { format } from "date-fns";
 import InvoiceSendCard from "./InvoiceSendCard/InvoiceSendCard";
-import { Button, TextField } from "@mui/material";
+import { Alert, Button, TextField } from "@mui/material";
 import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
 import GenericTopBar from "../../miscellaneous components/GenericTopBar";
 import MenuDivsWithIcon from "../../miscellaneous components/MenuListDivsWithIcon";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
-function invoiceCreationValidation(payloadData, financialData) {
-  const invoiceErrors = [];
-
-  for (const key in payloadData) {
-    if (payloadData[key] !== null && key === "discount") {
-      if (
-        parseFloat(payloadData?.discount) >
-        parseFloat(financialData?.amount_due)
-      ) {
-        invoiceErrors.push("Discount Cananot exceed amount due");
-        return invoiceErrors;
-      }
-
-      if (payloadData?.discount.includes("-")) {
-        invoiceErrors.push("Please enter a valid discount amount");
-      }
-
-      if (payloadData[key] !== null && key === "amount_total") {
-        if (
-          parseFloat(payloadData?.amount_due) >
-          parseFloat(financialData?.amount_paid)
-        ) {
-          invoiceErrors(
-            "The new amount cannot be less than the amount already paid"
-          );
-          return invoiceErrors;
-        }
-        if (
-          payloadData?.total_amount !== null &&
-          payloadData?.total_amount.includes("-")
-        ) {
-          invoiceErrors.push("Please enter a valid appointment total value");
-          return invoiceErrors;
-        }
-      }
-    }
-  }
-}
+import { invoicePageFinancialsValidation } from "../../../form validation Schemas/validationSchemas";
 
 export default function InvoicePortal({ hideComponent }) {
   //validation functuion has been made. make sur eyou having mathcing sttae names
@@ -79,7 +41,7 @@ export default function InvoicePortal({ hideComponent }) {
   const refetchAppointmentSearchList = useGlobalStore(
     (state) => state.globalRefetch
   );
-
+  const [error, setError] = useState();
   const [showInvoiceSendCard, setShowInvoiceSendCard] = useState(false);
   const [showPaymentsPage, setShowPaymentsPage] = useState(false);
   const [showIcd10Table, setShowIcd10Table] = useState(false);
@@ -211,6 +173,34 @@ export default function InvoicePortal({ hideComponent }) {
     setShowInvoiceSendCard(!showInvoiceSendCard);
   }
 
+  async function handleAppointmentPriceAndDiscountMutations(event) {
+    const name = event.target;
+    try {
+      if (Object.keys(appoinmentTotalAndDiscountChanges).length > 0) {
+        const validatedData = await invoicePageFinancialsValidation.validate(
+          appoinmentTotalAndDiscountChanges,
+          {
+            total_amount: financialsData.total_amount,
+            amount_paid: financialsData.amount_paid,
+          }
+        );
+        await patchMutation.mutateAsync(validatedData);
+        refetchFinancialsData(); //FIXME this validation schema isnt wokring. you must fix
+        refetchAppointmentSearchList();
+
+        setAppointmentTotalAndDiscountChanges({});
+      }
+    } catch (error) {
+      if (error.name === "ValidationError") {
+        console.log(error.name);
+        setError(error.message);
+        console.log("the error path is " + error.path);
+
+        setAppointmentTotalAndDiscountChanges({});
+      }
+    }
+  }
+
   function handleInvoiceChanges(event) {
     const { name, value } = event.target;
     setInvoicePayload((prev) => ({
@@ -234,7 +224,14 @@ export default function InvoicePortal({ hideComponent }) {
         <div className="w-full h-screen flex justify-center">
           <div className="w-[98%] h-fit  ">
             <div className="w-full ">
-              <div className="h-fit mt-4 mb-4  ">
+              <div className="h-fit mt-4 mb-4 relative">
+                {error && (
+                  <div className="absolute right-0 top-40">
+                    <Alert onClose={() => setError()} severity="warning">
+                      {error}
+                    </Alert>
+                  </div>
+                )}
                 <div className="space-y-2 p-2  w-1/3 shadow-md shadow-black/40  flex flex-col">
                   <TextField
                     onChange={(event) => handleFinancialDataChanges(event)}
@@ -246,19 +243,7 @@ export default function InvoicePortal({ hideComponent }) {
                     }
                     type="number"
                     variant="standard"
-                    onBlur={async () => {
-                      if (
-                        Object.keys(appoinmentTotalAndDiscountChanges).length >
-                        0
-                      ) {
-                        await patchMutation.mutateAsync(
-                          appoinmentTotalAndDiscountChanges
-                        );
-                        refetchFinancialsData();
-                        refetchAppointmentSearchList();
-                        setAppointmentTotalAndDiscountChanges({});
-                      }
-                    }}
+                    onBlur={handleAppointmentPriceAndDiscountMutations}
                     helperText={
                       appointmentTotalAndDiscountDisplay?.source_icd
                         ? "The price for this appointment is set according to the ICD codes"
@@ -269,19 +254,7 @@ export default function InvoicePortal({ hideComponent }) {
                   <TextField
                     variant="standard"
                     label="Add a discount"
-                    onBlur={async () => {
-                      if (
-                        Object.keys(appoinmentTotalAndDiscountChanges).length >
-                        0
-                      ) {
-                        await patchMutation.mutateAsync(
-                          appoinmentTotalAndDiscountChanges
-                        );
-                        refetchFinancialsData();
-                        refetchAppointmentSearchList();
-                        setAppointmentTotalAndDiscountChanges({});
-                      }
-                    }}
+                    onBlur={handleAppointmentPriceAndDiscountMutations}
                     name="discount"
                     type="number"
                     onChange={(event) => handleFinancialDataChanges(event)}
@@ -545,6 +518,7 @@ export default function InvoicePortal({ hideComponent }) {
                   />
                 </div>
               </div>
+
               <div className="flex justify-between   mt-2">
                 <Button
                   onClick={() => hideComponent()}
