@@ -41,6 +41,7 @@ import CreateAppointment from "./components/Appointment components/CreateAppoint
 import ClientInfoPortal from "./components/Patient PortalComponents/ClientInfoPortal";
 import UpdatePatientContactDetails from "./components/Create and update Patient component/UpdatePatientContactDetails";
 import PatientAdditionalInformation from "./components/Patient PortalComponents/PatientAdditionalInfo";
+import AppointmentsTab from "./components/Patient PortalComponents/AppointmentsTab";
 
 const queryClient = new QueryClient();
 
@@ -128,6 +129,10 @@ function App() {
                     />
                   }
                 >
+                  <Route
+                    path="patientAppointments"
+                    element={<AppointmentsTab />}
+                  />
                   <Route
                     path="treatmentNotes"
                     element={
