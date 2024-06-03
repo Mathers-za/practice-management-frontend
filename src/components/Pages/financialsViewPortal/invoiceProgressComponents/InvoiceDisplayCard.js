@@ -1,10 +1,8 @@
-import styles from "./invoiceCard.module.css";
-import { formatDateYearMonthDay } from "./progressUtilFunctions";
 import InvoiceListDropdown from "./InvoiceListDropDown";
 import { useState } from "react";
 import { IconButton } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import Badge from "./Badge";
+
 import { format } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -63,7 +61,7 @@ export default function InvoiceDisplayCard({
               <motion.div
                 className="w-full h-fit "
                 initial={{ height: "0%" }}
-                animate={{ height: "46%" }}
+                animate={{ height: "auto" }}
                 exit={{ height: "0%" }}
               >
                 <InvoiceListDropdown

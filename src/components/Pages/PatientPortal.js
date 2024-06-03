@@ -10,7 +10,7 @@ export default function PatientPortal({ patientId }) {
         <Link to="clientInfo">Client Information</Link>
         <Link to="treatmentNotes"> Treatment Notes</Link>
         <Link to={"patientAppointments"}>Appointments</Link>
-        <Link>Invoices</Link>
+        <Link to={"patientInvoices"}>Invoices</Link>
       </div>
 
       <div className="w-full h-full bg-white overflow-auto">

@@ -1,5 +1,6 @@
 import {
   useGlobalStore,
+  usePatientPortalStore,
   usePaymentsPageStore,
 } from "../../../../zustandStore/store";
 import PaymentPage from "../../Payments/PaymentPage";
@@ -11,6 +12,7 @@ import {
   handleInvoiceStatementGeneration,
   emailInvoiceStatement,
 } from "../../../../InvoiceApiRequestFns/invoiceApiHelperFns";
+import { useNavigate } from "react-router-dom";
 
 export default function InvoiceListDropdown({
   querkyKeyToInvalidate,
@@ -26,9 +28,12 @@ export default function InvoiceListDropdown({
     patient_id,
     amount_due,
   } = invoiceData;
-
+  const setPatientIdForPatientPortal = usePatientPortalStore(
+    (state) => state.setPatientId
+  );
   const { globalProfileData } = useGlobalStore();
   const [showPaymentsPage, setShowPaymentsPage] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <>
@@ -39,6 +44,10 @@ export default function InvoiceListDropdown({
           onclick={() => hideComponent()}
         />
         <MenuDivsWithIcon
+          onclick={() => {
+            setPatientIdForPatientPortal(patient_id);
+            navigate("/patientPortal/clientInfo/patientContactDetails");
+          }}
           text="View client"
           iconStart={
             <FontAwesomeIcon

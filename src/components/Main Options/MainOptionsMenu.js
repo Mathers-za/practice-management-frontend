@@ -2,7 +2,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import MenuDivsWithIcon from "../miscellaneous components/MenuListDivsWithIcon";
 import { IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { useGlobalStore } from "../../zustandStore/store";
+import {
+  useGlobalStore,
+  usePatientPortalStore,
+} from "../../zustandStore/store";
 import { format } from "date-fns";
 import { useState } from "react";
 import InvoicePortal from "../Pages/ICD10/InvoicePage";
@@ -10,12 +13,14 @@ import ICD10Table from "../Pages/ICD10/ICD10-Table";
 import PaymentPage from "../Pages/Payments/PaymentPage";
 import GenericTopBar from "../miscellaneous components/GenericTopBar";
 import CreateTreatmentNote from "../Pages/PatientTreatmentNotes/CreateTreatmentNote";
+import { useNavigate } from "react-router-dom";
 
 export default function MainOptionsMenu({
   hideComponent,
   refetchData,
   queryKeyToInvalidate,
 }) {
+  const navigate = useNavigate();
   const [showInvoicePage, setShowInvoicePage] = useState(false);
   const [showIcdCodeComponent, setShowIcdCodeComponent] = useState(false);
   const [showPaymentsPage, setShowPaymentsPage] = useState(false);
@@ -27,6 +32,9 @@ export default function MainOptionsMenu({
     globalFinancialData,
     globalInvoiceData,
   } = useGlobalStore();
+  const setPatientPortalPatientId = usePatientPortalStore(
+    (state) => state.setPatientId
+  );
 
   return (
     <>
@@ -47,6 +55,21 @@ export default function MainOptionsMenu({
             <CloseIcon color="inherit" />
           </IconButton>
         </div>
+
+        <MenuDivsWithIcon
+          text="View patient"
+          onclick={() => {
+            setPatientPortalPatientId(globalPatientData.id);
+            navigate("/patientPortal/clientInfo/patientContactDetails");
+          }}
+          iconStart={
+            <FontAwesomeIcon
+              icon="fa-regular fa-user"
+              size="xl"
+              color="#0284C7"
+            />
+          }
+        />
 
         <MenuDivsWithIcon
           onclick={() => setShowIcdCodeComponent(!showIcdCodeComponent)}
