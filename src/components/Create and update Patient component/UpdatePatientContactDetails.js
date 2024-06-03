@@ -51,6 +51,7 @@ export default function UpdatePatientContactDetails() {
   return (
     <>
       <PatientContactDetailsForm
+        disabled={Object.keys(changes).length === 0}
         patientInfo={patientInfo}
         handleChange={handleChange}
         handleSubmit={handleSubmit}

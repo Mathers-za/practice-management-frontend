@@ -7,10 +7,10 @@ export default function PatientList({ profileId, setPatientId }) {
   const setPatientIdForPatientPortal = usePatientPortalStore(
     (state) => state.setPatientId
   );
-  function handleClickProp(id) {
+  function handleClickProp(patientObj) {
     navigate(`/patientPortal`);
-    setPatientId(id);
-    setPatientIdForPatientPortal(id);
+    setPatientId(patientObj.id);
+    setPatientIdForPatientPortal(patientObj.id);
   }
 
   return (

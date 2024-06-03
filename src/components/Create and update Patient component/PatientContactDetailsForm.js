@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, TextField } from "@mui/material";
 
 export default function PatientContactDetailsForm({
+  disabled = false,
   handleSubmit,
   hideComponent = false,
   handleChange,
@@ -97,7 +98,7 @@ export default function PatientContactDetailsForm({
             color="primary"
             fullWidth
             type="submit"
-            disabled={Object.keys(patientInfo).length === 0}
+            disabled={disabled}
           >
             Save
           </Button>

@@ -67,7 +67,7 @@ export default function PatientPickerComponent({
                   <div
                     key={patient.id}
                     className="border-b group border-slate-300 flex  items-center font-semibold px-3 py-2 hover:bg-slate-100 ease-in-out duration-[20ms]"
-                    onClick={() => onclick(patient.id)}
+                    onClick={() => onclick(patient)}
                   >
                     {patient?.first_name || ""} {patient?.last_name || ""}
                     <p className="text-xs ml-1 hidden  text-slate-500 group-hover:block ">{`${
