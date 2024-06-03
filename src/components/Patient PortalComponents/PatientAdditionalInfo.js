@@ -12,6 +12,7 @@ export default function PatientAdditionalInformation() {
     `/patientAdditionalInformation/view${patientId}`,
     ["PatientAdditionalInfo", patientId]
   );
+  //TODO finish this page
 
   useEffect(() => {
     if (patientAddionalData) {
