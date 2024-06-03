@@ -8,7 +8,7 @@ export default function ClientInfoPortal() {
         <div className="flex relative top-5 font-semibold  shadow-md text-base shadow-black/40 rounded-sm  w-[90%] z-10 h-11 mx-auto items-center  bg-sky-400 justify-around">
           <Link to={"patientContactDetails"}>Contact Details</Link>
           <Link to={"medicalAid"}>Medical Aid information</Link>
-          <Link>Additional Information</Link>
+          <Link to={"additionalInformation"}>Additional Information</Link>
         </div>
         <div className="   mx-auto h-fit overflow-hidden p-8 border border-slate-300 shadow-md shadow-black/30">
           <div className="mt-5   ">

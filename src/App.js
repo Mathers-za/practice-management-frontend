@@ -40,6 +40,7 @@ import CreatePatient from "./components/Create and update Patient component/Crea
 import CreateAppointment from "./components/Appointment components/CreateAppointment";
 import ClientInfoPortal from "./components/Patient PortalComponents/ClientInfoPortal";
 import UpdatePatientContactDetails from "./components/Create and update Patient component/UpdatePatientContactDetails";
+import PatientAdditionalInformation from "./components/Patient PortalComponents/PatientAdditionalInfo";
 
 const queryClient = new QueryClient();
 
@@ -163,6 +164,10 @@ function App() {
                     <Route
                       path="medicalAid"
                       element={<MedicalAid patientId={patientIdRef.current} />}
+                    />
+                    <Route
+                      path="additionalInformation"
+                      element={<PatientAdditionalInformation />}
                     />
                   </Route>
                 </Route>

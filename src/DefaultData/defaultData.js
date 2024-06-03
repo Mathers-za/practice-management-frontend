@@ -14,6 +14,7 @@ const defaultData = {
     billing_address: null,
     profile_id: null,
   },
+  defaultTitles: ["Dr.", "Mr.", "Mrs.", "Miss", "Ms.", "Master"],
 };
 
 export default defaultData;

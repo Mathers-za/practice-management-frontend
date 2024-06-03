@@ -10,6 +10,7 @@ import {
 } from "yup";
 import axiosRequest from "../apiRequests/apiRequests";
 import { Discount } from "@mui/icons-material";
+import defaultData from "../DefaultData/defaultData";
 
 addMethod(Schema, "stripEmptyString", function () {
   return this.transform((value) => (value === "" ? undefined : value));
@@ -278,4 +279,23 @@ export const invoicePageFinancialsValidation = object({
         }
       }
     ),
+});
+
+export const patientAdditionalInformationValidationSchema = object({
+  date_of_birth: date().nullable(),
+  billing_address: string().nullable(),
+  initials: string().nullable(),
+  gender: string()
+    .oneOf(
+      ["Male", "Female", "Other"],
+      "Gender selection shoulder either be Male,Female or Other"
+    )
+    .nullable(),
+  title: string()
+    .oneOf(
+      defaultData.defaultTitles,
+      "Title is not included in the allowed list of titles"
+    )
+    .nullable(),
+  bio: string().nullable(),
 });
