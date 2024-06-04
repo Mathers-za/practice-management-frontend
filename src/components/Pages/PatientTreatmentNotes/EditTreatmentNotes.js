@@ -6,7 +6,11 @@ import {
   usePatchData,
 } from "../../../CustomHooks/serverStateHooks";
 
-export default function EditTreatmentNote({ hideComponent, treatmentNoteId }) {
+export default function EditTreatmentNote({
+  hideComponent,
+  treatmentNoteId,
+  queryKeyToInValidate,
+}) {
   const [changes, setChanges] = useState({});
   const [treatmentNoteData, setTreatmentNoteData] = useState({});
 
@@ -17,12 +21,12 @@ export default function EditTreatmentNote({ hideComponent, treatmentNoteId }) {
 
   const { patchMutation } = usePatchData(
     `/treatmentNotes/update${treatmentNoteId}`,
-    "treatmentNoteData"
+    queryKeyToInValidate && queryKeyToInValidate
   );
 
   const { deleteMutation } = useDeleteData(
     `/treatmentNotes/delete`,
-    "treatmentNoteData"
+    queryKeyToInValidate && queryKeyToInValidate
   );
 
   useEffect(() => {

@@ -1,16 +1,19 @@
 import { useRef, useState } from "react";
 import TreatmentNoteForm from "./TreatmentNoteForm";
 import { usePostData } from "../../../CustomHooks/serverStateHooks";
-import EditTreatmentNote from "./EditTreatmentNotes";
 
-export default function CreateTreatmentNote({ hideComponent, patientId }) {
+export default function CreateTreatmentNote({
+  hideComponent,
+  patientId,
+  queryKeyToInvalidate,
+}) {
   const [treatmentNotePayload, setTreatmentNotePayload] = useState({
     date: new Date(),
   });
-  const [showEditForm, setShowEditForm] = useState(false);
+
   const { createMutation } = usePostData(
     `/treatmentNotes/create${patientId}`,
-    "treatmentNoteData"
+    queryKeyToInvalidate && queryKeyToInvalidate
   );
   const createdTreatmentNoteId = useRef(null);
 

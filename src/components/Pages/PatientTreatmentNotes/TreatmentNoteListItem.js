@@ -1,5 +1,6 @@
 import { format } from "date-fns";
 import { useGlobalStore } from "../../../zustandStore/store";
+import { Button } from "@mui/material";
 
 export default function TreatmentNoteListItem({
   treatmentNoteData,
@@ -50,12 +51,21 @@ export default function TreatmentNoteListItem({
             </p>
           )}
         </div>
-        <button
-          onClick={() => editButtonclickFn(treatmentNoteData.id)}
-          className="px-2 py-1 bg-slate-300 text-back  hover:bg-slate-400 absolute top-1 right-1"
-        >
-          View/Edit
-        </button>
+        <div className="absolute top-1 right-1">
+          <Button
+            sx={{
+              padding: "4px 6px",
+              color: "white",
+              backgroundColor: "#64748b",
+            }}
+            size="small"
+            variant="contained"
+            onClick={() => editButtonclickFn(treatmentNoteData?.id)}
+            color="inherit"
+          >
+            Edit/view
+          </Button>
+        </div>
       </div>
     </>
   );

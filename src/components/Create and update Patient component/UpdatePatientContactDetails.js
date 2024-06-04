@@ -15,7 +15,7 @@ export default function UpdatePatientContactDetails() {
   const { patchMutation } = usePatchData(`/patients/update${patientId}`);
   const [errorMessage, setErrorMessage] = useState();
   const [patientInfo, setPatientInfo] = useState({});
-  const [changes, setChanges] = useState();
+  const [changes, setChanges] = useState({});
   useEffect(() => {
     if (patientContactDetailsData) {
       setPatientInfo(patientContactDetailsData);

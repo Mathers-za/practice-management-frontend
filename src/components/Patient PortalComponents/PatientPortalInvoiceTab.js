@@ -17,18 +17,22 @@ export default function PatientPortalInvoiceTab() {
 
   return (
     <>
-      <div className="flex flex-col h-full w-full">
-        {paginatedInvoiceData && paginatedInvoiceData.data.length > 0
-          ? paginatedInvoiceData.data.map((invoice) => {
-              return (
-                <InvoiceDisplayCard
-                  invoiceData={invoice}
-                  queryKeyToInvalidate={["patientInvoices", patientId, page]}
-                  key={invoice.invoice_id}
-                />
-              );
-            })
-          : "No invoices for this patient to show"}
+      <div className="flex flex-col bg-white min-h-full w-full">
+        {paginatedInvoiceData && paginatedInvoiceData.data.length > 0 ? (
+          paginatedInvoiceData.data.map((invoice) => {
+            return (
+              <InvoiceDisplayCard
+                invoiceData={invoice}
+                queryKeyToInvalidate={["patientInvoices", patientId, page]}
+                key={invoice.invoice_id}
+              />
+            );
+          })
+        ) : (
+          <div className="min-h-full w-full bg-white">
+            No appointments to show for this patient
+          </div>
+        )}
         {paginatedInvoiceData && paginatedInvoiceData?.data?.length > 0 ? (
           <div className="flex-grow flex justify-end items-end">
             <Pagination
