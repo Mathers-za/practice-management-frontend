@@ -210,10 +210,7 @@ export default function InvoiceColumnList({
             {leftColumnList
               ? leftColumnList.map((invoice) => (
                   <InvoiceDisplayCard
-                    queryKeyToInvalidate={[
-                      "invoiceProgressPage",
-                      searchDateCriteria,
-                    ]}
+                    refetch={invoiceDataRefetch}
                     key={invoice.invoice_id}
                     invoiceData={invoice}
                   />
@@ -225,10 +222,7 @@ export default function InvoiceColumnList({
             {middleColumnList
               ? middleColumnList.map((invoice) => (
                   <InvoiceDisplayCard
-                    queryKeyToInvalidate={[
-                      "invoiceProgressPage",
-                      searchDateCriteria,
-                    ]}
+                    refetch={invoiceDataRefetch}
                     key={invoice.invoice_id}
                     invoiceData={invoice}
                   />
@@ -239,10 +233,7 @@ export default function InvoiceColumnList({
             {rightColumnList
               ? rightColumnList.map((invoice) => (
                   <InvoiceDisplayCard
-                    queryKeyToInvalidate={[
-                      "invoiceProgressPage",
-                      searchDateCriteria,
-                    ]}
+                    refetch={invoiceDataRefetch}
                     key={invoice.invoice_id}
                     invoiceData={invoice}
                   />

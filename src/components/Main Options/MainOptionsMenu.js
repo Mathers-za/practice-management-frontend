@@ -3,23 +3,21 @@ import MenuDivsWithIcon from "../miscellaneous components/MenuListDivsWithIcon";
 import { IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import {
+  useAppointmentPortalStore,
   useGlobalStore,
   usePatientPortalStore,
 } from "../../zustandStore/store";
 import { format } from "date-fns";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import InvoicePortal from "../Pages/ICD10/InvoicePage";
 import ICD10Table from "../Pages/ICD10/ICD10-Table";
 import PaymentPage from "../Pages/Payments/PaymentPage";
 import GenericTopBar from "../miscellaneous components/GenericTopBar";
 import CreateTreatmentNote from "../Pages/PatientTreatmentNotes/CreateTreatmentNote";
 import { useNavigate } from "react-router-dom";
+import { useFetchData } from "../../CustomHooks/serverStateHooks";
 
-export default function MainOptionsMenu({
-  hideComponent,
-  refetchData,
-  queryKeyToInvalidate,
-}) {
+export default function MainOptionsMenu({ hideComponent, refetchData }) {
   const navigate = useNavigate();
   const [showInvoicePage, setShowInvoicePage] = useState(false);
   const [showIcdCodeComponent, setShowIcdCodeComponent] = useState(false);
@@ -29,12 +27,37 @@ export default function MainOptionsMenu({
     globalPatientData,
     globalAppointmentTypeData,
     globalAppointmentData,
-    globalFinancialData,
+
     globalInvoiceData,
   } = useGlobalStore();
   const setPatientPortalPatientId = usePatientPortalStore(
     (state) => state.setPatientId
   );
+  const { data: financialData } = useFetchData(
+    `/financials/view${globalAppointmentData.id}`,
+    ["financialData", globalAppointmentData.id]
+  );
+
+  const {
+    globalRefetchAppointmentList,
+    flagToRefreshAppointmentList,
+    setFlagToRefreshAppointmentList,
+    setGlobalRefetchAppointmentList,
+  } = useAppointmentPortalStore();
+
+  useEffect(() => {
+    if (refetchData) {
+      setGlobalRefetchAppointmentList(refetchData);
+    }
+  }, [refetchData]);
+
+  function handleExit() {
+    hideComponent();
+    if (flagToRefreshAppointmentList) {
+      globalRefetchAppointmentList();
+      setFlagToRefreshAppointmentList(false);
+    }
+  }
 
   return (
     <>
@@ -46,12 +69,12 @@ export default function MainOptionsMenu({
               globalPatientData?.last_name || ""}
             .
             {format(
-              new Date(globalAppointmentData.appointment_date),
+              new Date(globalAppointmentData?.appointment_date),
               "eee dd MMM yyyy"
             )}
             Daniel Mathers follow up appointment with Dan at Dans practice
           </p>
-          <IconButton onClick={() => hideComponent()}>
+          <IconButton onClick={handleExit}>
             <CloseIcon color="inherit" />
           </IconButton>
         </div>
@@ -98,7 +121,7 @@ export default function MainOptionsMenu({
 
         <div>
           <MenuDivsWithIcon
-            disabled={parseFloat(globalFinancialData.amount_due) <= 0}
+            disabled={parseFloat(financialData?.amount_due) <= 0}
             onclick={() => setShowPaymentsPage(!showPaymentsPage)}
             iconStart={
               <FontAwesomeIcon
@@ -106,7 +129,7 @@ export default function MainOptionsMenu({
                 size="lg"
                 style={{
                   color:
-                    parseFloat(globalFinancialData.amount_due) <= 0
+                    parseFloat(financialData?.amount_due) <= 0
                       ? "#94A3B8"
                       : "#0284C7",
                 }}
@@ -157,11 +180,10 @@ export default function MainOptionsMenu({
         {showPaymentsPage && (
           <div>
             <PaymentPage
-              queryKeyToInvalidate={queryKeyToInvalidate}
-              refetchData={refetchData}
+              queryKeyToInvalidate={["financialData", globalAppointmentData.id]}
               hideComponent={() => setShowPaymentsPage(!showPaymentsPage)}
               appointmentId={globalAppointmentData.id}
-              appointmentTypeId={globalAppointmentTypeData.id}
+              financialData={financialData}
             />
           </div>
         )}
@@ -185,6 +207,8 @@ export default function MainOptionsMenu({
           <div>
             <InvoicePortal
               hideComponent={() => setShowInvoicePage(!showInvoicePage)}
+              financialsData={financialData}
+              queryKeyToInvalidate={["financialData", globalAppointmentData.id]}
             />
           </div>
         )}

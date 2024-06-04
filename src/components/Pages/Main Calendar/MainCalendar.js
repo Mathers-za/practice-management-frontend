@@ -24,11 +24,12 @@ export default function MainCalendar({ profileId }) {
     end_date: endOfWeekDate,
   });
 
-  const { data: appointmentData } = useFetchData(
-    `/appointments/filter${profileId}`,
-    ["mainCalendar", searchDates],
-    searchDates
-  );
+  const { data: appointmentData, refetch: refetchAppointmentListData } =
+    useFetchData(
+      `/appointments/filter${profileId}`,
+      ["mainCalendar", searchDates],
+      searchDates
+    );
 
   const {
     setGlobalAppointmentData,
@@ -103,6 +104,7 @@ export default function MainCalendar({ profileId }) {
     });
 
     setGlobalAppointmentTypeData({
+      //FIXME calendar is not working as expeted. always one day behind.
       appointment_name: event.appointmentData.appointment_name,
       id: event.appointmentData.apptype_id,
     });
@@ -167,7 +169,7 @@ export default function MainCalendar({ profileId }) {
             handleDateSet(dateSetInfo);
           }}
           eventClick={(eventInfo) => handleEventClick(eventInfo.event.id)}
-          timeZone="local"
+          timeZone="Africa/Johannesburg"
           allDaySlot={false}
         />
       </div>
@@ -180,12 +182,9 @@ export default function MainCalendar({ profileId }) {
             className="fixed bottom-0 left-0 w-full h-fit z-10"
           >
             <MainOptionsMenu
+              refetchData={refetchAppointmentListData}
               queryKeyToInvalidate={["mainCalendar", searchDates]}
               hideComponent={() => setShowDropDownMenu(!showDropDownMenu)}
-              profileId={profileId}
-              patientId={selectedEvent.appointmentData.patient_id}
-              appointment_id={selectedEvent.appointmentData.appointment_id}
-              appointmentTypeId={selectedEvent.appointmentData.apptype_id}
             />
           </motion.div>
         )}

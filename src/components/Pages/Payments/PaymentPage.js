@@ -1,6 +1,4 @@
-import { checkAndSetIcds } from "../../../apiRequests/apiRequests";
-
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import {
   useFetchData,
   usePatchData,
@@ -21,70 +19,25 @@ import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
 import InputAdornment from "@mui/material/InputAdornment";
 import { createPaymentValidationSchema } from "../../../form validation Schemas/validationSchemas";
 import { CalendarIcon } from "@mui/x-date-pickers/icons";
-import { useGlobalStore } from "../../../zustandStore/store";
-import { checkAndSetInvoiceStatusToPaidOnFullPayment } from "./paymentsHelperFns";
 
-function checkForErrors(paymentPayload, data) {
-  const errors = [];
-
-  for (const property in paymentPayload) {
-    if (property === "amount" && paymentPayload[property] !== null) {
-      if (parseFloat(paymentPayload[property]) > parseFloat(data?.amount_due)) {
-        errors.push(
-          "Please enter a valid amount that does not exceed amount due"
-        );
-        return errors;
-      }
-    }
-
-    if (
-      paymentPayload[property] !== null &&
-      property !== "payment_date" &&
-      paymentPayload[property].includes("-")
-    ) {
-      errors.push("please enter a valid number");
-      return errors;
-    }
-
-    if (
-      paymentPayload[property] !== null &&
-      paymentPayload[property].includes(".")
-    ) {
-      const parts = paymentPayload[property].split(".");
-      if (parts[1].trim().length > 2) {
-        errors.push("invalid-greater than 2 decomals");
-        return errors;
-      }
-    }
-  }
-}
-
-function cleanAmount(payload) {
-  const cleanedAmount = payload.amount.replace(",", ".");
-  return { ...payload, amount: cleanedAmount };
-}
+import { useAppointmentPortalStore } from "../../../zustandStore/store";
 
 export default function PaymentPage({
+  financialData,
   appointmentId,
-  appointmentTypeId,
+  refetch = undefined,
   hideComponent,
-  refetchData = "",
+
   queryKeyToInvalidate = "",
 }) {
   const [error, setError] = useState();
-  const { data: financialData, refetch: refreshPaymentsPage } = useFetchData(
-    `/financials/view${appointmentId}`,
-    ["financialsControl", "page", "payments"]
-  );
+
   const { data: invoiceData } = useFetchData(`/invoices/view${appointmentId}`);
 
-  const refetchAppointmentListData = useGlobalStore(
-    (state) => state.globalRefetch
+  const { patchMutation: invoicePatchDataMutation } = usePatchData(
+    `/invoices/update${appointmentId}`
   );
-  const { patchMutation: invoicePatchData } = usePatchData(
-    `/invoices/update${appointmentId}`,
-    queryKeyToInvalidate
-  );
+  const { setFlagToRefreshAppointmentList } = useAppointmentPortalStore();
 
   const [paymentsPayload, setPaymentsPayload] = useState({
     amount: "0,00",
@@ -137,18 +90,27 @@ export default function PaymentPage({
         { amount_due: financialData?.amount_due }
       );
       setError();
-      await createMutation.mutateAsync(validatedData);
-      checkAndSetInvoiceStatusToPaidOnFullPayment(
-        invoiceData.invoice_status,
-        financialData.amount_due,
-        () => invoicePatchData.mutate()
+      const response = await createMutation.mutateAsync(validatedData);
+      console.log(
+        "the reponse amount is " +
+          response.amount +
+          " and the amount due is " +
+          financialData.amount_due
       );
+
+      if (invoiceData) {
+        if (
+          parseFloat(response.amount) >= parseFloat(financialData.amount_due)
+        ) {
+          invoicePatchDataMutation.mutate({ invoice_status: "Paid" });
+        }
+      }
+      setFlagToRefreshAppointmentList(true);
       setPaymentsPayload((prev) => ({
         ...prev,
         amount: null,
       }));
-      refreshPaymentsPage();
-      refetchAppointmentListData && refetchAppointmentListData();
+      refetch && refetch();
     } catch (error) {
       setError(error.message);
     }
@@ -164,7 +126,7 @@ export default function PaymentPage({
 
   return (
     <>
-      <div className="fixed left-0 top-0 overflow-auto bg-white h-screen w-full  flex flex-col  ">
+      <div className="fixed left-0 top-0 overflow-auto bg-white h-screen w-full z-20  flex flex-col  ">
         <div>
           <GenericTopBar onclick={hideComponent} label="Payments" />
         </div>

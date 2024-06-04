@@ -8,7 +8,7 @@ export default function PatientPortalInvoiceTab() {
   const { patientId } = usePatientPortalStore();
   const [page, setPage] = useState(1);
 
-  const { data: paginatedInvoiceData } = usePagination(
+  const { data: paginatedInvoiceData, refetch } = usePagination(
     `/invoices/getAllInvoicesByPatient${patientId}`,
     ["patientInvoices", patientId, page],
     page,

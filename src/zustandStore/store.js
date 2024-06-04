@@ -19,15 +19,18 @@ const usePaymentsPageStore = create((set) => ({
   },
 }));
 
-const useAppointmentPortalStore = create((set) => ({
-  appointmentsThathaveInvoices: {},
-  setAppsThatHaveInvoices: (dataObject) =>
-    set((state) => ({
-      appointmentsThathaveInvoices: {
-        ...state.appointmentsThathaveInvoices,
-        ...dataObject,
-      },
-    })),
+const useAppointmentListsStore = create((set) => ({
+  globalRefetchAppointmentList: "",
+  flagToRefreshAppointmentList: false,
+
+  setGlobalRefetchAppointmentList: (callback) =>
+    set({
+      globalRefetchAppointmentList: callback,
+    }),
+  setFlagToRefreshAppointmentList: (boolean) =>
+    set({
+      flagToRefreshAppointmentList: boolean,
+    }),
 }));
 
 const useInvoiceProgessComponent = create((set) => ({
@@ -94,7 +97,7 @@ const useFlags = create((set) => ({
 
 export {
   usePaymentsPageStore,
-  useAppointmentPortalStore,
+  useAppointmentListsStore as useAppointmentPortalStore,
   useInvoiceProgessComponent,
   useInvoiceListDropDown,
   useFlags,

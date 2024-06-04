@@ -173,9 +173,6 @@ export const createAppointmentValidationSchema = object({
   sent_confirmation: boolean("Invalid format").required(
     "A boolean value is expected"
   ),
-  appointment_date: date("A valid date is required").required(
-    "Please select an appointment date"
-  ),
 });
 
 export const createPaymentValidationSchema = object({

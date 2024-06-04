@@ -8,7 +8,10 @@ import {
   usePostData,
 } from "../../../CustomHooks/serverStateHooks";
 import PaymentPage from "../Payments/PaymentPage";
-import { useGlobalStore } from "../../../zustandStore/store";
+import {
+  useAppointmentPortalStore,
+  useGlobalStore,
+} from "../../../zustandStore/store";
 import PaymentReference from "./PaymentReference";
 import { format } from "date-fns";
 import InvoiceSendCard from "./InvoiceSendCard/InvoiceSendCard";
@@ -18,8 +21,13 @@ import GenericTopBar from "../../miscellaneous components/GenericTopBar";
 import MenuDivsWithIcon from "../../miscellaneous components/MenuListDivsWithIcon";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { invoicePageFinancialsValidation } from "../../../form validation Schemas/validationSchemas";
+import PaymentsListDropDownInvoicePage from "./PaymentsDropDownInInvoicePage";
 
-export default function InvoicePortal({ hideComponent }) {
+export default function InvoicePortal({
+  hideComponent,
+  financialsData,
+  queryKeyToInvalidate,
+}) {
   //validation functuion has been made. make sur eyou having mathcing sttae names
 
   const {
@@ -30,9 +38,6 @@ export default function InvoicePortal({ hideComponent }) {
     setGlobalInvoiceData,
   } = useGlobalStore();
 
-  const { data: financialsData, refetch: refetchFinancialsData } = useFetchData(
-    `/financials/view${globalAppointmentData.id}`
-  );
   console.log(globalProfileData);
   const [showDatePickers, setShowDatePickers] = useState(false);
   const [showInvoiceTitleDropdown, setShowInvoiceDropdown] = useState(false);
@@ -47,22 +52,10 @@ export default function InvoicePortal({ hideComponent }) {
   const [showIcd10Table, setShowIcd10Table] = useState(false);
 
   const [invoiceExist, setInvoiceExist] = useState(false);
-
+  const { setFlagToRefreshAppointmentList } = useAppointmentPortalStore();
   const { patchMutation } = usePatchData(
     `/financials/update${financialsData?.appointment_id}`,
-    ["financialsControl", "page", "invoice", "fetchPaymentsData"]
-  );
-  console.log(globalAppointmentData.id);
-
-  const { data: paymentsData } = useFetchData(
-    `/payments/view${globalAppointmentData.id}`,
-    [
-      "financialsControl",
-      "page",
-      "invoice",
-      "fetchPaymentsData",
-      globalAppointmentData.id,
-    ]
+    queryKeyToInvalidate && queryKeyToInvalidate
   );
 
   const { data: invoiceData } = useFetchData(
@@ -111,7 +104,7 @@ export default function InvoicePortal({ hideComponent }) {
       [name]: value === "" ? "0,00" : value,
     }));
     setAppointmentTotalAndDiscountChanges({
-      [name]: value === "" ? "0.00 " : value,
+      [name]: value === "" ? "0.00" : value,
     });
   }
   console.log("invoice title " + invoicePayload.invoice_title);
@@ -144,28 +137,26 @@ export default function InvoicePortal({ hideComponent }) {
 
   async function handleSubmission() {
     if (invoiceExist && Object.keys(invoicePayloadChanges).length > 0) {
-      const invoiceStatus = determineInvoiceStatus(
-        invoicePayload.invoice_status,
-        financialsData.amount_due
-      );
-      console.log("invoice status in update " + invoiceStatus);
       const responseFromPatch = await invoiceMutation.mutateAsync({
         ...invoicePayloadChanges,
-        invoice_status: invoiceStatus,
+        invoice_status: determineInvoiceStatus(
+          invoicePayload.invoice_status,
+          financialsData.amount_due
+        ),
       });
       setGlobalInvoiceData(responseFromPatch);
       setInvoicePayloadChanges({});
+      setFlagToRefreshAppointmentList(true);
     } else if (!invoiceExist) {
-      const invoiceStatus = determineInvoiceStatus(
-        invoicePayload.invoice_status,
-        financialsData.amount_due
-      );
-      console.log("invoice status in create mutation " + invoiceStatus);
       const responseData = await createMutation.mutateAsync({
         ...invoicePayload,
-        invoice_status: invoiceStatus,
+        invoice_status: determineInvoiceStatus(
+          invoicePayload.invoice_status,
+          financialsData.amount_due
+        ),
       });
-      console.log("reponse datta from create mututation " + responseData);
+      setFlagToRefreshAppointmentList(true);
+
       setGlobalInvoiceData(responseData);
       setInvoicePayloadChanges({});
       setInvoiceExist(true);
@@ -174,7 +165,6 @@ export default function InvoicePortal({ hideComponent }) {
   }
 
   async function handleAppointmentPriceAndDiscountMutations(event) {
-    const name = event.target;
     try {
       if (Object.keys(appoinmentTotalAndDiscountChanges).length > 0) {
         const validatedData = await invoicePageFinancialsValidation.validate(
@@ -185,13 +175,15 @@ export default function InvoicePortal({ hideComponent }) {
           }
         );
         await patchMutation.mutateAsync(validatedData);
-        refetchFinancialsData(); //FIXME this validation schema isnt wokring. you must fix
+
         refetchAppointmentSearchList();
+        setFlagToRefreshAppointmentList(true);
 
         setAppointmentTotalAndDiscountChanges({});
       }
     } catch (error) {
       if (error.name === "ValidationError") {
+        //FIXME fix the validation here
         console.log(error.name);
         setError(error.message);
         console.log("the error path is " + error.path);
@@ -320,7 +312,6 @@ export default function InvoicePortal({ hideComponent }) {
                     <ICD10Table
                       appointmentId={globalAppointmentData.id}
                       appointmentTypeId={globalAppointmentTypeData.id}
-                      financialsDataRefetch={() => refetchFinancialsData()}
                       queryKeyToInvalidate={[
                         "financialsControl",
                         "page",
@@ -423,37 +414,12 @@ export default function InvoicePortal({ hideComponent }) {
                   {showPaymentsReference && (
                     <div className="p-4">
                       <div>
-                        {paymentsData && paymentsData.length > 0
-                          ? paymentsData.map((payment) => (
-                              <PaymentReference
-                                key={payment.id}
-                                paymentsData={payment}
-                              />
-                            ))
-                          : "No payments data"}
-                      </div>
-                      <div className="flex justify-end">
-                        <Button
-                          size="small"
-                          disabled={parseFloat(financialsData.amount_due) <= 0}
-                          variant="contained"
-                          onClick={() => setShowPaymentsPage(!showPaymentsPage)}
-                        >
-                          Add Payment
-                        </Button>
+                        <PaymentsListDropDownInvoicePage
+                          financialsData={financialsData}
+                          queryKeyToInvalidate={queryKeyToInvalidate}
+                        />
                       </div>
                     </div>
-                  )}
-
-                  {showPaymentsPage && (
-                    <PaymentPage
-                      appointmentTypeId={globalAppointmentTypeData.id}
-                      hideComponent={() =>
-                        setShowPaymentsPage(!showPaymentsPage)
-                      }
-                      appointmentId={globalAppointmentData.id}
-                      queryKeyToInvalidate={["financialsControl", "page"]}
-                    />
                   )}
 
                   <MenuDivsWithIcon

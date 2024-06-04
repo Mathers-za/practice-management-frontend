@@ -6,10 +6,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { format } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function InvoiceDisplayCard({
-  invoiceData,
-  queryKeyToInvalidate,
-}) {
+export default function InvoiceDisplayCard({ refetch, invoiceData }) {
   const {
     amount_due,
     amount_paid,
@@ -65,10 +62,9 @@ export default function InvoiceDisplayCard({
                 exit={{ height: "0%" }}
               >
                 <InvoiceListDropdown
-                  querkyKeyToInvalidate={queryKeyToInvalidate}
+                  refetch={refetch}
                   hideComponent={() => setShowDropDown(!showDropDown)}
                   invoiceData={invoiceData}
-                  toggleDropdown={() => setShowDropDown(!showDropDown)}
                 />
               </motion.div>
             </div>
