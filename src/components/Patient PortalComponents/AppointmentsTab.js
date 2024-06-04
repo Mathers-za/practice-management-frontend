@@ -1,10 +1,16 @@
 import { useState } from "react";
 import { usePagination } from "../../CustomHooks/serverStateHooks";
-import { usePatientPortalStore } from "../../zustandStore/store";
+import {
+  useGlobalStore,
+  usePatientPortalStore,
+} from "../../zustandStore/store";
 import AppointmentCard from "../Pages/AppointmentCardAndList/AppointmentCard";
-import { Pagination } from "@mui/material";
+import { Pagination, Fab } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import CreateAppointment from "../Appointment components/CreateAppointment";
 
 export default function AppointmentsTab() {
+  const { globalProfileData } = useGlobalStore();
   const { patientId } = usePatientPortalStore();
   const [page, setPage] = useState(1);
   const { data: patientAppointmentDataAndMetaData, refetch } = usePagination(
@@ -13,6 +19,7 @@ export default function AppointmentsTab() {
     page,
     7
   );
+  const [showCreateAppointment, setShowCreateAppointment] = useState(false);
 
   //TODO clean this code up by fighuring out how to destructure the vraibles to make it more readable
 
@@ -38,6 +45,25 @@ export default function AppointmentsTab() {
             <Pagination
               onChange={(event, newPageNumber) => setPage(newPageNumber)}
               count={patientAppointmentDataAndMetaData?.metaData?.totalPages}
+            />
+          </div>
+        )}
+        <div className="absolute right-5 top-9">
+          <Fab
+            onClick={() => setShowCreateAppointment(!showCreateAppointment)}
+            color="primary"
+            size="small"
+          >
+            <AddIcon />
+          </Fab>
+        </div>
+        {showCreateAppointment && (
+          <div className="fixed left-0 top-0 w-full h-screen z-10">
+            <CreateAppointment
+              hideComponent={() =>
+                setShowCreateAppointment(!showCreateAppointment)
+              }
+              querykeyToInvalidate={["patientAppointments", patientId, page]}
             />
           </div>
         )}

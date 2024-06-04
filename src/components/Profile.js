@@ -6,7 +6,7 @@ import { Button, TextField } from "@mui/material";
 import Alert from "@mui/material/Alert";
 
 export default function Profile() {
-  const { data } = useFetchData("/profile/view", "profileData");
+  const { data } = useFetchData("/profile/view", "userProfileData");
   const {
     globalProfileData,
 

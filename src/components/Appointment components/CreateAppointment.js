@@ -33,7 +33,6 @@ function setDateAndTimes() {
 }
 
 export default function CreateAppointment({
-  profileId,
   calendarSelectedJsDateTimeString,
   hideComponent,
   querykeyToInvalidate,
@@ -48,6 +47,7 @@ export default function CreateAppointment({
   const setGlobalPatientData = useGlobalStore(
     (state) => state.setGlobalPatientData
   );
+  const { globalProfileData } = useGlobalStore();
   const setGlobalAppointmentTypeData = useGlobalStore(
     (state) => state.setGlobalAppointmentTypeData
   );
@@ -154,7 +154,7 @@ export default function CreateAppointment({
       setPatientSelectionDisplay("");
       if (result.sent_confirmation) {
         emailNotificationMutation.mutate({
-          profileId: profileId,
+          profileId: globalProfileData.id,
           appointmentId: result.id,
           patientId: result.patient_id,
         });
@@ -318,7 +318,7 @@ export default function CreateAppointment({
                 hideComponent={() =>
                   setShowAppointmentTypePicker(!showAppointmentTypeIcker)
                 }
-                profileId={profileId}
+                profileId={globalProfileData.id}
                 onclick={handleAppointmentTypeSelect}
               />
             </div>
@@ -348,7 +348,7 @@ export default function CreateAppointment({
         {showPatientPicker && (
           <div className="fixed top-0 left-0 min-w-full min-h-full max-h-fit bg-white z-10 overflow-y-scroll ">
             <PatientPicker
-              profileId={profileId}
+              profileId={globalProfileData.id}
               hideComponent={() => setShowPatientPicker(!showPatientPicker)}
               onclick={handlePatientPicker}
             />
