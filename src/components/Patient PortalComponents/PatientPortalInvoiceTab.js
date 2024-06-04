@@ -22,8 +22,8 @@ export default function PatientPortalInvoiceTab() {
           paginatedInvoiceData.data.map((invoice) => {
             return (
               <InvoiceDisplayCard
+                refetch={refetch}
                 invoiceData={invoice}
-                queryKeyToInvalidate={["patientInvoices", patientId, page]}
                 key={invoice.invoice_id}
               />
             );
