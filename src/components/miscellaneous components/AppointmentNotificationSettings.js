@@ -3,11 +3,16 @@ import { useNavigate } from "react-router-dom";
 import GenericTopBar from "./GenericTopBar";
 import { useGlobalStore } from "../../zustandStore/store";
 import { format } from "date-fns";
-import { Button } from "@mui/material";
+import { Button, IconButton } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import { useState } from "react";
+import UpdatePatientContactDetails from "../Create and update Patient component/UpdatePatientContactDetails";
 
 export default function ({ onchange, onsubmit, hideComponent }) {
+  const { globalPatientData } = useGlobalStore();
   const navigate = useNavigate();
-  const profileData = useGlobalStore((state) => state.globalProfileData);
+  const [showPatientContactPage, setShowPatientContactPage] = useState(false);
+
   const patientData = useGlobalStore((state) => state.globalPatientData);
   const appointmentTypeData = useGlobalStore(
     (state) => state.globalAppointmentTypeData
@@ -15,12 +20,10 @@ export default function ({ onchange, onsubmit, hideComponent }) {
   const appointmentData = useGlobalStore(
     (state) => state.globalAppointmentData
   );
-  //TODO mostly done. make componenet for pathing pts once they create appoitnment
-  //TODO needs error handling and validation
 
   return (
     <>
-      <div className="w-2/6 min-h-96 relative flex flex-col   border-slate-400 outline-slate-400 outline-offset-2 bg-white rounded-md shadow-lg  ">
+      <div className="lg:w-2/6 min-h-96 relative flex flex-col md:w-2/4 sm:w-3/4  border-slate-400 outline-slate-400 outline-offset-2 bg-white rounded-md shadow-lg  ">
         <GenericTopBar
           label={"Please Confirm"}
           onclick={() => hideComponent()}
@@ -35,28 +38,48 @@ export default function ({ onchange, onsubmit, hideComponent }) {
           </p>
         </div>
         <div className=" flex-grow flex flex-col gap-4 justify-center">
-          <div className="border  bg-white  hover:bg-slate-400 px-3 py-4  select-none flex items-center font-medium  ">
-            {" "}
+          <button
+            disabled={!globalPatientData?.email}
+            className="border  bg-white disabled:text-slate-400 disabled:bg-white   hover:bg-slate-400 px-3 py-4  select-none flex items-center font-medium  "
+          >
             <input
+              disabled={!globalPatientData?.email}
               onChange={(event) => onchange(event)}
               type="checkbox"
               name="sent_confirmation"
-              className="w-5 h-5 mr-4 "
+              className="w-5 h-5 mr-4 disabled:border-slate-400"
             />
             <p>Send Confirmation email</p>
-          </div>
-          <div className="border bg-white hover:bg-slate-400 px-3 py-4  select-none flex items-center font-medium  ">
+          </button>
+          <button
+            disabled={!globalPatientData?.email}
+            className="border bg-white disabled:text-slate-400 disabled:bg-white  hover:bg-slate-400 px-3 py-4  select-none flex items-center font-medium  "
+          >
             <input
+              disabled={!globalPatientData?.email}
               onChange={(event) => onchange(event)}
               type="checkbox"
               name="send_reminder"
-              className="w-5 h-5 mr-4  "
+              className="w-5 h-5 mr-4 disabled:border-slate-400   "
             />
             Send reminder Email 24 hours prior to appointment
+          </button>
+          <div className=" flex justify-evenly items-center w-full  bg-slate-200">
+            <p>
+              Email:{" "}
+              {globalPatientData?.email ||
+                "Not Provided. Add email in order to send notfications"}
+            </p>
+            <IconButton
+              onClick={() => setShowPatientContactPage(!showPatientContactPage)}
+              color="primary"
+            >
+              <EditIcon color="primary" />
+            </IconButton>
           </div>
         </div>
 
-        <div className="mt-3 mb-3 px-3 items-center  flex justify-between right-0">
+        <div className="mt-3 gap-2 mb-3 px-3 items-center  flex justify-between right-0">
           <Button
             size="small"
             variant="contained"
@@ -91,6 +114,21 @@ export default function ({ onchange, onsubmit, hideComponent }) {
           </div>
         </div>
       </div>
+      {showPatientContactPage && (
+        <div className="fixed left-0 top-0 w-full  h-screen flex justify-center items-center z-30">
+          {" "}
+          <UpdatePatientContactDetails
+            hideComponent={() =>
+              setShowPatientContactPage(!showPatientContactPage)
+            }
+            showTopBar={{
+              show: true,
+              label: "Update patient contact details",
+              showCloseOption: true,
+            }}
+          />
+        </div>
+      )}
     </>
   );
 }

@@ -28,6 +28,8 @@ const useFetchData = (
         setHttpStatus(response.status);
         return response.data;
       },
+      keepPreviousData: true,
+
       refetchOnWindowFocus: false,
     });
 
@@ -87,6 +89,7 @@ const usePatchData = (endpoint = "", queryKey = undefined) => {
         withCredentials: true,
       });
     },
+
     onSuccess: () => {
       queryKey && queryClient.invalidateQueries(queryKey);
     },

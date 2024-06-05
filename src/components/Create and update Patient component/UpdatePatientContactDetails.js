@@ -2,16 +2,31 @@ import { useEffect, useState } from "react";
 import { useFetchData, usePatchData } from "../../CustomHooks/serverStateHooks";
 import PatientContactDetailsForm from "./PatientContactDetailsForm";
 import { createPatientValidationSchema } from "../../form validation Schemas/validationSchemas";
-import { usePatientPortalStore } from "../../zustandStore/store";
+import {
+  useGlobalStore,
+  usePatientPortalStore,
+} from "../../zustandStore/store";
 
-export default function UpdatePatientContactDetails() {
+export default function UpdatePatientContactDetails({
+  showTopBar = {
+    label: "Patient Contact Details",
+    show: true,
+    showCloseOption: false,
+    labeTextClassName: "text-black border-b border-slate-400 w-full pb-3 ",
+
+    className: "bg-white p-4 ",
+  },
+  hideComponent = false,
+}) {
   const { patientId } = usePatientPortalStore();
   console.log("global patient portal id  is " + patientId);
   const { data: patientContactDetailsData } = useFetchData(
     `/patients/viewPatient${patientId}`,
     ["patientContactDetails", patientId]
   );
-
+  const setterFnForPatientDataInCreateAppointmentTree = useGlobalStore(
+    (state) => state.setGlobalPatientData
+  );
   const { patchMutation } = usePatchData(`/patients/update${patientId}`);
   const [errorMessage, setErrorMessage] = useState();
   const [patientInfo, setPatientInfo] = useState({});
@@ -40,7 +55,9 @@ export default function UpdatePatientContactDetails() {
       const validatedData = await createPatientValidationSchema.validate(
         changes
       );
-      patchMutation.mutate(validatedData);
+      const { data: response } = await patchMutation.mutateAsync(validatedData);
+
+      setterFnForPatientDataInCreateAppointmentTree(response);
       setChanges({});
       setErrorMessage();
     } catch (error) {
@@ -57,16 +74,8 @@ export default function UpdatePatientContactDetails() {
         handleSubmit={handleSubmit}
         guidanceMessage={false}
         errorMessage={errorMessage}
-        hideComponent={false}
-        showTopBar={{
-          label: "Patient Contact Details",
-          show: true,
-          showCloseOption: false,
-          labeTextClassName:
-            "text-black border-b border-slate-400 w-full pb-3 ",
-
-          className: "bg-white p-4 ",
-        }}
+        hideComponent={hideComponent}
+        showTopBar={showTopBar}
       />
     </>
   );

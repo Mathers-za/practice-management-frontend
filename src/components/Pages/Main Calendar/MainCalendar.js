@@ -78,6 +78,8 @@ export default function MainCalendar({ profileId }) {
   }, [appointmentData]);
 
   function handleEmptyCellClick(dateAndTimeOfClickedCell) {
+    console.log("Original date time: " + dateAndTimeOfClickedCell);
+
     setJsDateString(dateAndTimeOfClickedCell);
     setShowAppointmentCreationComponent(!showShowAppointmentCreationComponent);
   }
@@ -104,7 +106,6 @@ export default function MainCalendar({ profileId }) {
     });
 
     setGlobalAppointmentTypeData({
-      //FIXME calendar is not working as expeted. always one day behind.
       appointment_name: event.appointmentData.appointment_name,
       id: event.appointmentData.apptype_id,
     });
@@ -169,7 +170,7 @@ export default function MainCalendar({ profileId }) {
             handleDateSet(dateSetInfo);
           }}
           eventClick={(eventInfo) => handleEventClick(eventInfo.event.id)}
-          timeZone="Africa/Johannesburg"
+          timeZone="local"
           allDaySlot={false}
         />
       </div>
