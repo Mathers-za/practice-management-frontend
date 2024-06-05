@@ -116,17 +116,18 @@ export default function ({ onchange, onsubmit, hideComponent }) {
       </div>
       {showPatientContactPage && (
         <div className="fixed left-0 top-0 w-full  h-screen flex justify-center items-center z-30">
-          {" "}
-          <UpdatePatientContactDetails
-            hideComponent={() =>
-              setShowPatientContactPage(!showPatientContactPage)
-            }
-            showTopBar={{
-              show: true,
-              label: "Update patient contact details",
-              showCloseOption: true,
-            }}
-          />
+          <div className="w-[90%] h-2/4">
+            <UpdatePatientContactDetails
+              hideComponent={() =>
+                setShowPatientContactPage(!showPatientContactPage)
+              }
+              showTopBar={{
+                show: true,
+                label: "Update patient contact details",
+                showCloseOption: true,
+              }}
+            />
+          </div>
         </div>
       )}
     </>

@@ -24,7 +24,7 @@ export default function PatientContactDetailsForm({
   return (
     <>
       <form
-        className="bg-white rounded-sm shadow-md shadow-black/30 "
+        className="bg-white rounded-sm h-full relative  shadow-md shadow-black/30 "
         onSubmit={handleSubmit}
       >
         {showTopBar.show && (
@@ -92,16 +92,19 @@ export default function PatientContactDetailsForm({
               <p>{guidanceMessage}</p>
             </div>
           )}
-
-          <Button
-            variant="contained"
-            color="primary"
-            fullWidth
-            type="submit"
-            disabled={disabled}
-          >
-            Save
-          </Button>
+          <div className="absolute bottom-0  left-0 w-full">
+            <Button
+              sx={{ borderRadius: "0px" }}
+              size="large"
+              variant="contained"
+              color="primary"
+              fullWidth
+              type="submit"
+              disabled={disabled}
+            >
+              Save
+            </Button>
+          </div>
         </div>
       </form>
 

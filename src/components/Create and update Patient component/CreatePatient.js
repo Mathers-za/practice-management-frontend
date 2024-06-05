@@ -4,8 +4,13 @@ import { usePostData } from "../../CustomHooks/serverStateHooks";
 import { createPatientValidationSchema } from "../../form validation Schemas/validationSchemas";
 import { patientCreationGuidance } from "../../userGuidanceFunctions/createPatientFns";
 import PatientContactDetailsForm from "./PatientContactDetailsForm";
+import {
+  useGlobalStore,
+  usePatientPortalStore,
+} from "../../zustandStore/store";
 
-export default function CreatePatient({ profileId, hideComponent }) {
+export default function CreatePatient({ hideComponent, actionOnSave }) {
+  const profileId = useGlobalStore((state) => state.globalProfileData.id);
   const { createMutation } = usePostData(`/patients/create${profileId}`);
   const [patientInfo, setPatientInfo] = useState({});
   const [errorMessage, setErrorMessage] = useState();
@@ -27,6 +32,7 @@ export default function CreatePatient({ profileId, hideComponent }) {
       );
       const response = await createMutation.mutateAsync(validatedData);
       setErrorMessage();
+      actionOnSave && actionOnSave(response);
     } catch (error) {
       setErrorMessage(error.message);
     }
@@ -51,11 +57,11 @@ export default function CreatePatient({ profileId, hideComponent }) {
         handleSubmit={handleSubmit}
         patientInfo={patientInfo}
         guidanceMessage={guidanceMessage}
+        hideComponent={hideComponent}
         showTopBar={{
           label: "Create a new patient",
           show: true,
           showCloseOption: true,
-          onclick: hideComponent,
         }}
       />
     </>

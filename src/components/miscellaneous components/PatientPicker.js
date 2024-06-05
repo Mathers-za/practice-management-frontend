@@ -1,13 +1,20 @@
 import { useEffect, useRef, useState } from "react";
 import { useFetchData } from "../../CustomHooks/serverStateHooks";
 import GenericTopBar from "./GenericTopBar";
-import { TextField } from "@mui/material";
-
+import { IconButton, TextField } from "@mui/material";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import CreatePatient from "../Create and update Patient component/CreatePatient";
+import { useGlobalStore } from "../../zustandStore/store";
 export default function PatientPickerComponent({
   profileId,
   hideComponent,
   onclick,
   showTopBar = true,
+  showAddPatientButton = {
+    show: false,
+    actionOnSave: false,
+    hideComponent: false,
+  },
 }) {
   const { data: patientData } = useFetchData(
     `/patients/viewAll${profileId}`,
@@ -16,6 +23,8 @@ export default function PatientPickerComponent({
   const [forceRerender, setForceRender] = useState(false);
   const [searchBarInput, setSearchBarInput] = useState("");
   const [filteredSearch, setFilteredSearch] = useState([]);
+  const [showCreatePatientPage, setShowCreatePatientPage] = useState(false);
+  const { globalPatientData, setGlobalPatientData } = useGlobalStore();
 
   const showLength = useRef(10);
 
@@ -46,17 +55,29 @@ export default function PatientPickerComponent({
         <GenericTopBar label="Choose a Patient" onclick={hideComponent} />
       )}
       <div className="p-3">
-        <TextField
-          variant="filled"
-          label="search"
-          fullWidth
-          value={searchBarInput || ""}
-          type="text"
-          name="searchBarInput"
-          onChange={(event) => setSearchBarInput(event.target.value)}
-          autoFocus={true}
-          helperText=" Search according to name,surname,email or phone number"
-        />
+        <div className=" flex gap-4">
+          {showAddPatientButton.show && (
+            <div className="self-center h-full">
+              {" "}
+              <IconButton
+                onClick={() => setShowCreatePatientPage(!showCreatePatientPage)}
+              >
+                <PersonAddIcon />
+              </IconButton>
+            </div>
+          )}
+          <TextField
+            variant="filled"
+            label="search"
+            fullWidth
+            value={searchBarInput || ""}
+            type="text"
+            name="searchBarInput"
+            onChange={(event) => setSearchBarInput(event.target.value)}
+            autoFocus={true}
+            placeholder="Search according to name,surname,email or phone number"
+          />
+        </div>
 
         <div className="mt-1 select-none  ">
           {filteredSearch.length > 0
@@ -88,6 +109,18 @@ export default function PatientPickerComponent({
             </div>
           ) : null}
         </div>
+        {showCreatePatientPage && (
+          <div className="fixed left-0 top-0 w-full h-screen z-20 bg-black/30 flex justify-center items-center">
+            <div className="w-4/5 h-3/4 ">
+              <CreatePatient
+                actionOnSave={showAddPatientButton?.actionOnSave}
+                hideComponent={() =>
+                  setShowCreatePatientPage(!showCreatePatientPage)
+                }
+              />
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

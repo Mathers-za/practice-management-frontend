@@ -120,6 +120,8 @@ export default function CreateAppointment({
   const { createMutation: emailNotificationMutation } = usePostData(
     `/emailNotifications/sendConfirmationEmail`
   );
+
+  //TODO add clean up fcntion to patient sreach list in patentent portal. the patient data is persisting
   const { createMutation } = usePostData(
     "/appointments/createAppointment",
     querykeyToInvalidate && querykeyToInvalidate
@@ -396,9 +398,25 @@ export default function CreateAppointment({
         {showPatientPicker && (
           <div className="fixed top-0 left-0 min-w-full min-h-full max-h-fit bg-white z-10 overflow-y-scroll ">
             <PatientPicker
+              showTopBar={true}
               profileId={globalProfileData.id}
               hideComponent={() => setShowPatientPicker(!showPatientPicker)}
               onclick={handlePatientPicker}
+              showAddPatientButton={{
+                show: true,
+                actionOnSave: (responsePatientData) => {
+                  setAppointment((prev) => ({
+                    ...prev,
+                    patient_id: responsePatientData.id,
+                  }));
+                  console.log("Made it here yo");
+                  setShowPatientPicker(!showPatientPicker);
+                  setGlobalPatientData(responsePatientData);
+                  setterfnForPatientIdInPatientPortalTree(
+                    responsePatientData.id
+                  );
+                },
+              }}
             />
           </div>
         )}
