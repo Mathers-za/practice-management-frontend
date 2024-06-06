@@ -62,6 +62,11 @@ export default function AppointmentCard({ appointmentData, refetchData }) {
         )
       );
     }
+
+    return () => {
+      setGlobalPatientData("");
+      console.log("cleaned globalpatient data fired");
+    };
   }, [appointmentData]);
 
   return (

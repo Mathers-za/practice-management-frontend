@@ -1,9 +1,9 @@
 import { Link, Outlet } from "react-router-dom";
 import PatientList from "../PatientList";
+import { useEffect } from "react";
+import { useGlobalStore } from "../../zustandStore/store";
 
 export default function PatientPortal({ patientId }) {
-  //navbar
-
   return (
     <>
       <div className="relative">

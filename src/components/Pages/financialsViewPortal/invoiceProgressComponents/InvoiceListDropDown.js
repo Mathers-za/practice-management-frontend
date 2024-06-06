@@ -32,12 +32,6 @@ export default function InvoiceListDropdown({
   const setPatientIdForPatientPortal = usePatientPortalStore(
     (state) => state.setPatientId
   );
-  useEffect(() => {
-    if (refetch) {
-      setFlagToRefreshAppointmentList(false);
-      setGlobalRefetchAppointmentList(refetch);
-    }
-  }, [refetch]);
 
   const { data: financialData } = useFetchData(
     `/financials/view${appointment_id}`,
@@ -52,13 +46,20 @@ export default function InvoiceListDropdown({
   const { globalProfileData } = useGlobalStore();
   const [showPaymentsPage, setShowPaymentsPage] = useState(false);
   const navigate = useNavigate();
-  function handleExit() {
-    if (flagToRefreshAppointmentList) {
-      globalRefetchAppointmentList();
+
+  useEffect(() => {
+    if (refetch) {
+      setFlagToRefreshAppointmentList(false);
+      setGlobalRefetchAppointmentList(refetch);
     }
 
-    hideComponent();
-  }
+    return () => {
+      if (flagToRefreshAppointmentList) {
+        globalRefetchAppointmentList();
+        console.log("fired cleanup fucntion ijn invoice dropdown list");
+      }
+    };
+  }, [refetch]);
 
   return (
     <>
@@ -66,7 +67,7 @@ export default function InvoiceListDropdown({
         <GenericTopBar
           label={invoice_title}
           className="text-base text-[#000000] p-[8px] bg-[#0EA5E9]"
-          onclick={handleExit}
+          onclick={hideComponent}
         />
         <MenuDivsWithIcon
           onclick={() => {
