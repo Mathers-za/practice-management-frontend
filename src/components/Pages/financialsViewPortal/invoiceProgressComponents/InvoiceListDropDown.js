@@ -47,14 +47,18 @@ export default function InvoiceListDropdown({
     useGlobalStore();
   const [showPaymentsPage, setShowPaymentsPage] = useState(false);
   const navigate = useNavigate();
+  console.log(globalPatientData);
 
   useEffect(() => {
     if (refetch) {
       setFlagToRefreshAppointmentList(false);
       setGlobalRefetchAppointmentList(refetch);
       setGlobalPatientData({ email: email });
+      setPatientIdForPatientPortal(invoiceData.patient_id);
     }
+  }, [refetch]);
 
+  useEffect(() => {
     return () => {
       if (flagToRefreshAppointmentList) {
         globalRefetchAppointmentList();
@@ -62,7 +66,7 @@ export default function InvoiceListDropdown({
       }
       setGlobalPatientData("");
     };
-  }, [refetch]);
+  }, []);
 
   return (
     <>
@@ -105,7 +109,7 @@ export default function InvoiceListDropdown({
         />
         <div className="relative">
           <MenuDivsWithIcon
-            customClassName=" py-[10px] "
+            className={"py-[10px]"}
             disabled={!globalPatientData.email}
             onclick={async () =>
               await emailInvoiceStatement(
@@ -121,7 +125,7 @@ export default function InvoiceListDropdown({
                   <p className="text-xs">
                     {globalPatientData.email
                       ? `Patient Email: ${globalPatientData.email}`
-                      : "No Patient email. Add one in order to send"}
+                      : "No Patient email. Add one in order to send invoice"}
                   </p>
                 </div>
               </>

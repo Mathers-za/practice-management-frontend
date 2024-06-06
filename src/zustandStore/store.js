@@ -105,7 +105,7 @@ export {
 
 export const useGlobalStore = create((set) => ({
   globalRefetch: "",
-  globalPatientData: {},
+  globalPatientData: "",
   globalAppointmentTypeData: {},
   globalAppointmentData: {},
   globalProfileData: {},

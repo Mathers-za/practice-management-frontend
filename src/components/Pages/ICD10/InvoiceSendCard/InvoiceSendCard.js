@@ -29,7 +29,7 @@ export default function InvoiceSendCard({
   const [showUpdatePatientPage, setShowUpdatePatientPage] = useState(false);
 
   //TODO add flow step if patient email isnt present. ideally the option to edit the patients email
-
+  console.log(globalPatientData.email);
   const { data: invoiceData } = useFetchData(
     `/invoices/view${appointmentId}`,
     "invDataInSendInvoices" // take this out. set invoicedatat global in invoice page during api request and make sure you captur chnages in the patch and post routes. then pass diretcly and save an api request

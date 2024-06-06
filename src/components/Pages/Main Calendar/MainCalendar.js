@@ -103,6 +103,7 @@ export default function MainCalendar({ profileId }) {
       first_name: event.appointmentData.patient_first_name,
       last_name: event.appointmentData.patient_last_name,
       id: event.appointmentData.patient_id,
+      email: event.appointmentData.email,
     });
 
     setGlobalAppointmentTypeData({

@@ -88,12 +88,6 @@ export default function CreateAppointment({
     start_time: calendarSelectedJsDateTimeString
       ? format(new Date(calendarSelectedJsDateTimeString), "HH:mm")
       : format(new Date(), "HH:mm"),
-    end_time: globalAppointmentTypeData?.duration
-      ? format(
-          addMinutes(new Date(), parseInt(globalAppointmentTypeData.duration)),
-          "HH:mm"
-        )
-      : null,
   });
   console.log("global duration is " + globalAppointmentTypeData.duration);
 
@@ -328,9 +322,7 @@ export default function CreateAppointment({
                   orientation="portrait"
                   ampm={false}
                   value={
-                    appointment?.end_time
-                      ? new Date(appointment?.end_time)
-                      : new Date()
+                    appointment?.end_time ? appointment.end_time : new Date()
                   }
                   onAccept={(value) => {
                     setAppointment((prev) => ({
