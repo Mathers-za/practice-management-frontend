@@ -91,6 +91,7 @@ function App() {
                 path="/"
                 element={<DashBoard profileIdStateSetter={setProfileIdProp} />}
               >
+                <Route index element={<MainCalendar profileId={profileId} />} />
                 <Route
                   path="profile"
                   element={<Profile profileId={profileId} />}

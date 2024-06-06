@@ -8,6 +8,7 @@ import {
   useGlobalStore,
   usePatientPortalStore,
 } from "../../zustandStore/store";
+import CreatePatientSuccessPage from "./PatientCreatedSuccessPage";
 
 export default function CreatePatient({ hideComponent, actionOnSave }) {
   const profileId = useGlobalStore((state) => state.globalProfileData.id);
@@ -15,6 +16,7 @@ export default function CreatePatient({ hideComponent, actionOnSave }) {
   const [patientInfo, setPatientInfo] = useState({});
   const [errorMessage, setErrorMessage] = useState();
   const [guidanceMessage, setGuidanceMessage] = useState();
+  const [showSuccessPage, setShowSuccessPage] = useState(false);
 
   useEffect(() => {
     const message = patientCreationGuidance(patientInfo);
@@ -32,7 +34,9 @@ export default function CreatePatient({ hideComponent, actionOnSave }) {
       );
       const response = await createMutation.mutateAsync(validatedData);
       setErrorMessage();
-      actionOnSave && actionOnSave(response);
+      actionOnSave
+        ? actionOnSave(response)
+        : setShowSuccessPage(!showSuccessPage);
     } catch (error) {
       setErrorMessage(error.message);
     }
@@ -64,6 +68,19 @@ export default function CreatePatient({ hideComponent, actionOnSave }) {
           showCloseOption: true,
         }}
       />
+      {showSuccessPage && (
+        <div className="fixed left-0 top-0  w-full h-screen z-20">
+          <div className="w-full h-full">
+            <CreatePatientSuccessPage
+              hideComponent={() => setShowSuccessPage(!showSuccessPage)}
+              resetCreateAppointmentFn={() => {
+                setGuidanceMessage();
+                setPatientInfo({});
+              }}
+            />
+          </div>
+        </div>
+      )}
     </>
   );
 }
