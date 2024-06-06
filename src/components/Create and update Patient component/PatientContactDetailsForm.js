@@ -36,7 +36,7 @@ export default function PatientContactDetailsForm({
             labelTextClassName={showTopBar.labeTextClassName}
           />
         )}
-        <div className="p-3 space-y-6 ">
+        <div className="p-3 space-y-6  ">
           <div className="flex gap-3 ">
             <TextField
               fullWidth
@@ -92,7 +92,7 @@ export default function PatientContactDetailsForm({
               <p>{guidanceMessage}</p>
             </div>
           )}
-          <div className="absolute bottom-0  left-0 w-full">
+          <div className="">
             <Button
               sx={{ borderRadius: "0px" }}
               size="large"
