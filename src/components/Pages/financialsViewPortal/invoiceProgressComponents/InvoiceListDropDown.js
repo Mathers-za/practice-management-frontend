@@ -135,7 +135,6 @@ export default function InvoiceListDropdown({
             }
           />
           <div className="absolute right-8 top-3">
-            {" "}
             <IconButton
               onClick={() => setShowUpdatePatientPage(!showUpdatePatientPage)}
             >

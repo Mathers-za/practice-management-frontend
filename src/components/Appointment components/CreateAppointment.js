@@ -67,10 +67,12 @@ export default function CreateAppointment({
     (state) => state.setGlobalPatientData
   );
   const { globalProfileData } = useGlobalStore();
-  const setGlobalAppointmentTypeData = useGlobalStore(
-    (state) => state.setGlobalAppointmentTypeData
-  );
-  const { globalPatientData, globalAppointmentTypeData } = useGlobalStore();
+
+  const {
+    globalPatientData,
+    globalAppointmentTypeData,
+    setGlobalAppointmentTypeData,
+  } = useGlobalStore();
   const setGlobalAppointmentData = useGlobalStore(
     (state) => state.setGlobalAppointmentData
   );
@@ -96,6 +98,13 @@ export default function CreateAppointment({
   console.log("global duration is " + globalAppointmentTypeData.duration);
 
   useEffect(() => {
+    return () => {
+      setGlobalPatientData("");
+      setGlobalAppointmentTypeData("");
+    };
+  }, []);
+
+  useEffect(() => {
     if (!appointment?.end_time && globalAppointmentTypeData?.duration) {
       setAppointment((prev) => ({
         ...prev,
@@ -105,11 +114,6 @@ export default function CreateAppointment({
         ),
       }));
     }
-
-    return () => {
-      setGlobalPatientData("");
-      setGlobalAppointmentTypeData("");
-    };
   }, [globalAppointmentTypeData]);
 
   const [showAppointmentTypeIcker, setShowAppointmentTypePicker] =
@@ -120,6 +124,8 @@ export default function CreateAppointment({
   const { createMutation: emailNotificationMutation } = usePostData(
     `/emailNotifications/sendConfirmationEmail`
   );
+
+  console.log("global patient data is " + JSON.stringify(globalPatientData));
 
   //TODO add clean up fcntion to patient sreach list in patentent portal. the patient data is persisting
   const { createMutation } = usePostData(
@@ -146,10 +152,11 @@ export default function CreateAppointment({
   }
 
   function handlePatientPicker(patientData) {
-    setAppointment((prev) => ({ ...prev, patient_id: patientData.id }));
-    setShowPatientPicker(!showPatientPicker);
     setGlobalPatientData(patientData);
+    setAppointment((prev) => ({ ...prev, patient_id: patientData.id }));
     setterfnForPatientIdInPatientPortalTree(patientData.id);
+
+    setShowPatientPicker(!showPatientPicker);
   }
 
   function handleEmailNotificationChanges(event) {

@@ -1,5 +1,5 @@
 export default function MenuDivsWithIcon({
-  customClassName = false,
+  className,
   iconStart = "",
   text,
   onclick,
@@ -12,7 +12,7 @@ export default function MenuDivsWithIcon({
       <button
         disabled={disabled}
         onClick={() => (!onclick ? null : onclick())}
-        className={`hover:cursor-pointer cursor-default border-slate-300 px-6 py-4 items-center disabled:cursor-default disabled:text-slate-400 disabled:hover:bg-white hover:bg-slate-300  text-slate-600 w-full bg-white flex  min-h-10 border-b ${customClassName} ${
+        className={`hover:cursor-pointer cursor-default border-slate-300 px-6 py-4 items-center disabled:cursor-default disabled:text-slate-400 disabled:hover:bg-white hover:bg-slate-300  text-slate-600 w-full bg-white flex  min-h-10 border-b ${className} ${
           iconEnd ? "justify-between" : "justify-start"
         }   `}
       >

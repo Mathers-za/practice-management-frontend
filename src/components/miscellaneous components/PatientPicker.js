@@ -24,7 +24,6 @@ export default function PatientPickerComponent({
   const [searchBarInput, setSearchBarInput] = useState("");
   const [filteredSearch, setFilteredSearch] = useState([]);
   const [showCreatePatientPage, setShowCreatePatientPage] = useState(false);
-  const { globalPatientData, setGlobalPatientData } = useGlobalStore();
 
   const showLength = useRef(10);
 

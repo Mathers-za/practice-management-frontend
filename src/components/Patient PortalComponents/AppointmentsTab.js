@@ -50,6 +50,7 @@ export default function AppointmentsTab() {
         )}
         <div className="absolute right-5 top-9">
           <Fab
+            sx={{ zIndex: 10 }}
             onClick={() => setShowCreateAppointment(!showCreateAppointment)}
             color="primary"
             size="small"

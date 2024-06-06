@@ -36,6 +36,7 @@ export default function AppointmentCard({ appointmentData, refetchData }) {
       first_name: appointmentData.patient_first_name,
       last_name: appointmentData.patient_last_name,
       id: appointmentData.patient_id,
+      email: appointmentData.patient_email,
     });
 
     setGlobalAppointmentTypeData({

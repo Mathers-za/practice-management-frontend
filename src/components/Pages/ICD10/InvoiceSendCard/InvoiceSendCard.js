@@ -1,4 +1,6 @@
-import axios from "axios";
+import { IconButton } from "@mui/material";
+import UpdatePatientContactDetails from "../../../Create and update Patient component/UpdatePatientContactDetails";
+import EditIcon from "@mui/icons-material/Edit";
 import {
   handleInvoiceStatementGeneration,
   emailInvoiceStatement,
@@ -10,8 +12,12 @@ import MenuDivsWithIcon from "../../../miscellaneous components/MenuListDivsWith
 import SendIcon from "@mui/icons-material/Send";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import HomeIcon from "@mui/icons-material/Home";
-import { useGlobalStore } from "../../../../zustandStore/store";
+import {
+  useGlobalStore,
+  usePatientPortalStore,
+} from "../../../../zustandStore/store";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import { useState } from "react";
 
 export default function InvoiceSendCard({
   patientData,
@@ -19,7 +25,8 @@ export default function InvoiceSendCard({
   appointmentId,
   hideComponent,
 }) {
-  const { globalInvoiceData } = useGlobalStore();
+  const { globalInvoiceData, globalPatientData } = useGlobalStore();
+  const [showUpdatePatientPage, setShowUpdatePatientPage] = useState(false);
 
   //TODO add flow step if patient email isnt present. ideally the option to edit the patients email
 
@@ -27,7 +34,11 @@ export default function InvoiceSendCard({
     `/invoices/view${appointmentId}`,
     "invDataInSendInvoices" // take this out. set invoicedatat global in invoice page during api request and make sure you captur chnages in the patch and post routes. then pass diretcly and save an api request
   );
+  const setterFnForPatientIdInPatientPortalTree = usePatientPortalStore(
+    (state) => state.setPatientId
+  );
   const navigate = useNavigate();
+  console.log(JSON.stringify(globalPatientData));
 
   return (
     <div className="fixed top-0 left-0 bg-black/40 w-full h-screen z-30 flex items-center justify-center">
@@ -46,18 +57,43 @@ export default function InvoiceSendCard({
           <p className="text-lg">Invoice Created</p>
           <p>{globalInvoiceData?.invoice_title}</p>
         </div>
-        <MenuDivsWithIcon
-          onclick={() =>
-            emailInvoiceStatement(
-              profileId,
-              invoiceData.appointment_id,
-              patientData.patientId
-            )
-          }
-          className="px-1"
-          text="Send to patient"
-          iconStart={<SendIcon sx={{ color: "#0284C7" }} />}
-        />
+        <div className="relative">
+          <MenuDivsWithIcon
+            disabled={!globalPatientData?.email}
+            onclick={() =>
+              emailInvoiceStatement(
+                profileId,
+                invoiceData.appointment_id,
+                patientData.patientId
+              )
+            }
+            className="px-1 py-[10px]"
+            text={
+              <>
+                <div className="text-start">
+                  <p>Send to patient</p>
+                  <p className="text-xs">
+                    {globalPatientData.email
+                      ? `Patient email: ${globalPatientData.email}`
+                      : "No pateint email"}
+                  </p>
+                </div>
+              </>
+            }
+            iconStart={<SendIcon sx={{ color: "#0284C7" }} />}
+          />
+          <div className="absolute right-3   top-2">
+            <IconButton
+              onClick={() => {
+                setShowUpdatePatientPage(!showUpdatePatientPage);
+                setterFnForPatientIdInPatientPortalTree(globalPatientData.id);
+              }}
+            >
+              <EditIcon />
+            </IconButton>
+          </div>
+        </div>
+
         <MenuDivsWithIcon
           className="px-1"
           text="Send to medical aid"
@@ -82,6 +118,22 @@ export default function InvoiceSendCard({
           iconStart={<HomeIcon sx={{ color: "#0284C7" }} />}
         />
       </div>
+      {showUpdatePatientPage && (
+        <div className="fixed top-0 left-0 w-full h-screen flex justify-center items-center bg-black/30 z-20">
+          <div className="w-3/4">
+            <UpdatePatientContactDetails
+              hideComponent={() =>
+                setShowUpdatePatientPage(!showUpdatePatientPage)
+              }
+              showTopBar={{
+                show: true,
+                label: "Update Patient Contact Details",
+                showCloseOption: true,
+              }}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
