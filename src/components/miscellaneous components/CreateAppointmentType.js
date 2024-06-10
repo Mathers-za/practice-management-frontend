@@ -6,6 +6,8 @@ import { createAppointmentTypeValidationSchema } from "../../form validation Sch
 import DisplaySingleError from "./WarningMessage";
 
 import { TextField, Button } from "@mui/material";
+import { useOnSubmitButtonTextstateManager } from "../../CustomHooks/otherHooks";
+import CustomAlertMessage from "./CustomAlertMessage";
 
 export default function CreateAppointmentType({
   profileId,
@@ -19,6 +21,12 @@ export default function CreateAppointmentType({
 
   const [appointmentTypeDataPayload, setAppointmentTypeDataPayload] = useState(
     {}
+  );
+
+  const submitButtonText = useOnSubmitButtonTextstateManager(
+    "save",
+    undefined,
+    createMutation
   );
 
   function handleChange(event) {
@@ -112,11 +120,16 @@ export default function CreateAppointmentType({
               type="submit"
               disabled={Object.keys(appointmentTypeDataPayload).length != 3}
             >
-              Save
+              {submitButtonText}
             </Button>
           </div>
 
-          {errorMessage && <DisplaySingleError errorMessage={errorMessage} />}
+          <CustomAlertMessage
+            errorFlag={errorMessage}
+            successFlag={createMutation.isSuccess}
+            errorMessage={errorMessage}
+            successMessage="Successfully created appointment type"
+          />
         </form>
       </div>
     </>

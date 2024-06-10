@@ -3,20 +3,25 @@ import { useFetchData, usePatchData } from "../CustomHooks/serverStateHooks";
 import { useGlobalStore } from "../zustandStore/store";
 import { profileValidationSchema } from "../form validation Schemas/validationSchemas";
 import { Button, TextField } from "@mui/material";
-import Alert from "@mui/material/Alert";
+
+import { useOnSubmitButtonTextstateManager } from "../CustomHooks/otherHooks";
+import CircularProgress from "@mui/material/CircularProgress";
+
+import CustomAlertMessage from "./miscellaneous components/CustomAlertMessage";
 
 export default function Profile() {
-  const { data } = useFetchData("/profile/view", "userProfileData");
-  const {
-    globalProfileData,
-
-    setGlobalProfileData,
-  } = useGlobalStore();
-  const [error, setError] = useState();
   const [profileData, setProfileData] = useState({});
-  const [changes, setChanges] = useState({});
+  const { data } = useFetchData("/profile/view", "userProfileData");
+  const { setGlobalProfileData } = useGlobalStore();
+  const { patchMutation } = usePatchData(`/profile/update${data?.id}`);
+  const [error, setError] = useState();
 
-  const { patchMutation } = usePatchData(`/profile/update${profileData?.id}`);
+  const [changes, setChanges] = useState({});
+  const saveButtonText = useOnSubmitButtonTextstateManager(
+    "Save",
+    undefined,
+    patchMutation
+  );
 
   useEffect(() => {
     if (data) {
@@ -40,21 +45,28 @@ export default function Profile() {
 
   async function handleSubmit(event) {
     event.preventDefault();
+    console.log("fired patch");
+    setError();
     try {
       await profileValidationSchema.validate(profileData);
 
       const { data } = await patchMutation.mutateAsync(changes);
       setGlobalProfileData(data);
-      setError();
-      setChanges({});
     } catch (error) {
       setError(error.message);
     }
   }
+  useEffect(() => {
+    if (patchMutation.isSuccess) {
+      setChanges({});
+    }
+    console.log("is idle is " + patchMutation.isIdle);
+    console.log(patchMutation.isSuccess);
+  }, [patchMutation.isSuccess]);
 
   return (
     <>
-      <div className="flex w-full h-full justify-center items-center max-h-full overflow-auto   ">
+      <div className="flex w-full h-full justify-center relative items-center max-h-full overflow-auto   ">
         <div className="w-11/12  h-fit rounded-md      bg-white">
           <form
             className="min-w-full h-fit px-4 py-6   border   shadow-md  shadow-slate-600 rounded-md relative  "
@@ -68,7 +80,6 @@ export default function Profile() {
 
               <div className="flex gap-3 ">
                 <TextField
-                  required
                   fullWidth
                   variant="standard"
                   name="first_name"
@@ -140,7 +151,16 @@ export default function Profile() {
                   value={profileData?.profession || ""}
                 />
               </div>
-              {error && <Alert severity="warning">{error}</Alert>}
+
+              <CustomAlertMessage
+                successFlag={patchMutation.isSuccess}
+                errorMessage={error}
+                severityOnError="error"
+                severityOnSuccess="success"
+                successMessage="Successfully updated"
+                errorFlag={error}
+              />
+
               <div className="col-span-2 flex justify-end items-end ">
                 <Button
                   color="primary"
@@ -149,8 +169,7 @@ export default function Profile() {
                   fullWidth
                   disabled={Object.keys(changes).length === 0}
                 >
-                  {" "}
-                  Save
+                  {saveButtonText}
                 </Button>
               </div>
             </div>

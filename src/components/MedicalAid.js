@@ -1,46 +1,54 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import {
   useFetchData,
   usePostData,
   usePatchData,
 } from "../CustomHooks/serverStateHooks";
-import { useQueryClient } from "react-query";
+
 import { TextField, Checkbox, Button, FormControlLabel } from "@mui/material";
 import { usePatientPortalStore } from "../zustandStore/store";
+import { useOnSubmitButtonTextstateManager } from "../CustomHooks/otherHooks";
+import CustomAlertMessage from "./miscellaneous components/CustomAlertMessage";
 
 export default function MedicalAid() {
+  const [isPatch, setIsPatch] = useState(false);
   const { patientId } = usePatientPortalStore();
-  const { data, isSuccess } = useFetchData(
-    `/medicalAid/view${patientId}`,
-    "medicalAidData"
-  );
+  const { data, isSuccess } = useFetchData(`/medicalAid/view${patientId}`, [
+    "medicalAidData",
+    patientId,
+  ]);
 
-  const [isFirstTimeCreatingPost, setIsFirstTimeCreatingPost] = useState(true);
-  const { createMutation } = usePostData(
-    `/medicalAid/create${patientId}`,
-    "medicalAidData"
-  );
+  const { createMutation } = usePostData(`/medicalAid/create${patientId}`, [
+    "medicalAidData",
+    patientId,
+  ]); //FIXME flag not wokring for save button text state managment
 
   const [medAidInformation, setMedAidInformation] = useState({});
   const [changes, setChanges] = useState({});
   const { patchMutation } = usePatchData(`/medicalAid/update${data?.id}`);
-
+  const [error, setError] = useState(false);
   const [showDependantFields, setShowDependantFields] = useState(false);
-
+  const saveButtonText = useOnSubmitButtonTextstateManager(
+    "save",
+    undefined,
+    patchMutation
+  );
+  console.log(saveButtonText);
   useEffect(() => {
     if (data && isSuccess) {
       setMedAidInformation(data);
-      setIsFirstTimeCreatingPost(false);
+      setIsPatch(true);
       setShowDependantFields(data.is_dependant);
     }
 
-    if (!data) {
+    if (!data && isSuccess) {
       //syncing issue with patient id. this solve sthe problem. dont touch
       setMedAidInformation({});
       setShowDependantFields(false);
+      setIsPatch(false);
     }
-  }, [data, patientId]);
+  }, [data, isSuccess]);
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -54,22 +62,28 @@ export default function MedicalAid() {
       [name]: value === "" ? null : value,
     }));
   }
+  function handleSubmit(event) {
+    event.preventDefault();
+
+    try {
+      if (!isPatch) {
+        createMutation.mutate(medAidInformation);
+        setIsPatch(true);
+        setChanges({});
+      } else {
+        patchMutation.mutate(changes);
+        setChanges({});
+      }
+    } catch (error) {
+      setError(error.message);
+    }
+  }
 
   return (
     <>
       <form
         className="bg-white p-5    shadow-md shadow-black/20 rounded-sm   "
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (isFirstTimeCreatingPost) {
-            createMutation.mutate(medAidInformation);
-            setIsFirstTimeCreatingPost(false);
-            setChanges({});
-          } else {
-            patchMutation.mutate(changes);
-            setChanges({});
-          }
-        }}
+        onSubmit={handleSubmit}
       >
         <div className="space-y-6">
           <div className="border-b ">
@@ -169,9 +183,18 @@ export default function MedicalAid() {
             size="large"
             variant="contained"
           >
-            Save
+            {saveButtonText}
           </Button>
         </div>
+
+        <CustomAlertMessage
+          errorFlag={error}
+          successFlag={patchMutation.isSuccess}
+          errorMessage={error}
+          successMessage={"Successfully updated"}
+          severityOnError="error"
+          severityOnSuccess="success"
+        />
       </form>
     </>
   );

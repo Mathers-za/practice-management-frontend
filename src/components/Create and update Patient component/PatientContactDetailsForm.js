@@ -20,6 +20,7 @@ export default function PatientContactDetailsForm({
     className: "",
     labeTextClassName: "text-white",
   },
+  saveButtonText,
 }) {
   return (
     <>
@@ -102,7 +103,7 @@ export default function PatientContactDetailsForm({
               type="submit"
               disabled={disabled}
             >
-              Save
+              {saveButtonText}
             </Button>
           </div>
         </div>

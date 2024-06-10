@@ -3,7 +3,9 @@ import { useFetchData, usePatchData } from "../CustomHooks/serverStateHooks";
 import { practiceDetailsValidationSchema } from "../form validation Schemas/validationSchemas";
 import { useGlobalStore } from "../zustandStore/store";
 import { Button, TextField } from "@mui/material";
-import Alert from "@mui/material/Alert";
+
+import CustomAlertMessage from "./miscellaneous components/CustomAlertMessage";
+import { useOnSubmitButtonTextstateManager } from "../CustomHooks/otherHooks";
 
 export default function PracticeDetails({ profileId }) {
   const { data: practiceDetailsData } = useFetchData(
@@ -19,6 +21,12 @@ export default function PracticeDetails({ profileId }) {
 
   const { patchMutation } = usePatchData(
     `/practiceDetails/update${practiceData?.id}`
+  );
+
+  const saveButtonText = useOnSubmitButtonTextstateManager(
+    "save",
+    undefined,
+    patchMutation
   );
 
   async function handleSubmit(event) {
@@ -123,7 +131,14 @@ export default function PracticeDetails({ profileId }) {
                 />
               </div>
             </div>
-            {error && <Alert severity="warning">{error}</Alert>}
+            <CustomAlertMessage
+              errorFlag={error}
+              successFlag={patchMutation.isSuccess}
+              errorMessage={error}
+              severityOnError="error"
+              successMessage="Successfully updated"
+              severityOnSuccess="success"
+            />
 
             <div className="col-span-6 flex justify-end items-end ">
               <Button
@@ -132,7 +147,7 @@ export default function PracticeDetails({ profileId }) {
                 fullWidth
                 type="submit"
               >
-                Save
+                {saveButtonText}
               </Button>
             </div>
           </form>

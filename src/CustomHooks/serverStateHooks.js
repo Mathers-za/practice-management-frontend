@@ -72,11 +72,7 @@ const usePostData = (endpoint = "", queryKey = undefined) => {
     },
   });
 
-  function handlePost(payload) {
-    createMutation.mutate(payload);
-  }
-
-  return { handlePost, createMutation, postHttpStatus };
+  return { createMutation, postHttpStatus };
 };
 
 export { usePostData };

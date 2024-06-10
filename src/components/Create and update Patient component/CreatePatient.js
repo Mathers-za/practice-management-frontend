@@ -9,6 +9,8 @@ import {
   usePatientPortalStore,
 } from "../../zustandStore/store";
 import CreatePatientSuccessPage from "./PatientCreatedSuccessPage";
+import { useOnSubmitButtonTextstateManager } from "../../CustomHooks/otherHooks";
+import CustomAlertMessage from "../miscellaneous components/CustomAlertMessage";
 
 export default function CreatePatient({ hideComponent, actionOnSave }) {
   const profileId = useGlobalStore((state) => state.globalProfileData.id);
@@ -17,6 +19,11 @@ export default function CreatePatient({ hideComponent, actionOnSave }) {
   const [errorMessage, setErrorMessage] = useState();
   const [guidanceMessage, setGuidanceMessage] = useState();
   const [showSuccessPage, setShowSuccessPage] = useState(false);
+  const saveButtonText = useOnSubmitButtonTextstateManager(
+    "save",
+    undefined,
+    createMutation
+  );
 
   useEffect(() => {
     const message = patientCreationGuidance(patientInfo);
@@ -56,6 +63,7 @@ export default function CreatePatient({ hideComponent, actionOnSave }) {
   return (
     <>
       <PatientContactDetailsForm
+        saveButtonText={saveButtonText}
         errorMessage={errorMessage}
         handleChange={handleChange}
         handleSubmit={handleSubmit}
@@ -67,6 +75,14 @@ export default function CreatePatient({ hideComponent, actionOnSave }) {
           show: true,
           showCloseOption: true,
         }}
+      />
+      <CustomAlertMessage
+        errorFlag={errorMessage}
+        successFlag={createMutation.isSuccess}
+        errorMessage={errorMessage}
+        severityOnError="error"
+        severityOnSuccess="success"
+        successMessage="Successfully created patient"
       />
       {showSuccessPage && (
         <div className="fixed left-0 top-0  w-full h-screen z-20">

@@ -6,6 +6,8 @@ import {
   useGlobalStore,
   usePatientPortalStore,
 } from "../../zustandStore/store";
+import { useOnSubmitButtonTextstateManager } from "../../CustomHooks/otherHooks";
+import CustomAlertMessage from "../miscellaneous components/CustomAlertMessage";
 
 export default function UpdatePatientContactDetails({
   showTopBar = {
@@ -31,6 +33,11 @@ export default function UpdatePatientContactDetails({
   const [errorMessage, setErrorMessage] = useState();
   const [patientInfo, setPatientInfo] = useState({});
   const [changes, setChanges] = useState({});
+  const saveButtonText = useOnSubmitButtonTextstateManager(
+    "save",
+    undefined,
+    patchMutation
+  );
   useEffect(() => {
     if (patientContactDetailsData) {
       setPatientInfo(patientContactDetailsData);
@@ -68,6 +75,7 @@ export default function UpdatePatientContactDetails({
   return (
     <>
       <PatientContactDetailsForm
+        saveButtonText={saveButtonText}
         disabled={Object.keys(changes).length === 0}
         patientInfo={patientInfo}
         handleChange={handleChange}
@@ -76,6 +84,12 @@ export default function UpdatePatientContactDetails({
         errorMessage={errorMessage}
         hideComponent={hideComponent}
         showTopBar={showTopBar}
+      />
+      <CustomAlertMessage
+        errorFlag={errorMessage}
+        successFlag={patchMutation.isSuccess}
+        errorMessage={errorMessage}
+        successMessage="Successfully updated"
       />
     </>
   );
