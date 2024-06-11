@@ -5,6 +5,8 @@ import {
   useDeleteData,
   usePatchData,
 } from "../../../CustomHooks/serverStateHooks";
+import { useOnSubmitButtonTextstateManager } from "../../../CustomHooks/otherHooks";
+import CustomAlertMessage from "../../miscellaneous components/CustomAlertMessage";
 
 export default function EditTreatmentNote({
   hideComponent,
@@ -23,12 +25,29 @@ export default function EditTreatmentNote({
     `/treatmentNotes/update${treatmentNoteId}`,
     queryKeyToInValidate && queryKeyToInValidate
   );
+  const [error, setError] = useState(false);
+  const saveButtonText = useOnSubmitButtonTextstateManager(
+    "Save",
+    undefined,
+    patchMutation
+  );
 
   const { deleteMutation } = useDeleteData(
     `/treatmentNotes/delete`,
     queryKeyToInValidate && queryKeyToInValidate
   );
-
+  const deleteButtonText = useOnSubmitButtonTextstateManager(
+    "delete",
+    undefined,
+    deleteMutation
+  );
+  useEffect(() => {
+    if (deleteMutation.isSuccess) {
+      setTimeout(() => {
+        hideComponent();
+      }, 2000);
+    }
+  }, [deleteMutation.isSuccess]);
   useEffect(() => {
     if (treatmentNote) {
       setTreatmentNoteData(treatmentNote);
@@ -51,10 +70,13 @@ export default function EditTreatmentNote({
 
   function handleSubmit(event) {
     event.preventDefault();
+    setError("");
     try {
       patchMutation.mutate(changes);
       setChanges({});
-    } catch (error) {}
+    } catch (error) {
+      setError(error);
+    }
   }
 
   function handleDateChange(date) {
@@ -70,8 +92,12 @@ export default function EditTreatmentNote({
   }
 
   function handleDelete(id) {
-    deleteMutation.mutate(id);
-    hideComponent();
+    setError("");
+    try {
+      deleteMutation.mutate(id);
+    } catch (error) {
+      setError(error.message);
+    }
   }
   return (
     <>
@@ -85,6 +111,20 @@ export default function EditTreatmentNote({
         topBarLabelText="Edit patient treatment note"
         treatmentNoteData={treatmentNoteData}
         isPostRequestBoolean={false}
+        saveButtonText={saveButtonText}
+        deleteButtonText={deleteButtonText}
+      />
+      <CustomAlertMessage
+        errorFlag={error}
+        errorMessage={error}
+        successFlag={patchMutation.isSuccess}
+        successMessage="Successfully updated treatment note"
+      />
+      <CustomAlertMessage
+        errorFlag={error}
+        errorMessage={error}
+        successFlag={deleteMutation.isSuccess}
+        successMessage="Successfully deleted treatment note"
       />
     </>
   );

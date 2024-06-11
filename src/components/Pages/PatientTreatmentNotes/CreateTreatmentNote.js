@@ -1,7 +1,8 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import TreatmentNoteForm from "./TreatmentNoteForm";
 import { usePostData } from "../../../CustomHooks/serverStateHooks";
-
+import { useOnSubmitButtonTextstateManager } from "../../../CustomHooks/otherHooks";
+import CustomAlertMessage from "../../miscellaneous components/CustomAlertMessage";
 export default function CreateTreatmentNote({
   hideComponent,
   patientId,
@@ -10,10 +11,15 @@ export default function CreateTreatmentNote({
   const [treatmentNotePayload, setTreatmentNotePayload] = useState({
     date: new Date(),
   });
-
+  const [error, setError] = useState("");
   const { createMutation } = usePostData(
     `/treatmentNotes/create${patientId}`,
     queryKeyToInvalidate && queryKeyToInvalidate
+  );
+  const saveButtonText = useOnSubmitButtonTextstateManager(
+    "save",
+    undefined,
+    createMutation
   );
   const createdTreatmentNoteId = useRef(null);
 
@@ -26,11 +32,22 @@ export default function CreateTreatmentNote({
     }));
   }
 
+  useEffect(() => {
+    if (createMutation.isSuccess) {
+      setTimeout(() => {
+        hideComponent();
+      }, 2000);
+    }
+  }, [createMutation.isSuccess]);
+
   async function handleSubmit(event) {
     event.preventDefault();
-    const response = await createMutation.mutateAsync(treatmentNotePayload);
-    createdTreatmentNoteId.current = response.id;
-    hideComponent();
+    try {
+      const response = await createMutation.mutateAsync(treatmentNotePayload);
+      createdTreatmentNoteId.current = response.id;
+    } catch (error) {
+      setError(error.message);
+    }
   }
 
   function handleDateChange(date) {
@@ -51,6 +68,13 @@ export default function CreateTreatmentNote({
         topBarLabelText="Create patient treatment note"
         treatmentNoteData={treatmentNotePayload}
         disable={!treatmentNotePayload?.title}
+        saveButtonText={saveButtonText}
+      />
+      <CustomAlertMessage
+        successFlag={createMutation.isSuccess}
+        errorFlag={error}
+        errorMessage={error}
+        successMessage="Successfully created treatment note"
       />
     </>
   );

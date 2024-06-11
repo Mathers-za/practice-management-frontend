@@ -5,7 +5,8 @@ import {
   usePostData,
 } from "../../../CustomHooks/serverStateHooks";
 import { format } from "date-fns";
-
+import { useOnSubmitButtonTextstateManager } from "../../../CustomHooks/otherHooks";
+import CustomAlertMessage from "../../miscellaneous components/CustomAlertMessage";
 import GenericTopBar from "../../miscellaneous components/GenericTopBar";
 import {
   Button,
@@ -49,6 +50,12 @@ export default function PaymentPage({
   const { createMutation } = usePostData(
     `/payments/create${appointmentId}`,
     queryKeyToInvalidate
+  );
+
+  const saveButtonText = useOnSubmitButtonTextstateManager(
+    "Add payment",
+    undefined,
+    createMutation
   );
 
   const isChecked = useRef(false);
@@ -284,9 +291,15 @@ export default function PaymentPage({
               variant="contained"
               color="primary"
             >
-              Add payment
+              {saveButtonText}
             </Button>
           </div>
+          <CustomAlertMessage
+            errorFlag={error}
+            errorMessage={error}
+            successMessage="successfully added payment"
+            successFlag={createMutation.isSuccess}
+          />
         </div>
       </div>
     </>

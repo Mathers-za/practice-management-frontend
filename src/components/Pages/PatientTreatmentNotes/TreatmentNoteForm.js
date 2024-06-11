@@ -13,6 +13,8 @@ export default function TreatmentNoteForm({
   hideComponent,
   isPostRequestBoolean,
   disable,
+  saveButtonText,
+  deleteButtonText,
 }) {
   return (
     <>
@@ -118,11 +120,11 @@ export default function TreatmentNoteForm({
                 handleDelete(treatmentNoteData.id);
               }}
             >
-              Delete
+              {deleteButtonText}
             </Button>
           )}
           <Button variant="contained" disabled={disable} type="submit">
-            Save
+            {saveButtonText}
           </Button>
         </div>
       </form>
