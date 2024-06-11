@@ -3,11 +3,11 @@ import {
   useFetchData,
   usePostData,
 } from "../CustomHooks/serverStateHooks";
-import { useEffect, useState } from "react";
-
+import { useEffect, useRef, useState } from "react";
+import CustomAlertMessage from "./miscellaneous components/CustomAlertMessage";
 import DeleteDustbin from "./miscellaneous components/DeleteDustbin";
 import { useAppointmentTypeAndIcdAutomationsPage } from "../zustandStore/store";
-
+import { useOnSubmitButtonTextstateManager } from "../CustomHooks/otherHooks";
 import { validatepreDefinedICD10CodeCreation } from "../form validation Schemas/validationSchemas";
 import DisplaySingleError from "./miscellaneous components/WarningMessage";
 import { Button, TextField } from "@mui/material";
@@ -42,6 +42,12 @@ export default function PreDefinedIcdCoding({ appTypeId, hideComponent }) {
   const { deleteMutation } = useBatchDeleteData(
     `/predefinedIcd10/batchDeletion`
   );
+  const saveButtonText = useOnSubmitButtonTextstateManager(
+    "Save",
+    undefined,
+    !createMutation.isIdle ? createMutation : deleteMutation
+  );
+  const isSendingApiRequest = useRef(false);
 
   useEffect(() => {
     if (originalICDData && originalICDData.length > 0) {
@@ -67,15 +73,24 @@ export default function PreDefinedIcdCoding({ appTypeId, hideComponent }) {
 
   async function handleSubmit() {
     if (arrayOfIcdIdsToDelete.length > 0) {
+      isSendingApiRequest.current = true;
       deleteMutation.mutate(arrayOfIcdIdsToDelete);
       resetArrayOfIcdIdsToDelete();
     }
 
     if (arrayOfIcdsToUpdate.length > 0) {
+      isSendingApiRequest.current = true;
       createMutation.mutate(arrayOfIcdsToUpdate);
       resetAll();
     }
   }
+  useEffect(() => {
+    if (createMutation.isIdle || deleteMutation.isIdle) {
+      setTimeout(() => {
+        isSendingApiRequest.current = false;
+      }, 2000);
+    }
+  }, [createMutation.isIdle, deleteMutation.isIdle]);
 
   async function addIcdToList() {
     setErrorMessage();
@@ -97,8 +112,6 @@ export default function PreDefinedIcdCoding({ appTypeId, hideComponent }) {
       setErrorMessage(error.message);
     }
   }
-
-  console.log(arrayOfIcdIdsToDelete);
 
   //TODO refactor this page, make a resuable add button and fix the rations of the inputs
 
@@ -205,8 +218,14 @@ export default function PreDefinedIcdCoding({ appTypeId, hideComponent }) {
             }
             onClick={handleSubmit}
           >
-            Save
+            {saveButtonText}
           </Button>
+          <CustomAlertMessage
+            errorFlag={errorMessage}
+            successFlag={isSendingApiRequest.current}
+            errorMessage={errorMessage}
+            successMessage="Success"
+          />
         </div>
       </div>
     </>

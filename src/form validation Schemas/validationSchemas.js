@@ -106,7 +106,6 @@ export const updateAppointmentTypeValidatiionSchema = object({
   price: number("Must be a valid number")
     .min(0, "Price must be a minimum of 0")
 
-    .transform((value) => (isNaN(value) ? null : value))
     .nonNullable("Price is required")
     .test(
       "2Decimals",
@@ -118,7 +117,8 @@ export const updateAppointmentTypeValidatiionSchema = object({
           return regEx.test(value);
         }
       }
-    ),
+    )
+    .optional(),
 });
 
 export const validatepreDefinedICD10CodeCreation = object({

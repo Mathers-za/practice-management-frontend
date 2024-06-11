@@ -44,6 +44,8 @@ export default function UpdateAppointmentType({
     }));
   }
 
+  //TODO pottintial validation update solutions- option - 1 pass entire object instead of just chnages, option -2 try pass a varible to use for hen mthid in yup
+
   async function handleSubmit(event) {
     setErrorMessage();
     event.preventDefault();
