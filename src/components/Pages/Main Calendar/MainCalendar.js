@@ -196,6 +196,11 @@ export default function MainCalendar({ profileId }) {
           {" "}
           <div className="w-full h-full">
             <CreateAppointment
+              hideCreateAppointmentComponent={() =>
+                setShowAppointmentCreationComponent(
+                  !showShowAppointmentCreationComponent
+                )
+              }
               querykeyToInvalidate={["mainCalendar", searchDates]}
               hideComponent={() =>
                 setShowAppointmentCreationComponent(

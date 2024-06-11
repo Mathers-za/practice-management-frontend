@@ -50,7 +50,7 @@ export default function AppointmentTypeList({ profileId }) {
           {showCreateAppointmentType && (
             <div className="w-[95%] flex mx-auto">
               <CreateAppointmentType
-                refetchFn={refetch}
+                queryKeyToInvalidate={["appointmentTypeList", 1]}
                 profileId={profileId}
                 hideComponent={() =>
                   setShowCreateAppointmentType(!showCreateAppointmentType)
@@ -61,7 +61,7 @@ export default function AppointmentTypeList({ profileId }) {
           {appTypeAndIcdData?.data ? (
             <div className="flex  min-w-full min-h-full bg-white  gap-16 justify-center   gap-y-2 flex-wrap">
               {appTypeAndIcdData.data.appointmentTypeData
-                .sort((a, b) => a.id - b.id)
+                .sort((a, b) => b.id - a.id)
                 .map((type) => (
                   <div className=" w-1/4 h-fit  bg-pink-500 ">
                     <AppointmentTypeCard

@@ -5,18 +5,17 @@ import { Outlet } from "react-router-dom";
 import { useFetchData, usePostData } from "../../CustomHooks/serverStateHooks";
 import MainMenuSideBar from "../mainMenuSideBar/MainMenuSideBar";
 import MainMenuTopBar from "../MainMenuTopBar/MainMenuTopBar";
-import { useGlobalStore } from "../../zustandStore/store";
+import {
+  useGlobalStore,
+  useGlobalSubmissionAert,
+} from "../../zustandStore/store";
 import { motion, AnimatePresence } from "framer-motion";
 import axiosRequest from "../../apiRequests/apiRequests";
 
 export default function DashBoard({ profileIdStateSetter }) {
   const [showSideBar, setShowSideBar] = useState(true);
 
-  const {
-    setGlobalProfileData,
-    setGlobalPracticeDetails,
-    globalPracticeDetailsData,
-  } = useGlobalStore();
+  const { setGlobalProfileData, setGlobalPracticeDetails } = useGlobalStore();
   const { data, httpStatus } = useFetchData(
     `/profile/view`,
     "profileDataDashboard"

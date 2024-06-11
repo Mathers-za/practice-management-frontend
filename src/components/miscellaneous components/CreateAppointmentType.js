@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { usePostData } from "../../CustomHooks/serverStateHooks";
 
@@ -11,17 +11,24 @@ import CustomAlertMessage from "./CustomAlertMessage";
 
 export default function CreateAppointmentType({
   profileId,
-  refetchFn,
+  queryKeyToInvalidate,
   hideComponent,
 }) {
   const [errorMessage, setErrorMessage] = useState();
   const { createMutation } = usePostData(
-    `/appointmentTypes/create${profileId}`
+    `/appointmentTypes/create${profileId}`,
+    queryKeyToInvalidate && queryKeyToInvalidate
   );
 
   const [appointmentTypeDataPayload, setAppointmentTypeDataPayload] = useState(
     {}
   );
+
+  useEffect(() => {
+    if (createMutation.isSuccess) {
+      setAppointmentTypeDataPayload({});
+    }
+  }, [createMutation.isSuccess]);
 
   const submitButtonText = useOnSubmitButtonTextstateManager(
     "save",
@@ -41,7 +48,7 @@ export default function CreateAppointmentType({
 
   async function handleSubmit(event) {
     event.preventDefault();
-
+    setErrorMessage("");
     try {
       const cleanedData = createAppointmentTypeValidationSchema.cast(
         appointmentTypeDataPayload,
@@ -52,14 +59,10 @@ export default function CreateAppointmentType({
 
       await createAppointmentTypeValidationSchema.validate(cleanedData);
       await createMutation.mutateAsync(cleanedData);
-      setAppointmentTypeDataPayload({});
-      refetchFn();
     } catch (error) {
       setErrorMessage(error.message);
     }
   }
-
-  //TODO create a reusbale cancel button. keep in mind that we dont want to trigge rsubmits whne we lcick it in the form
 
   return (
     <>

@@ -1,7 +1,7 @@
 import { usePostData } from "../../CustomHooks/serverStateHooks";
 import { useEffect, useState } from "react";
 import { format, add, addMinutes, set } from "date-fns";
-import Alert from "@mui/material/Alert";
+
 import { createAppointmentValidationSchema } from "../../form validation Schemas/validationSchemas";
 import { checkAndSetIcds } from "../../apiRequests/apiRequests";
 import GenericTopBar from "../miscellaneous components/GenericTopBar";
@@ -17,6 +17,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useGlobalStore } from "../../zustandStore/store";
 import AppointmentNotificationSettings from "../miscellaneous components/AppointmentNotificationSettings";
 import { Button } from "@mui/material";
+import CustomAlertMessage from "../miscellaneous components/CustomAlertMessage";
 
 function setDateAndTimes() {
   const currentDateAndTime = new Date();
@@ -52,6 +53,7 @@ export default function CreateAppointment({
   calendarSelectedJsDateTimeString,
   hideComponent,
   querykeyToInvalidate,
+  hideCreateAppointmentComponent,
 }) {
   const setterfnForPatientIdInPatientPortalTree = usePatientPortalStore(
     (state) => state.setPatientId
@@ -181,24 +183,28 @@ export default function CreateAppointment({
       setError(error.message);
     }
   }
-
-  async function handleSubmission() {
-    try {
-      const validatedData = await createAppointmentValidationSchema.validate(
-        appointment
-      );
-      console.log(validatedData);
-      const result = await createMutation.mutateAsync(validatedData);
-      await checkAndSetIcds(result.id, result.appointment_type_id);
+  useEffect(() => {
+    if (createMutation.isSuccess) {
       setAppointment({
         sent_confirmation: false,
         send_reminder: false,
         appointment_date: calendarSelectedJsDateTimeString
           ? format(calendarSelectedJsDateTimeString, "yyyy-MM-dd")
-          : formattedCurrentDate,
+          : new Date(),
       });
-
+      setGlobalPatientData("");
       setAppointmentTypeSelectionDisplay("");
+      setError();
+    }
+  }, [createMutation.isSuccess]);
+  async function handleSubmission() {
+    try {
+      const validatedData = await createAppointmentValidationSchema.validate(
+        appointment
+      );
+
+      const result = await createMutation.mutateAsync(validatedData);
+      await checkAndSetIcds(result.id, result.appointment_type_id);
 
       if (result.sent_confirmation) {
         emailNotificationMutation.mutate({
@@ -207,7 +213,6 @@ export default function CreateAppointment({
           patientId: result.patient_id,
         });
       }
-      setError();
     } catch (error) {
       setError(error.message);
       setAppointmentTypeSelectionDisplay("");
@@ -420,15 +425,6 @@ export default function CreateAppointment({
           </div>
         )}
 
-        {error && (
-          <Alert
-            sx={{ height: "4rem", display: "flex", alignItems: "center" }}
-            severity="warning"
-          >
-            {error}
-          </Alert>
-        )}
-
         <div className="absolute bottom-0 left-0 w-full ">
           <Button
             fullWidth
@@ -444,6 +440,8 @@ export default function CreateAppointment({
         {showNotificationSettings && (
           <div className="fixed left-0 top-0  w-full min-h-screen flex justify-center items-center bg-black bg-opacity-50 z-10 ">
             <AppointmentNotificationSettings
+              hideCreateAppointmentComponent={hideCreateAppointmentComponent}
+              createMutationStateObject={createMutation}
               onchange={handleEmailNotificationChanges}
               onsubmit={handleSubmission}
               hideComponent={() =>
@@ -452,6 +450,12 @@ export default function CreateAppointment({
             />
           </div>
         )}
+        <CustomAlertMessage
+          errorFlag={error}
+          successFlag={createMutation.isSuccess}
+          errorMessage={error}
+          successMessage="Successfully created appointment"
+        />
       </div>
     </>
   );

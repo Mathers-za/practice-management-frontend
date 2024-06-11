@@ -5,7 +5,7 @@ import { isError } from "react-query";
 
 export default function CustomAlertMessage({
   successMessage = "Success",
-  className = "fixed right-1 bottom-1 z-10",
+  className = "fixed right-1 bottom-1 z-50",
   errorFlag,
   successFlag,
   errorMessage = "error",

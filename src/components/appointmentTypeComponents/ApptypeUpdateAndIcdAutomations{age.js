@@ -1,8 +1,4 @@
-import { useEffect } from "react";
-import {
-  useAppointmentTypeAndIcdAutomationsPage,
-  useAppointmentTypeListComponenet,
-} from "../../zustandStore/store";
+import { useAppointmentTypeListComponenet } from "../../zustandStore/store";
 import PreDefinedIcdCoding from "../PreDefinedIcd10";
 import GenericTopBar from "../miscellaneous components/GenericTopBar";
 import UpdateAppointmentType from "./appointmentTypeUpdate";

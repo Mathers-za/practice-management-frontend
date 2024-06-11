@@ -5,14 +5,32 @@ import { useGlobalStore } from "../../zustandStore/store";
 import { format } from "date-fns";
 import { Button, IconButton } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import UpdatePatientContactDetails from "../Create and update Patient component/UpdatePatientContactDetails";
+import { useOnSubmitButtonTextstateManager } from "../../CustomHooks/otherHooks";
+import { loginFormSchema } from "../../form validation Schemas/validationSchemas";
 
-export default function ({ onchange, onsubmit, hideComponent }) {
+export default function ({
+  onchange,
+  onsubmit,
+  hideComponent,
+  createMutationStateObject,
+  hideCreateAppointmentComponent,
+}) {
   const { globalPatientData } = useGlobalStore();
-  const navigate = useNavigate();
-  const [showPatientContactPage, setShowPatientContactPage] = useState(false);
 
+  const [showPatientContactPage, setShowPatientContactPage] = useState(false);
+  const saveAndAddAnotherButtonText = useOnSubmitButtonTextstateManager(
+    "Save and add another",
+    undefined,
+    createMutationStateObject
+  );
+  const saveAndReturnHomeButtonText = useOnSubmitButtonTextstateManager(
+    "Save and return home",
+    undefined,
+    createMutationStateObject
+  );
+  const [isNavigateHome, setIsNavigatehome] = useState(false);
   const patientData = useGlobalStore((state) => state.globalPatientData);
   const appointmentTypeData = useGlobalStore(
     (state) => state.globalAppointmentTypeData
@@ -20,6 +38,28 @@ export default function ({ onchange, onsubmit, hideComponent }) {
   const appointmentData = useGlobalStore(
     (state) => state.globalAppointmentData
   );
+
+  console.log(
+    "createmuation object succes is " + createMutationStateObject.isSuccess
+  );
+  const isSumbutAndAddAnother = useRef(false);
+
+  useEffect(() => {}, [isNavigateHome, createMutationStateObject.isSuccess]);
+
+  useEffect(() => {
+    if (isNavigateHome && createMutationStateObject.isSuccess) {
+      setTimeout(() => {
+        hideCreateAppointmentComponent();
+      }, 2000);
+    }
+    if (isSumbutAndAddAnother.current && createMutationStateObject.isSuccess) {
+      hideComponent();
+    }
+  }, [
+    isNavigateHome,
+    createMutationStateObject.isSuccess,
+    isSumbutAndAddAnother,
+  ]);
 
   return (
     <>
@@ -94,11 +134,11 @@ export default function ({ onchange, onsubmit, hideComponent }) {
               variant="contained"
               color="primary"
               onClick={() => {
+                setIsNavigatehome(true);
                 onsubmit();
-                navigate("/");
               }}
             >
-              Add and return home
+              {saveAndReturnHomeButtonText}
             </Button>
             <Button
               size="small"
@@ -106,10 +146,11 @@ export default function ({ onchange, onsubmit, hideComponent }) {
               color="primary"
               onClick={() => {
                 onsubmit();
-                hideComponent();
+
+                isSumbutAndAddAnother.current = true;
               }}
             >
-              Add and add another
+              {saveAndAddAnotherButtonText}
             </Button>
           </div>
         </div>

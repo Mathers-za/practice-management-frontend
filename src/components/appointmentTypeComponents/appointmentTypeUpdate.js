@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useFetchData, usePatchData } from "../../CustomHooks/serverStateHooks";
 import { updateAppointmentTypeValidatiionSchema } from "../../form validation Schemas/validationSchemas";
-
-import DisplaySingleError from "../miscellaneous components/WarningMessage";
+import { useOnSubmitButtonTextstateManager } from "../../CustomHooks/otherHooks";
 import { useAppointmentTypeAndIcdAutomationsPage } from "../../zustandStore/store";
 import { Button, TextField } from "@mui/material";
-import Alert from "@mui/material/Alert";
+import { updateAppointmentTypeValidationSchema } from "../../form validation Schemas/validationSchemas";
+import CustomAlertMessage from "../miscellaneous components/CustomAlertMessage";
 
 export default function UpdateAppointmentType({
   appointmentTypeId,
@@ -19,7 +19,11 @@ export default function UpdateAppointmentType({
     `/appointmentTypes/update${appointmentTypeId}`
   );
   const [displayAppointmentData, setDisplayAppointmentData] = useState({});
-
+  const submitButtonText = useOnSubmitButtonTextstateManager(
+    "save",
+    undefined,
+    patchMutation
+  );
   useEffect(() => {
     if (appointmentTypeData) {
       setDisplayAppointmentData(appointmentTypeData);
@@ -122,11 +126,16 @@ export default function UpdateAppointmentType({
               color="primary"
               disabled={Object.keys(changes).length === 0}
             >
-              Save
+              {submitButtonText}
             </Button>
           </div>
 
-          {errorMessage && <Alert severity="warning">{errorMessage}</Alert>}
+          <CustomAlertMessage
+            errorFlag={errorMessage}
+            successFlag={patchMutation.isSuccess}
+            errorMessage={errorMessage}
+            successMessage="Successfully updated appointment type details"
+          />
         </form>
       </div>
     </>
