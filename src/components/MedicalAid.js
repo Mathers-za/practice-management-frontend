@@ -23,7 +23,7 @@ export default function MedicalAid() {
     "medicalAidData",
     patientId,
   ]); //FIXME flag not wokring for save button text state managment
-
+  //TODO not in this folder but you do need to add some user feedback when invoices are sent
   const [medAidInformation, setMedAidInformation] = useState({});
   const [changes, setChanges] = useState({});
   const { patchMutation } = usePatchData(`/medicalAid/update${data?.id}`);
@@ -32,7 +32,7 @@ export default function MedicalAid() {
   const saveButtonText = useOnSubmitButtonTextstateManager(
     "save",
     undefined,
-    patchMutation
+    !patchMutation.isIdle ? patchMutation : createMutation
   );
   console.log(saveButtonText);
   useEffect(() => {
@@ -189,9 +189,17 @@ export default function MedicalAid() {
 
         <CustomAlertMessage
           errorFlag={error}
-          successFlag={patchMutation.isSuccess}
+          successFlag={
+            !patchMutation.isIdle
+              ? patchMutation.isSuccess
+              : createMutation.isSuccess
+          }
           errorMessage={error}
-          successMessage={"Successfully updated"}
+          successMessage={
+            !patchMutation.isIdle
+              ? "Successfully updated"
+              : "Succesfully updated"
+          }
           severityOnError="error"
           severityOnSuccess="success"
         />

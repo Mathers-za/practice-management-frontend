@@ -5,12 +5,13 @@ import {
 } from "../../../../CustomHooks/serverStateHooks";
 import { TextField, Button, Chip } from "@mui/material";
 import { defaultNotfications } from "./defaultNotifications";
-
+import CustomAlertMessage from "../../../miscellaneous components/CustomAlertMessage";
 import TemplateOptions from "../templatingOptions/TemplateOptions";
 import {
   getSaveButtonDisabledState,
   showDefaultLabel,
 } from "../email customization page/emailNotificationHelperFns";
+import { useOnSubmitButtonTextstateManager } from "../../../../CustomHooks/otherHooks";
 
 export default function TextContent({ columnName, data, refetch, label }) {
   const [content, setContent] = useState({
@@ -33,6 +34,11 @@ export default function TextContent({ columnName, data, refetch, label }) {
 
   const { createMutation: errorCheck } = usePostData(
     `/emailNotifications//customizationErrorCheck`
+  );
+  const saveButtonText = useOnSubmitButtonTextstateManager(
+    "Save",
+    undefined,
+    patchMutation
   );
 
   const [changes, setChanges] = useState({});
@@ -75,20 +81,20 @@ export default function TextContent({ columnName, data, refetch, label }) {
 
   async function handleSubmission() {
     try {
+      setError("");
       await errorCheck.mutateAsync(changes);
-      setError();
+      setChanges({});
+      setIsResetToDefault(false);
+
+      await patchMutation.mutateAsync(changes);
+
+      await refetch();
     } catch (error) {
       console.error(error);
       setError(error.response.data);
       setChanges({});
       return;
     }
-    setChanges({});
-    setIsResetToDefault(false);
-
-    await patchMutation.mutateAsync(changes);
-
-    await refetch();
   }
 
   function addToStringFn(string) {
@@ -145,7 +151,7 @@ export default function TextContent({ columnName, data, refetch, label }) {
                 onClick={handleSubmission}
                 disabled={getSaveButtonDisabledState(changes, isResetToDefault)}
               >
-                Save Changes
+                {saveButtonText}
               </Button>
             </div>
           </div>
@@ -153,11 +159,13 @@ export default function TextContent({ columnName, data, refetch, label }) {
         </div>
       </div>
 
-      {error && (
-        <div>
-          <textarea value={error || ""} cols="80" rows="10"></textarea>
-        </div>
-      )}
+      <CustomAlertMessage
+        errorFlag={error}
+        successFlag={patchMutation.isSuccess}
+        errorMessage={error}
+        successMessage="Updated successfully"
+        errorDisplayDuration="7000"
+      />
     </>
   );
 }

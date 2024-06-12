@@ -1,7 +1,6 @@
 import { Alert } from "@mui/material";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
-import { isError } from "react-query";
 
 export default function CustomAlertMessage({
   successMessage = "Success",
@@ -11,6 +10,7 @@ export default function CustomAlertMessage({
   errorMessage = "error",
   severityOnError = "error",
   severityOnSuccess = "success",
+  errorDisplayDuration = "",
 }) {
   const [isVisible, setIsVisible] = useState(false);
   useEffect(() => {
@@ -22,9 +22,12 @@ export default function CustomAlertMessage({
         errorFlag ? 0 : 800
       );
 
-      const timeOutId = setTimeout(() => {
-        setIsVisible(false);
-      }, 3000);
+      const timeOutId = setTimeout(
+        () => {
+          setIsVisible(false);
+        },
+        errorDisplayDuration ? errorDisplayDuration : 3000
+      );
       return () => {
         clearTimeout(timeOutId);
       };

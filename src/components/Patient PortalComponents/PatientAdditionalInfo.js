@@ -13,10 +13,11 @@ import {
   FormControl,
   Select,
   Button,
-  Alert,
   InputAdornment,
 } from "@mui/material";
 import defaultData from "../../DefaultData/defaultData";
+import CustomAlertMessage from "../miscellaneous components/CustomAlertMessage";
+import { useOnSubmitButtonTextstateManager } from "../../CustomHooks/otherHooks";
 
 import { CalendarIcon, MobileDatePicker } from "@mui/x-date-pickers";
 
@@ -36,9 +37,17 @@ export default function PatientAdditionalInformation() {
   const { createMutation } = usePostData(
     `/patientAdditionalInformation/create${patientId}`
   );
+
+  const sumbitButtonText = useOnSubmitButtonTextstateManager(
+    "Save",
+    undefined,
+    !patchMutation.isIdle ? patchMutation : createMutation
+  );
   const [errors, setErrors] = useState();
+
   async function handleSubmit(event) {
     event.preventDefault();
+    setErrors("");
     try {
       if (isPatch) {
         const validatedData =
@@ -50,12 +59,11 @@ export default function PatientAdditionalInformation() {
           await patientAdditionalInformationValidationSchema.validate(
             patientAdditionalData
           );
-        createMutation.mutateAsync(validatedData);
+        await createMutation.mutateAsync(validatedData);
 
         setIsPatch(true);
         setChanges({});
       }
-      setErrors();
     } catch (error) {
       setErrors(error.message);
     }
@@ -189,15 +197,31 @@ export default function PatientAdditionalInformation() {
             <MenuItem value={"Other"}>Other</MenuItem>
           </Select>
         </FormControl>
-        {errors && <Alert severity="warning">{errors}</Alert>}
+
         <Button
+          size="large"
+          fullWidth
           disabled={Object.keys(changes).length === 0}
           variant="contained"
           type="submit"
           color="primary"
         >
-          Save
+          {sumbitButtonText}
         </Button>
+        <CustomAlertMessage
+          errorMessage={errors}
+          successMessage={
+            !patchMutation.isIdle
+              ? "Successfully updated details"
+              : "Successfully updated details"
+          }
+          errorFlag={errors}
+          successFlag={
+            !patchMutation.isIdle
+              ? patchMutation.isSuccess
+              : createMutation.isSuccess
+          }
+        />
       </form>
     </>
   );
