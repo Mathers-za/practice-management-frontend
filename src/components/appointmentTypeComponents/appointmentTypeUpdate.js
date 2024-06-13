@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import { useFetchData, usePatchData } from "../../CustomHooks/serverStateHooks";
 import { updateAppointmentTypeValidatiionSchema } from "../../form validation Schemas/validationSchemas";
-import { useOnSubmitButtonTextstateManager } from "../../CustomHooks/otherHooks";
+import {
+  useOnSubmitButtonTextstateManager,
+  useSetLoadingStates,
+} from "../../CustomHooks/otherHooks";
 import { useAppointmentTypeAndIcdAutomationsPage } from "../../zustandStore/store";
 import { Button, TextField } from "@mui/material";
 import { updateAppointmentTypeValidationSchema } from "../../form validation Schemas/validationSchemas";
@@ -11,13 +14,16 @@ export default function UpdateAppointmentType({
   appointmentTypeId,
   hideComponent,
 }) {
-  const { icdPriceTotal } = useAppointmentTypeAndIcdAutomationsPage();
-  const { data: appointmentTypeData } = useFetchData(
+  const { icdPriceTotal, setApptypeEditLoadingState } =
+    useAppointmentTypeAndIcdAutomationsPage();
+  const { data: appointmentTypeData, isLoading } = useFetchData(
     `/appointmentTypes/view${appointmentTypeId}`
   );
   const { patchMutation } = usePatchData(
     `/appointmentTypes/update${appointmentTypeId}`
   );
+  useSetLoadingStates(isLoading, setApptypeEditLoadingState);
+
   const [displayAppointmentData, setDisplayAppointmentData] = useState({});
   const submitButtonText = useOnSubmitButtonTextstateManager(
     "save",
@@ -62,7 +68,7 @@ export default function UpdateAppointmentType({
   }
   return (
     <>
-      <div className="w-full h-fit bg-white p-3  pt-4  font-medium  ">
+      <div className="w-full h-fit  bg-white p-3  pt-4  font-medium  ">
         <form className="space-y-5" onSubmit={handleSubmit}>
           <TextField
             required

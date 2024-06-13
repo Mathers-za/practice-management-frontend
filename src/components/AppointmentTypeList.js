@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-
+import Fab from "@mui/material/Fab";
 import { usePagination } from "../CustomHooks/serverStateHooks";
 import { Pagination } from "@mui/material";
 import AppointmentTypeCard from "./appointmentTypeComponents/AppointmentTypeCard";
@@ -9,6 +9,8 @@ import {
   useAppointmentTypeListComponenet,
 } from "../zustandStore/store";
 import CreateAppointmentType from "./miscellaneous components/CreateAppointmentType";
+import CustomLinearProgressBar from "./miscellaneous components/CustomLinearProgressBar";
+import AddIcon from "@mui/icons-material/Add";
 
 export default function AppointmentTypeList({ profileId }) {
   const [showCreateAppointmentType, setShowCreateAppointmentType] =
@@ -19,7 +21,11 @@ export default function AppointmentTypeList({ profileId }) {
     (state) => state.practiceDetails
   );
 
-  const { data: appTypeAndIcdData, refetch } = usePagination(
+  const {
+    data: appTypeAndIcdData,
+    refetch,
+    isLoading,
+  } = usePagination(
     `/appointmentTypes/getAppTypesAndThierIcds${profileId}`,
     ["appointmentTypeList", page],
     page,
@@ -34,18 +40,26 @@ export default function AppointmentTypeList({ profileId }) {
 
   return (
     <>
-      <div className="flex justify-center">
+      <div className="flex justify-center ">
         <div className="w-full bg-white min-h-screen  ">
-          <div className="py-5 px-3 bg-purple-500 text-white mb-4 relative  ">
+          <div className="py-5 px-3 bg-sky-400  text-white mb-4 relative  ">
             {globalPracticeDetailsData?.appointment_name || "Appointment types"}
-            <div
-              onClick={() =>
-                setShowCreateAppointmentType(!showCreateAppointmentType)
-              }
-              className="size-10 rounded-full bg-blue-600 flex transition-all  delay-100 hover:scale-125 justify-center    hover:ring-sky-800 hover:ring-2  hover:bg-blue-500 items-center  absolute -bottom-3 right-3"
-            >
-              <FontAwesomeIcon icon="fa-solid fa-plus" size="xl" />
+            <div className="    absolute -bottom-5 right-3">
+              <Fab
+                size="large"
+                sx={{ zIndex: 1 }}
+                onClick={() =>
+                  setShowCreateAppointmentType(!showCreateAppointmentType)
+                }
+                color="primary"
+              >
+                <AddIcon />
+              </Fab>
             </div>
+            <CustomLinearProgressBar
+              isLoading={isLoading}
+              className="absolute bottom-0 z-0 left-0 w-full"
+            />
           </div>
           {showCreateAppointmentType && (
             <div className="w-[95%] flex mx-auto">

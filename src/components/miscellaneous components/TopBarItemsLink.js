@@ -7,7 +7,6 @@ export default function TopBarItemsLink({
   toolTipText,
   toolTipUnqiueId,
 }) {
-  //TODO finish topbar including the tooltips
   return (
     <>
       <div className="group flex flex-col items-center ">

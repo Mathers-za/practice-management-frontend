@@ -4,7 +4,10 @@ import {
   usePatchData,
   usePostData,
 } from "../../CustomHooks/serverStateHooks";
-import { usePatientPortalStore } from "../../zustandStore/store";
+import {
+  useClientInfoPortal,
+  usePatientPortalStore,
+} from "../../zustandStore/store";
 import { patientAdditionalInformationValidationSchema } from "../../form validation Schemas/validationSchemas";
 import {
   TextField,
@@ -17,7 +20,10 @@ import {
 } from "@mui/material";
 import defaultData from "../../DefaultData/defaultData";
 import CustomAlertMessage from "../miscellaneous components/CustomAlertMessage";
-import { useOnSubmitButtonTextstateManager } from "../../CustomHooks/otherHooks";
+import {
+  useOnSubmitButtonTextstateManager,
+  useSetLoadingStates,
+} from "../../CustomHooks/otherHooks";
 
 import { CalendarIcon, MobileDatePicker } from "@mui/x-date-pickers";
 
@@ -25,12 +31,13 @@ export default function PatientAdditionalInformation() {
   const { patientId } = usePatientPortalStore();
   const [patientAdditionalData, setPatientAdditonalData] = useState({});
   const [isPatch, setIsPatch] = useState(false);
-  const { data: patientData } = useFetchData(
+  const { data: patientData, isLoading } = useFetchData(
     `/patientAdditionalInformation/view${patientId}`,
     ["PatientAdditionalInfo", patientId]
   );
   const [changes, setChanges] = useState({});
-
+  const { setAdditionalInformationLoadingState } = useClientInfoPortal();
+  useSetLoadingStates(isLoading, setAdditionalInformationLoadingState);
   const { patchMutation } = usePatchData(
     `/patientAdditionalInformation/update${patientId}`
   );

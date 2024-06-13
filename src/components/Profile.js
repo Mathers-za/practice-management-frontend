@@ -5,13 +5,13 @@ import { profileValidationSchema } from "../form validation Schemas/validationSc
 import { Button, TextField } from "@mui/material";
 
 import { useOnSubmitButtonTextstateManager } from "../CustomHooks/otherHooks";
-import CircularProgress from "@mui/material/CircularProgress";
 
 import CustomAlertMessage from "./miscellaneous components/CustomAlertMessage";
+import CustomLinearProgressBar from "./miscellaneous components/CustomLinearProgressBar";
 
 export default function Profile() {
   const [profileData, setProfileData] = useState({});
-  const { data } = useFetchData("/profile/view", "userProfileData");
+  const { data, isLoading } = useFetchData("/profile/view", "userProfileData");
   const { setGlobalProfileData } = useGlobalStore();
   const { patchMutation } = usePatchData(`/profile/update${data?.id}`);
   const [error, setError] = useState();
@@ -67,12 +67,12 @@ export default function Profile() {
   return (
     <>
       <div className="flex w-full h-full justify-center relative items-center max-h-full overflow-auto   ">
-        <div className="w-11/12  h-fit rounded-md      bg-white">
+        <div className="w-11/12  h-fit rounded-md bg-white">
           <form
-            className="min-w-full h-fit px-4 py-6   border   shadow-md  shadow-slate-600 rounded-md relative  "
+            className="min-w-full h-fit px-4 py-6    border   shadow-md  shadow-slate-600 rounded-md relative  "
             onSubmit={handleSubmit}
           >
-            {" "}
+            <div className="top-0 left-0 w-full  absolute "> </div>
             <div className="space-y-8">
               <h1 className="text-xl font-medium mb-2 border-b border-slate-500 pb-3">
                 Details
@@ -173,6 +173,7 @@ export default function Profile() {
                 </Button>
               </div>
             </div>
+            <CustomLinearProgressBar isLoading={isLoading} />
           </form>
         </div>
       </div>

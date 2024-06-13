@@ -43,3 +43,9 @@ export const useOnSubmitButtonTextstateManager = (
 
   return buttonText;
 };
+
+export const useSetLoadingStates = (isloadingState, setterFn) => {
+  useEffect(() => {
+    setterFn(isloadingState);
+  }, [isloadingState]);
+};

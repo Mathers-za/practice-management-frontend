@@ -5,7 +5,6 @@ export default function GenericButton({
   type = "button",
   className = "",
 }) {
-  //TODO make this cancel button look lekker
   return (
     <>
       <button

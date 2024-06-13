@@ -8,17 +8,24 @@ import AppointmentCard from "../Pages/AppointmentCardAndList/AppointmentCard";
 import { Pagination, Fab } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import CreateAppointment from "../Appointment components/CreateAppointment";
+import { useSetLoadingStates } from "../../CustomHooks/otherHooks";
 
 export default function AppointmentsTab() {
   const { globalProfileData } = useGlobalStore();
   const { patientId } = usePatientPortalStore();
   const [page, setPage] = useState(1);
-  const { data: patientAppointmentDataAndMetaData, refetch } = usePagination(
+  const {
+    data: patientAppointmentDataAndMetaData,
+    refetch,
+    isLoading,
+  } = usePagination(
     `/appointments/viewAppointmentsByPatient${patientId}`,
     ["patientAppointments", patientId, page],
     page,
     7
   );
+  const { setAppointmentTabLoadingState } = usePatientPortalStore();
+  useSetLoadingStates(isLoading, setAppointmentTabLoadingState);
   const [showCreateAppointment, setShowCreateAppointment] = useState(false);
 
   //TODO clean this code up by fighuring out how to destructure the vraibles to make it more readable

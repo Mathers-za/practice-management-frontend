@@ -34,7 +34,7 @@ import { fab } from "@fortawesome/free-brands-svg-icons";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
 import "@fontsource/inter";
-import PatientPickerComponent from "./components/miscellaneous components/PatientPicker";
+
 import ComponentView from "./tailWindSandbox/styleComponents";
 import CreatePatient from "./components/Create and update Patient component/CreatePatient";
 import CreateAppointment from "./components/Appointment components/CreateAppointment";

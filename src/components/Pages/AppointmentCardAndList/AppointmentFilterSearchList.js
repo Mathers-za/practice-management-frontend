@@ -6,6 +6,7 @@ import {
 import { useGlobalStore } from "../../../zustandStore/store.js";
 import AppointmentCard from "./AppointmentCard.js";
 import Pagination from "@mui/material/Pagination";
+import CustomLinearProgressBar from "../../miscellaneous components/CustomLinearProgressBar.js";
 
 export default function AppointmentFilterSearchList({ params, profileId }) {
   const setGlobalApppointmentFilterResultRefetch = useGlobalStore(
@@ -14,14 +15,21 @@ export default function AppointmentFilterSearchList({ params, profileId }) {
 
   const [page, setPage] = useState(1);
 
-  const { data: appointmentData, refetch: refetchInAppointmentFilterList } =
-    usePagination(
-      `/appointments/appointmentsPagination${profileId}`,
-      ["appointmentsFilter", params, page],
-      page,
-      10,
-      params
-    );
+  const {
+    data: appointmentData,
+    refetch: refetchInAppointmentFilterList,
+    isLoading,
+  } = usePagination(
+    `/appointments/appointmentsPagination${profileId}`,
+    ["appointmentsFilter", params, page],
+    page,
+    10,
+    params
+  );
+
+  useEffect(() => {
+    console.log("isloading is " + isLoading);
+  }, [isLoading]);
 
   useEffect(() => {
     setGlobalApppointmentFilterResultRefetch(refetchInAppointmentFilterList);
@@ -29,7 +37,7 @@ export default function AppointmentFilterSearchList({ params, profileId }) {
 
   return (
     <>
-      <div className="flex flex-col w-full h-full">
+      <div className="flex  flex-col w-full relative h-full">
         {appointmentData?.data?.length > 0 ? (
           appointmentData.data.map((appointment) => {
             return (
@@ -58,6 +66,10 @@ export default function AppointmentFilterSearchList({ params, profileId }) {
             />
           </div>
         </div>
+        <CustomLinearProgressBar
+          className="bottom-0 absolute left-0 w-full"
+          isLoading={isLoading}
+        />
       </div>
     </>
   );

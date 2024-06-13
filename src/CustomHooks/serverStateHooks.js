@@ -11,27 +11,34 @@ const useFetchData = (
 ) => {
   //endpoint:string, querykey: string or an array with queryString and uniqueId, [aramsData:object of key value pairs you want to pass]
   const [httpStatus, setHttpStatus] = useState();
-  const { data, isSuccess, isError, error, isLoading, isRefetching, refetch } =
-    useQuery({
-      //data.data.property to acces properties. data.status to access http codes
-      queryKey: queryKey,
-      cacheTime: cacheTime,
-      queryFn: async () => {
-        const response = await axios.get(
-          `http://localhost:4000${endpoint}`,
+  const {
+    data,
+    isSuccess,
+    isError,
+    error,
+    isLoading,
+    isRefetching,
+    refetch,
+    isFetching,
+  } = useQuery({
+    //data.data.property to acces properties. data.status to access http codes
+    queryKey: queryKey,
+    cacheTime: cacheTime,
+    queryFn: async () => {
+      const response = await axios.get(
+        `http://localhost:4000${endpoint}`,
 
-          {
-            params: paramsData && paramsData,
-            withCredentials: true,
-          }
-        );
-        setHttpStatus(response.status);
-        return response.data;
-      },
-      keepPreviousData: true,
+        {
+          params: paramsData && paramsData,
+          withCredentials: true,
+        }
+      );
+      setHttpStatus(response.status);
+      return response.data;
+    },
 
-      refetchOnWindowFocus: false,
-    });
+    refetchOnWindowFocus: false,
+  });
 
   return {
     data,
@@ -41,6 +48,7 @@ const useFetchData = (
     isLoading,
     httpStatus,
     isRefetching,
+    isFetching,
 
     refetch,
   };
@@ -163,8 +171,9 @@ const usePagination = (
       });
       return data;
     },
-    keepPreviousData: true,
+
     refetchOnWindowFocus: false,
+    keepPreviousData: true,
   });
   return {
     data,

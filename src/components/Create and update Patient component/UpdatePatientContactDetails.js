@@ -3,10 +3,14 @@ import { useFetchData, usePatchData } from "../../CustomHooks/serverStateHooks";
 import PatientContactDetailsForm from "./PatientContactDetailsForm";
 import { createPatientValidationSchema } from "../../form validation Schemas/validationSchemas";
 import {
+  useClientInfoPortal,
   useGlobalStore,
   usePatientPortalStore,
 } from "../../zustandStore/store";
-import { useOnSubmitButtonTextstateManager } from "../../CustomHooks/otherHooks";
+import {
+  useOnSubmitButtonTextstateManager,
+  useSetLoadingStates,
+} from "../../CustomHooks/otherHooks";
 import CustomAlertMessage from "../miscellaneous components/CustomAlertMessage";
 
 export default function UpdatePatientContactDetails({
@@ -22,13 +26,16 @@ export default function UpdatePatientContactDetails({
 }) {
   const { patientId } = usePatientPortalStore();
   console.log("global patient portal id  is " + patientId);
-  const { data: patientContactDetailsData } = useFetchData(
+  const { data: patientContactDetailsData, isLoading } = useFetchData(
     `/patients/viewPatient${patientId}`,
     ["patientContactDetails", patientId]
   );
   const setterFnForPatientDataInCreateAppointmentTree = useGlobalStore(
     (state) => state.setGlobalPatientData
   );
+  const { setPatientContactDetailsPageLoadingState } = useClientInfoPortal();
+
+  useSetLoadingStates(isLoading, setPatientContactDetailsPageLoadingState);
   const { patchMutation } = usePatchData(`/patients/update${patientId}`);
   const [errorMessage, setErrorMessage] = useState();
   const [patientInfo, setPatientInfo] = useState({});

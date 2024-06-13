@@ -7,13 +7,16 @@ import { useEffect, useRef, useState } from "react";
 import CustomAlertMessage from "./miscellaneous components/CustomAlertMessage";
 import DeleteDustbin from "./miscellaneous components/DeleteDustbin";
 import { useAppointmentTypeAndIcdAutomationsPage } from "../zustandStore/store";
-import { useOnSubmitButtonTextstateManager } from "../CustomHooks/otherHooks";
+import {
+  useOnSubmitButtonTextstateManager,
+  useSetLoadingStates,
+} from "../CustomHooks/otherHooks";
 import { validatepreDefinedICD10CodeCreation } from "../form validation Schemas/validationSchemas";
 import DisplaySingleError from "./miscellaneous components/WarningMessage";
 import { Button, TextField } from "@mui/material";
 
 export default function PreDefinedIcdCoding({ appTypeId, hideComponent }) {
-  const { data: originalICDData } = useFetchData(
+  const { data: originalICDData, isFetching } = useFetchData(
     `/predefinedIcd10/view${appTypeId}`,
     "icd10Data",
     undefined,
@@ -30,7 +33,7 @@ export default function PreDefinedIcdCoding({ appTypeId, hideComponent }) {
     updateIcdList,
     incrementTotal,
     decrementTotal,
-
+    setPredefinedIcdComponentLoadingState,
     resetArrayOfIcdIdsToDelete,
     deleteIcdListItem,
     setIcd10List,
@@ -56,7 +59,7 @@ export default function PreDefinedIcdCoding({ appTypeId, hideComponent }) {
   }, [originalICDData]);
 
   const [preDefinedIcdInputData, setPreDefinedIcdInputData] = useState({});
-
+  useSetLoadingStates(isFetching, setPredefinedIcdComponentLoadingState);
   function handleIcdInputChange(e) {
     const { name, value } = e.target;
 

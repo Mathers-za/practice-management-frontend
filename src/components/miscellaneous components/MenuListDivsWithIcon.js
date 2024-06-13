@@ -6,7 +6,6 @@ export default function MenuDivsWithIcon({
   iconEnd = null,
   disabled = false,
 }) {
-  //TODO change to a button
   return (
     <>
       <button

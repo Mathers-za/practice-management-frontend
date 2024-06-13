@@ -6,9 +6,10 @@ import { Button, TextField } from "@mui/material";
 
 import CustomAlertMessage from "./miscellaneous components/CustomAlertMessage";
 import { useOnSubmitButtonTextstateManager } from "../CustomHooks/otherHooks";
+import CustomLinearProgressBar from "./miscellaneous components/CustomLinearProgressBar";
 
 export default function PracticeDetails({ profileId }) {
-  const { data: practiceDetailsData } = useFetchData(
+  const { data: practiceDetailsData, isLoading } = useFetchData(
     `/practiceDetails/view${profileId}`,
     "practiceDetailsInPracticeComponent"
   );
@@ -64,9 +65,9 @@ export default function PracticeDetails({ profileId }) {
 
   return (
     <>
-      <div className="flex justify-center items-center min-w-full min-h-full overflow-auto ">
-        <div className="w-11/12 border  p-4 justify-center bg-white  shadow-md  shadow-slate-600 rounded-md ">
-          <form onSubmit={handleSubmit} className="space-y-8">
+      <div className="flex justify-center items-center min-w-full  min-h-full overflow-auto ">
+        <div className="w-11/12 border relative  p-4 justify-center  bg-white  shadow-md  shadow-slate-600 rounded-md ">
+          <form onSubmit={handleSubmit} className="space-y-8 ">
             <h1 className="text-xl font-semibold  border-b  border-slate-500   pb-3 ">
               Practice Details
             </h1>
@@ -151,6 +152,7 @@ export default function PracticeDetails({ profileId }) {
               </Button>
             </div>
           </form>
+          <CustomLinearProgressBar isLoading={isLoading} />
         </div>
       </div>
     </>

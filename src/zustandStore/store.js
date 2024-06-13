@@ -144,6 +144,16 @@ export const useAppointmentTypeAndIcdAutomationsPage = create(
     arrayOfIcdsToUpdate: [],
     copyOfOrginalIcdData: [],
     count: -30,
+    appTypeEditLoadingState: false,
+    predefinedIcdComponentLoadingState: false,
+    setApptypeEditLoadingState: (loadingState) =>
+      set({
+        appTypeEditLoadingState: loadingState,
+      }),
+    setPredefinedIcdComponentLoadingState: (loadingState) =>
+      set({
+        predefinedIcdComponentLoadingState: loadingState,
+      }),
     setIcd10List: (icdData) => {
       getState().resetTotal();
       set({
@@ -267,8 +277,42 @@ export const useAppointmentCard = create((set) => ({
 
 export const usePatientPortalStore = create((set) => ({
   patientId: "",
+  appointmentTabLoadingState: false,
+  invoiceTabLoadingState: false,
+  treatmentNotesTabLoadingState: false,
+
+  setAppointmentTabLoadingState: (loadingState) =>
+    set({
+      appointmentTabLoadingState: loadingState,
+    }),
+  setInvoiceTabLoadingState: (loadingState) =>
+    set({
+      invoiceTabLoadingState: loadingState,
+    }),
+  setTreatmentNotesTabLoadingState: (loadingState) =>
+    set({
+      treatmentNotesTabLoadingState: loadingState,
+    }),
   setPatientId: (id) =>
     set({
       patientId: id,
+    }),
+}));
+
+export const useClientInfoPortal = create((set) => ({
+  patientContactDetailsPageLoadingState: false,
+  medicalAidLoadingState: false,
+  additionalInformationLoadingState: false,
+  setPatientContactDetailsPageLoadingState: (loadingState) =>
+    set({
+      patientContactDetailsPageLoadingState: loadingState,
+    }),
+  setMedicalAidLoadingState: (loadingState) =>
+    set({
+      medicalAidLoadingState: loadingState,
+    }),
+  setAdditionalInformationLoadingState: (loadingState) =>
+    set({
+      additionalInformationLoadingState: loadingState,
     }),
 }));

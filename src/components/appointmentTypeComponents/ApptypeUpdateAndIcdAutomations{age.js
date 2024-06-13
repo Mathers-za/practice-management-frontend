@@ -1,5 +1,10 @@
-import { useAppointmentTypeListComponenet } from "../../zustandStore/store";
+import { color } from "framer-motion";
+import {
+  useAppointmentTypeAndIcdAutomationsPage,
+  useAppointmentTypeListComponenet,
+} from "../../zustandStore/store";
 import PreDefinedIcdCoding from "../PreDefinedIcd10";
+import CustomLinearProgressBar from "../miscellaneous components/CustomLinearProgressBar";
 import GenericTopBar from "../miscellaneous components/GenericTopBar";
 import UpdateAppointmentType from "./appointmentTypeUpdate";
 
@@ -11,18 +16,28 @@ export default function ApptypeEditsAndIcdAutomationsPage({
   const refetchAppointmentTypeListData = useAppointmentTypeListComponenet(
     (state) => state.refetchAppointmentListTypeData
   );
+  const { appTypeEditLoadingState, predefinedIcdComponentLoadingState } =
+    useAppointmentTypeAndIcdAutomationsPage();
 
   return (
     <>
-      <GenericTopBar
-        label="Appointment Type settings and Icd automations"
-        onclick={() => {
-          hideComponent();
+      {" "}
+      <div className="relative">
+        <GenericTopBar
+          label="Appointment Type settings and Icd automations"
+          onclick={() => {
+            hideComponent();
 
-          refetchAppointmentTypeListData();
-        }}
-      />
-
+            refetchAppointmentTypeListData();
+          }}
+        />
+        <CustomLinearProgressBar
+          isLoading={
+            appTypeEditLoadingState || predefinedIcdComponentLoadingState
+          }
+          className="absolute -bottom-1 left-0 w-full"
+        />
+      </div>
       <div className="bg-white flex flex-col justify-evenly p-2 h-screen overflow-y-auto ">
         <div className="bg-white  border-b border-slate-600">
           <h1 className="text-xl font-semibold mb-3">Edit Appoinment Type</h1>

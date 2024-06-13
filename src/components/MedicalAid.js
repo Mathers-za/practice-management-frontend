@@ -7,24 +7,31 @@ import {
 } from "../CustomHooks/serverStateHooks";
 
 import { TextField, Checkbox, Button, FormControlLabel } from "@mui/material";
-import { usePatientPortalStore } from "../zustandStore/store";
-import { useOnSubmitButtonTextstateManager } from "../CustomHooks/otherHooks";
+import {
+  useClientInfoPortal,
+  usePatientPortalStore,
+} from "../zustandStore/store";
+import {
+  useOnSubmitButtonTextstateManager,
+  useSetLoadingStates,
+} from "../CustomHooks/otherHooks";
 import CustomAlertMessage from "./miscellaneous components/CustomAlertMessage";
 
 export default function MedicalAid() {
   const [isPatch, setIsPatch] = useState(false);
   const { patientId } = usePatientPortalStore();
-  const { data, isSuccess } = useFetchData(`/medicalAid/view${patientId}`, [
-    "medicalAidData",
-    patientId,
-  ]);
+  const { data, isSuccess, isLoading } = useFetchData(
+    `/medicalAid/view${patientId}`,
+    ["medicalAidData", patientId]
+  );
 
   const { createMutation } = usePostData(`/medicalAid/create${patientId}`, [
     "medicalAidData",
     patientId,
-  ]); //FIXME flag not wokring for save button text state managment
+  ]);
   //TODO not in this folder but you do need to add some user feedback when invoices are sent
   const [medAidInformation, setMedAidInformation] = useState({});
+  const { setMedicalAidLoadingState } = useClientInfoPortal();
   const [changes, setChanges] = useState({});
   const { patchMutation } = usePatchData(`/medicalAid/update${data?.id}`);
   const [error, setError] = useState(false);
@@ -34,7 +41,8 @@ export default function MedicalAid() {
     undefined,
     !patchMutation.isIdle ? patchMutation : createMutation
   );
-  console.log(saveButtonText);
+  useSetLoadingStates(isLoading, setMedicalAidLoadingState);
+
   useEffect(() => {
     if (data && isSuccess) {
       setMedAidInformation(data);
@@ -195,11 +203,7 @@ export default function MedicalAid() {
               : createMutation.isSuccess
           }
           errorMessage={error}
-          successMessage={
-            !patchMutation.isIdle
-              ? "Successfully updated"
-              : "Succesfully updated"
-          }
+          successMessage={"Successfully updated"}
           severityOnError="error"
           severityOnSuccess="success"
         />

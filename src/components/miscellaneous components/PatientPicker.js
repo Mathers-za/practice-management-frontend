@@ -5,6 +5,7 @@ import { IconButton, TextField } from "@mui/material";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import CreatePatient from "../Create and update Patient component/CreatePatient";
 import { useGlobalStore } from "../../zustandStore/store";
+import CustomLinearProgressBar from "./CustomLinearProgressBar";
 export default function PatientPickerComponent({
   profileId,
   hideComponent,
@@ -16,7 +17,7 @@ export default function PatientPickerComponent({
     hideComponent: false,
   },
 }) {
-  const { data: patientData } = useFetchData(
+  const { data: patientData, isLoading } = useFetchData(
     `/patients/viewAll${profileId}`,
     "listOfPatients"
   );
@@ -65,17 +66,23 @@ export default function PatientPickerComponent({
               </IconButton>
             </div>
           )}
-          <TextField
-            variant="filled"
-            label="search"
-            fullWidth
-            value={searchBarInput || ""}
-            type="text"
-            name="searchBarInput"
-            onChange={(event) => setSearchBarInput(event.target.value)}
-            autoFocus={true}
-            placeholder="Search according to name,surname,email or phone number"
-          />
+          <div className="w-full relative ">
+            <TextField
+              variant="filled"
+              label="search"
+              fullWidth
+              value={searchBarInput || ""}
+              type="text"
+              name="searchBarInput"
+              onChange={(event) => setSearchBarInput(event.target.value)}
+              autoFocus={true}
+              placeholder="Search according to name,surname,email or phone number"
+            />
+            <CustomLinearProgressBar
+              isLoading={isLoading}
+              className="absolute bottom-0 left-0 w-full"
+            />
+          </div>
         </div>
 
         <div className="mt-1 select-none  ">

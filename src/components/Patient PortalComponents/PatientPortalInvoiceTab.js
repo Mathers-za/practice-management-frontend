@@ -3,17 +3,24 @@ import { usePagination } from "../../CustomHooks/serverStateHooks";
 import { usePatientPortalStore } from "../../zustandStore/store";
 import InvoiceDisplayCard from "../Pages/financialsViewPortal/invoiceProgressComponents/InvoiceDisplayCard";
 import { Pagination } from "@mui/material";
+import { useSetLoadingStates } from "../../CustomHooks/otherHooks";
 
 export default function PatientPortalInvoiceTab() {
   const { patientId } = usePatientPortalStore();
   const [page, setPage] = useState(1);
 
-  const { data: paginatedInvoiceData, refetch } = usePagination(
+  const {
+    data: paginatedInvoiceData,
+    refetch,
+    isLoading,
+  } = usePagination(
     `/invoices/getAllInvoicesByPatient${patientId}`,
     ["patientInvoices", patientId, page],
     page,
     7
   );
+  const { setInvoiceTabLoadingState } = usePatientPortalStore();
+  useSetLoadingStates(isLoading, setInvoiceTabLoadingState);
 
   return (
     <>
