@@ -15,7 +15,7 @@ export default function EmailNotificationTypeTile({
         className={`w-full min-h-full  flex flex-col  p-3 $ border border-slate-300 rounded-md shadow-md shadow-black/30  ${className}`}
       >
         <h2 className="font-semibold text-lg mb-4">{heading}</h2>
-        <p className="grow">{textContent}</p>
+        <p className="grow  ">{textContent}</p>
         <div className=" justify-self-end self-end ">
           <Button
             id={id}

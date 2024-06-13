@@ -25,6 +25,7 @@ export default function AppointmentTypeList({ profileId }) {
     data: appTypeAndIcdData,
     refetch,
     isLoading,
+    isPreviousData,
   } = usePagination(
     `/appointmentTypes/getAppTypesAndThierIcds${profileId}`,
     ["appointmentTypeList", page],
@@ -57,7 +58,7 @@ export default function AppointmentTypeList({ profileId }) {
               </Fab>
             </div>
             <CustomLinearProgressBar
-              isLoading={isLoading}
+              isLoading={isLoading || isPreviousData}
               className="absolute bottom-0 z-0 left-0 w-full"
             />
           </div>

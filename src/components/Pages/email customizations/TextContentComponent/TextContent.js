@@ -3,7 +3,7 @@ import {
   usePatchData,
   usePostData,
 } from "../../../../CustomHooks/serverStateHooks";
-import { TextField, Button, Chip } from "@mui/material";
+import { TextField, Button, Chip, CircularProgress } from "@mui/material";
 import { defaultNotfications } from "./defaultNotifications";
 import CustomAlertMessage from "../../../miscellaneous components/CustomAlertMessage";
 import TemplateOptions from "../templatingOptions/TemplateOptions";
@@ -12,6 +12,7 @@ import {
   showDefaultLabel,
 } from "../email customization page/emailNotificationHelperFns";
 import { useOnSubmitButtonTextstateManager } from "../../../../CustomHooks/otherHooks";
+import { useTextContentComponent } from "../../../../zustandStore/store";
 
 export default function TextContent({ columnName, data, refetch, label }) {
   const [content, setContent] = useState({
@@ -19,17 +20,11 @@ export default function TextContent({ columnName, data, refetch, label }) {
   });
 
   const [isResetToDefault, setIsResetToDefault] = useState(false);
-
+  const { textContentLoadingState } = useTextContentComponent();
   const [error, setError] = useState();
-
-  const [showTemplateOptions, setShowTemPlateOptions] = useState(false);
 
   const { patchMutation } = usePatchData(
     `/emailNotifications/update${content.id}`
-  );
-  const { createMutation } = usePostData(
-    `/emailNotifications/create`,
-    "customEmailConfirmation"
   );
 
   const { createMutation: errorCheck } = usePostData(
@@ -113,7 +108,7 @@ export default function TextContent({ columnName, data, refetch, label }) {
       <div>
         <div className="flex gap-3  mt-4  ">
           <div className="w-3/4 space-y-3 ">
-            <div className="shadow-md relative">
+            <div className="shadow-md  relative">
               <TextField
                 required
                 fullWidth
@@ -133,6 +128,11 @@ export default function TextContent({ columnName, data, refetch, label }) {
                     color="secondary"
                     size="small"
                   />
+                </div>
+              )}
+              {textContentLoadingState && (
+                <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                  <CircularProgress />
                 </div>
               )}
             </div>

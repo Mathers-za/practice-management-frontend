@@ -15,6 +15,7 @@ import {
 } from "./mainCalendarHelperFns.js";
 import { useGlobalStore } from "../../../zustandStore/store.js";
 import { useFetchData } from "../../../CustomHooks/serverStateHooks.js";
+import CustomLinearProgressBar from "../../miscellaneous components/CustomLinearProgressBar.js";
 
 export default function MainCalendar({ profileId }) {
   const { startOfWeekDate, endOfWeekDate } =
@@ -24,12 +25,16 @@ export default function MainCalendar({ profileId }) {
     end_date: endOfWeekDate,
   });
 
-  const { data: appointmentData, refetch: refetchAppointmentListData } =
-    useFetchData(
-      `/appointments/filter${profileId}`,
-      ["mainCalendar", searchDates],
-      searchDates
-    );
+  const {
+    data: appointmentData,
+    refetch: refetchAppointmentListData,
+    isLoading,
+    isFetching,
+  } = useFetchData(
+    `/appointments/filter${profileId}`,
+    ["mainCalendar", searchDates],
+    searchDates
+  );
 
   const {
     setGlobalAppointmentData,
@@ -39,7 +44,6 @@ export default function MainCalendar({ profileId }) {
     setGlobalInvoiceData,
   } = useGlobalStore();
 
-  const [selectedEvent, setSelectedEvent] = useState();
   const [jsDateString, setJsDateString] = useState();
 
   const [showDropDownMenu, setShowDropDownMenu] = useState(false);
@@ -116,7 +120,6 @@ export default function MainCalendar({ profileId }) {
       invoice_title: event.appointmentData.invoice_title,
     });
 
-    setSelectedEvent(event);
     setShowDropDownMenu(!showDropDownMenu);
   }
 
@@ -145,7 +148,7 @@ export default function MainCalendar({ profileId }) {
 
   return (
     <>
-      <div className="bg-white p-3 ">
+      <div className="bg-white p-3 relative ">
         <FullCalendar
           eventContent={(eventInfo) => handleEventCssCustomization(eventInfo)}
           displayEventEnd={true}
@@ -173,6 +176,10 @@ export default function MainCalendar({ profileId }) {
           eventClick={(eventInfo) => handleEventClick(eventInfo.event.id)}
           timeZone="local"
           allDaySlot={false}
+        />
+        <CustomLinearProgressBar
+          className="absolute top-0 left-0 w-full"
+          isLoading={isLoading || isFetching}
         />
       </div>
       <AnimatePresence>

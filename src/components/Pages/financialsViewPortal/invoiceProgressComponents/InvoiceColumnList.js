@@ -3,8 +3,7 @@ import InvoiceDisplayCard from "./InvoiceDisplayCard";
 import { useFetchData } from "../../../../CustomHooks/serverStateHooks";
 import { useEffect, useState } from "react";
 import { startOfWeek, endOfWeek, format } from "date-fns";
-import { CalendarIcon } from "@mui/x-date-pickers/icons";
-import InputAdornment from "@mui/material";
+
 import {
   filterInvoiceData,
   formatDateYearMonthDay,
@@ -14,6 +13,7 @@ import { useInvoiceProgessComponent } from "../../../../zustandStore/store";
 import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
 import { TextField } from "@mui/material";
 import Badge from "./Badge";
+import CustomLinearProgressBar from "../../../miscellaneous components/CustomLinearProgressBar";
 
 function setCountAndTotalWhenProgessFlagTrue(
   filterFunction,
@@ -67,7 +67,11 @@ export default function InvoiceColumnList({
 
   const [searchBarInput, setSearchBarInput] = useState();
 
-  const { data: invoiceData, refetch: invoiceDataRefetch } = useFetchData(
+  const {
+    data: invoiceData,
+    refetch: invoiceDataRefetch,
+    isLoading,
+  } = useFetchData(
     `/invoices/filteredView`,
     ["invoiceProgressPage", searchDateCriteria],
     { ...searchDateCriteria, profile_id: profileId }
@@ -118,7 +122,7 @@ export default function InvoiceColumnList({
   return (
     <>
       <div className="w-full  h-fit p-2 min-h-full  bg-white">
-        <div className="h-fit border shadow-md shadow-black/40 w-full mb-2 items-start justify-between flex px-3 pt-2 pb-3 ">
+        <div className="h-fit relative border shadow-md shadow-black/40 w-full mb-2 items-start justify-between flex px-3 pt-2 pb-3 ">
           <div className=" flex flex-col gap-3  h-full w-1/3">
             <MobileDatePicker
               label="Start Date"
@@ -158,6 +162,10 @@ export default function InvoiceColumnList({
               </div>
             </div>
           )}
+          <CustomLinearProgressBar
+            isLoading={isLoading}
+            className="-bottom-1 left-0 w-full absolute"
+          />
         </div>
         <div className="w-full flex    gap-5 ">
           <div className="bg-black w-1/3 flex items-center p-3 justify-between  text-white   ">

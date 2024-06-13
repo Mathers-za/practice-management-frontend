@@ -9,6 +9,7 @@ import { format } from "date-fns";
 import { TextField } from "@mui/material";
 import Pagination from "@mui/material/Pagination";
 import { useGlobalStore } from "../../../../zustandStore/store";
+import CustomLinearProgressBar from "../../../miscellaneous components/CustomLinearProgressBar";
 
 export default function PaymentsList({ profileId }) {
   const [searchDateCriteria, setSearchDateCriteria] = useState({
@@ -21,7 +22,12 @@ export default function PaymentsList({ profileId }) {
   const [page, setPage] = useState(1);
   const [searchBarInput, setSearchBarInput] = useState(null);
   const [mapPaymentData, setMapPaymentData] = useState([]);
-  const { data: paymentsData } = usePagination(
+  const {
+    data: paymentsData,
+    isLoading,
+    isPreviousData,
+    isFetching,
+  } = usePagination(
     `/payments/getAllProfilePayments${globalProfileData.id}`,
     ["paymentsDataList", searchDateCriteria, page],
     page,
@@ -58,7 +64,7 @@ export default function PaymentsList({ profileId }) {
   return (
     <>
       <div className="w-full min-h-full h-fit p-3 bg-white">
-        <div className="border border-slate-500 shadow-md shadow-black/40 rounded-sm p-4">
+        <div className="border border-slate-500 shadow-md relative shadow-black/40 rounded-sm p-4">
           <div>
             <div className="flex gap-5">
               <div className="w-2/4">
@@ -125,6 +131,10 @@ export default function PaymentsList({ profileId }) {
               </div>
             </div>
           </div>
+          <CustomLinearProgressBar
+            isLoading={isLoading || isPreviousData}
+            className="-bottom-1 left-0 absolute w-full"
+          />
         </div>
         {mapPaymentData && mapPaymentData.length > 0
           ? mapPaymentData

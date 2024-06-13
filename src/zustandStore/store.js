@@ -316,3 +316,12 @@ export const useClientInfoPortal = create((set) => ({
       additionalInformationLoadingState: loadingState,
     }),
 }));
+
+export const useTextContentComponent = create((set) => ({
+  textContentLoadingState: false,
+
+  setTextContentLoadingState: (loadingState) =>
+    set({
+      textContenLoadingState: loadingState,
+    }),
+}));

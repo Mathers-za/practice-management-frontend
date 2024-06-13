@@ -1,16 +1,27 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ConfirmationCustomization from "../confirmation customization/ConfirmationCustomization";
 import ReminderCustomization from "../email reminder customization/ReminderCustomization";
 import { useFetchData } from "../../../../CustomHooks/serverStateHooks";
 import EmailNotificationTypeTile from "./EmailTypeSelectorTile";
 import { handleTileColorChange } from "./emailNotificationHelperFns";
+import { useTextContentComponent } from "../../../../zustandStore/store";
 
 export default function EmailCustomizationPage({ profileId }) {
   const [tileColor, setTileColor] = useState(Array(2).fill("bg-white"));
-  const { data: emailNotificationData, refetch } = useFetchData(
+  const {
+    data: emailNotificationData,
+    refetch,
+    isLoading,
+  } = useFetchData(
     `/emailNotifications/view${profileId}`,
     "customEmailConfirmation"
   );
+
+  const { setTextContentLoadingState } = useTextContentComponent();
+
+  useEffect(() => {
+    setTextContentLoadingState(isLoading);
+  }, [isLoading]);
   const [showConfirmationCustomization, setShowConfirmationCustomization] =
     useState(false);
   const [showReminderCustomization, setShowReminderCustomization] =

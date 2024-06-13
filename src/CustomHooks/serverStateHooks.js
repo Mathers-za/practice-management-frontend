@@ -18,6 +18,7 @@ const useFetchData = (
     error,
     isLoading,
     isRefetching,
+    isFetched,
     refetch,
     isFetching,
   } = useQuery({
@@ -49,7 +50,7 @@ const useFetchData = (
     httpStatus,
     isRefetching,
     isFetching,
-
+    isFetched,
     refetch,
   };
 };
@@ -153,6 +154,7 @@ const usePagination = (
   filterParams
 ) => {
   const {
+    isPreviousData,
     data,
     isError,
     error,
@@ -184,6 +186,7 @@ const usePagination = (
     isLoading,
     refetch,
     isSuccess,
+    isPreviousData,
   };
 };
 

@@ -19,6 +19,8 @@ export default function AppointmentFilterSearchList({ params, profileId }) {
     data: appointmentData,
     refetch: refetchInAppointmentFilterList,
     isLoading,
+    isFetching,
+    isPreviousData,
   } = usePagination(
     `/appointments/appointmentsPagination${profileId}`,
     ["appointmentsFilter", params, page],
@@ -67,8 +69,8 @@ export default function AppointmentFilterSearchList({ params, profileId }) {
           </div>
         </div>
         <CustomLinearProgressBar
-          className="bottom-0 absolute left-0 w-full"
-          isLoading={isLoading}
+          className="top-0 absolute left-0 w-full"
+          isLoading={isLoading || isPreviousData}
         />
       </div>
     </>

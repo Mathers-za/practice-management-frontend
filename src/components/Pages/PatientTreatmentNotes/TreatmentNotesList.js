@@ -12,6 +12,7 @@ import TreatmentNoteListItem from "./TreatmentNoteListItem";
 import { usePatientPortalStore } from "../../../zustandStore/store";
 import { Pagination, Fab } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import { useSetLoadingStates } from "../../../CustomHooks/otherHooks";
 
 export default function PatientTreatmentNotesList() {
   const { patientId } = usePatientPortalStore();
@@ -20,12 +21,14 @@ export default function PatientTreatmentNotesList() {
   const treatmentNoteIdForEdit = useRef();
   const [page, setPage] = useState(1);
 
-  const { data: treatmentNotesArrayAndMetaData } = usePagination(
+  const { data: treatmentNotesArrayAndMetaData, isLoading } = usePagination(
     `/treatmentNotes/viewAll${patientId}`,
     ["patientTreatmentNotes", patientId, page],
     page,
     6
   );
+  const { setTreatmentNotesTabLoadingState } = usePatientPortalStore();
+  useSetLoadingStates(isLoading, setTreatmentNotesTabLoadingState);
 
   return (
     <>
