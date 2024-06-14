@@ -23,22 +23,27 @@ export const useOnSubmitButtonTextstateManager = (
 ) => {
   const { isIdle, isLoading, reset, isSuccess } = reactUseMutationReturnObject;
   const [buttonText, setButtonText] = useState(baseText);
-
+  let proccessingTextTimeOut = "";
+  let isSuccessTimeout = "";
   useEffect(() => {
     if (isIdle) {
       setButtonText(baseText);
     } else if (isLoading) {
       setButtonText(processingRequestText);
-      setTimeout(() => {
+      proccessingTextTimeOut = setTimeout(() => {
         setButtonText(baseText);
       }, 1500);
     }
 
     if (isSuccess) {
-      setTimeout(() => {
+      isSuccessTimeout = setTimeout(() => {
         reset();
       }, 3000);
     }
+    return () => {
+      clearTimeout(isSuccessTimeout);
+      clearTimeout(proccessingTextTimeOut);
+    };
   }, [reactUseMutationReturnObject]);
 
   return buttonText;

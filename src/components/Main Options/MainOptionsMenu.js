@@ -196,6 +196,10 @@ export default function MainOptionsMenu({ hideComponent, refetchData }) {
               />
               <div className="mt-4">
                 <ICD10Table
+                  queryKeyToInvalidate={[
+                    "financialData",
+                    globalAppointmentData.id,
+                  ]}
                   appointmentTypeId={globalAppointmentTypeData.id}
                   appointmentId={globalAppointmentData.id}
                 />

@@ -312,12 +312,7 @@ export default function InvoicePortal({
                     <ICD10Table
                       appointmentId={globalAppointmentData.id}
                       appointmentTypeId={globalAppointmentTypeData.id}
-                      queryKeyToInvalidate={[
-                        "financialsControl",
-                        "page",
-                        "invoice",
-                        "fetchFinancialData",
-                      ]}
+                      queryKeyToInvalidate={queryKeyToInvalidate}
                     />
                   )}
 

@@ -130,6 +130,10 @@ export default function MainCalendar({ profileId }) {
     });
   }
 
+  useEffect(() => {
+    return () => setGlobalPatientData("");
+  }, []);
+
   function handleEventCssCustomization(eventInfo) {
     const amountDue = eventInfo.event.extendedProps.appointmentData.amount_due;
     console.log(amountDue);

@@ -5,7 +5,7 @@ import {
   usePostData,
 } from "../../../CustomHooks/serverStateHooks";
 import { Button } from "@mui/material";
-import { useGlobalStore } from "../../../zustandStore/store";
+import { useGlobalStore, useIcd10Component } from "../../../zustandStore/store";
 
 export default function CodeLineItem({
   codeData,
@@ -37,6 +37,12 @@ export default function CodeLineItem({
     QueryKeyToInvalidate
   );
 
+  const {
+    setIsSuccessfullMutation,
+    setError,
+    setSuccessfullMutationFeedbackMessage,
+  } = useIcd10Component();
+
   function handleChange(event) {
     const { name, value } = event.target;
 
@@ -51,16 +57,49 @@ export default function CodeLineItem({
     }));
   }
 
+  useEffect(() => {
+    setIsSuccessfullMutation(false);
+    let timeout = "";
+    if (patchMutation.isSuccess || createMutation.isSuccess) {
+      //TODO instead of havung this ugy usefecct with this logic rather place it within the handlesubmit fucntion to make it cleaner. add it will be 10 times easier to set errors this way
+      setIsSuccessfullMutation(true);
+      setSuccessfullMutationFeedbackMessage(
+        patchMutation.isSuccess ? "code updated" : "code created"
+      );
+      timeout = setTimeout(() => {
+        setIsSuccessfullMutation(false);
+        patchMutation.isSuccess
+          ? patchMutation.reset()
+          : createMutation.reset();
+      }, 2000);
+    }
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [
+    patchMutation.isSuccess,
+    patchMutation.isIdle,
+    createMutation.isSuccess,
+    createMutation.error,
+    patchMutation.error,
+    createMutation.isIdle,
+  ]);
+
   async function handleSubmit() {
     if (codeData) {
       await patchMutation.mutateAsync(changes);
       refetchIcd10TableData();
       setChanges({});
-      hideComponent();
+      setTimeout(() => {
+        hideComponent();
+      }, 2100);
     } else {
       await createMutation.mutateAsync(lineItemData);
       refetchIcd10TableData();
-      hideComponent();
+      setTimeout(() => {
+        hideComponent();
+      }, 2100);
     }
   }
 

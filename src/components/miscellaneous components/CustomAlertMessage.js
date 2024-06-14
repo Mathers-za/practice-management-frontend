@@ -14,6 +14,7 @@ export default function CustomAlertMessage({
 }) {
   const [isVisible, setIsVisible] = useState(false);
   useEffect(() => {
+    setIsVisible(false);
     if (successFlag || errorFlag) {
       setTimeout(
         () => {

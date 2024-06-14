@@ -325,3 +325,21 @@ export const useTextContentComponent = create((set) => ({
       textContenLoadingState: loadingState,
     }),
 }));
+
+export const useIcd10Component = create((set) => ({
+  isSuccessfullMutation: false,
+  error: false,
+  successfullMutationFeedbackMessage: "Success",
+  setIsSuccessfullMutation: (isSuccessFlag) =>
+    set({
+      isSuccessfullMutation: isSuccessFlag,
+    }),
+  setError: (error) =>
+    set({
+      error: error,
+    }),
+  setSuccessfullMutationFeedbackMessage: (customSuccessMessage) =>
+    set({
+      successfullMutationFeedbackMessage: customSuccessMessage,
+    }),
+}));

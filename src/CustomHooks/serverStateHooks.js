@@ -22,6 +22,7 @@ const useFetchData = (
     refetch,
     isFetching,
     isPreviousData,
+    isStale,
   } = useQuery({
     //data.data.property to acces properties. data.status to access http codes
     queryKey: queryKey,
@@ -54,6 +55,7 @@ const useFetchData = (
     isFetched,
     refetch,
     isPreviousData,
+    isStale,
   };
 };
 

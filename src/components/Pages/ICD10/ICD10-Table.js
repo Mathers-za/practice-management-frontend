@@ -1,14 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import {
+  useDeleteData,
   useFetchData,
-  usePatchData,
-  usePostData,
 } from "../../../CustomHooks/serverStateHooks";
 import styles from "./ICDTable.module.css";
 import CodeLineItem from "./LineItemSelection";
-import GenericTopBar from "../../miscellaneous components/GenericTopBar";
+
 import { Button, IconButton } from "@mui/material";
 import { Delete, Edit } from "@mui/icons-material";
+import CustomLinearProgressBar from "../../miscellaneous components/CustomLinearProgressBar";
+import { useIcd10Component } from "../../../zustandStore/store";
+import CustomAlertMessage from "../../miscellaneous components/CustomAlertMessage";
 //TODO add tailwind styles to table. its currenlty using styles
 
 export default function ICD10Table({
@@ -18,9 +20,18 @@ export default function ICD10Table({
   queryKeyToInvalidate = "",
 }) {
   const codeDataToEdit = useRef(null);
-  const { data: ICD10Data, refetch: refetchIcd10Data } = useFetchData(
-    `/icd10Codes/view${appointmentId}`,
-    ["financialsControl,page,icd10Table,fetchIcd10Data"]
+  const {
+    data: ICD10Data,
+    refetch: refetchIcd10Data,
+    isLoading,
+    isRefetching,
+  } = useFetchData(`/icd10Codes/view${appointmentId}`, [
+    "financialsControl,page,icd10Table,fetchIcd10Data",
+  ]);
+
+  const { deleteMutation } = useDeleteData(
+    `/icd10Codes/delete`,
+    queryKeyToInvalidate && queryKeyToInvalidate
   );
 
   const { data: predefinedICDCData } = useFetchData(
@@ -28,12 +39,34 @@ export default function ICD10Table({
     "predefinedICDData"
   );
 
+  const {
+    isSuccessfullMutation,
+    error,
+    successfullMutationFeedbackMessage,
+    setIsSuccessfullMutation,
+    setError,
+    setSuccessfullMutationFeedbackMessage,
+  } = useIcd10Component();
+
+  console.log("issucces global is " + isSuccessfullMutation); //TODO instead of this ugly use effect have a a handle dlete function
+  useEffect(() => {
+    let timeoutId = "";
+    if (deleteMutation.isSuccess) {
+      setIsSuccessfullMutation(true);
+      setError(deleteMutation.error);
+      setSuccessfullMutationFeedbackMessage("Code deleted");
+      timeoutId = setTimeout(() => {
+        deleteMutation.reset();
+        setIsSuccessfullMutation(false);
+      }, 2000);
+      refetchIcd10Data();
+    }
+
+    return () => clearTimeout(timeoutId);
+  }, [deleteMutation.isSuccess]);
+
   const [codesForMapping, setCodesForMapping] = useState();
 
-  const { createMutation } = usePostData(
-    `/icd10Codes/create${appointmentId}`,
-    queryKeyToInvalidate
-  );
   const [showLineItem, setShowLineItem] = useState(false);
 
   useEffect(() => {
@@ -46,7 +79,7 @@ export default function ICD10Table({
 
   return (
     <>
-      <div className="w-full h-fit bg-white  ">
+      <div className="w-full h-fit bg-white relative  ">
         <div className=" flex flex-col items-center  space-y-2 justify-center p-3">
           <table className="w-11/12  table-fixed ">
             <tr className="h-12">
@@ -78,6 +111,7 @@ export default function ICD10Table({
                             <Edit />
                           </IconButton>
                           <IconButton
+                            onClick={() => deleteMutation.mutate(code.id)}
                             color="error"
                             sx={{
                               "&.MuiButtonBase-root": { padding: "0px" },
@@ -121,6 +155,13 @@ export default function ICD10Table({
             />
           </div>
         )}
+        <CustomAlertMessage
+          errorFlag={error}
+          successFlag={isSuccessfullMutation}
+          errorMessage={error}
+          successMessage={successfullMutationFeedbackMessage}
+        />
+        <CustomLinearProgressBar isLoading={isLoading || isRefetching} />
       </div>
     </>
   );
