@@ -8,7 +8,7 @@ export default function ConfirmChoiceModal({
   onAccept,
   message,
   showComponent = false,
-  className = "  w-1/2 h-1/3 shadow-md shadow-black/30 bg-white flex flex-col p-0 justify-between border      border-inherit ",
+  className = "  w-1/2 h-1/3 bg-orange-50 shadow-md shadow-black/30 flex flex-col p-0 justify-between border      border-inherit ",
   hideComponent,
 }) {
   const [spinOnClick, setSpinOnClick] = useState(false);

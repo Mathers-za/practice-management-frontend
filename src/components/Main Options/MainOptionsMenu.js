@@ -21,6 +21,7 @@ import {
 } from "../../CustomHooks/serverStateHooks";
 import CustomAlertMessage from "../miscellaneous components/CustomAlertMessage";
 import { useOnSubmitButtonTextstateManager } from "../../CustomHooks/otherHooks";
+import ConfirmChoiceModal from "../miscellaneous components/ConfirmComponent";
 
 export default function MainOptionsMenu({ hideComponent, refetchData }) {
   const navigate = useNavigate();
@@ -28,6 +29,8 @@ export default function MainOptionsMenu({ hideComponent, refetchData }) {
   const [showIcdCodeComponent, setShowIcdCodeComponent] = useState(false);
   const [showPaymentsPage, setShowPaymentsPage] = useState(false);
   const [showTreatmentNotePage, setShowTreatmentNotePage] = useState(false);
+  const [showConfirmDeletionModal, setShowConfirmDeletionModal] =
+    useState(false);
   const {
     globalPatientData,
     globalAppointmentTypeData,
@@ -198,7 +201,7 @@ export default function MainOptionsMenu({ hideComponent, refetchData }) {
 
         <div>
           <MenuDivsWithIcon
-            onclick={handleAppointmentDelete}
+            onclick={() => setShowConfirmDeletionModal(true)}
             iconStart={
               <FontAwesomeIcon
                 icon="fa-solid fa-trash"
@@ -266,6 +269,13 @@ export default function MainOptionsMenu({ hideComponent, refetchData }) {
           successMessage="Appointment Successfully deleted"
         />
       </div>
+      <ConfirmChoiceModal
+        hideComponent={() => setShowConfirmDeletionModal(false)}
+        message="Are you sure you wish to delete this appointment?"
+        onAccept={handleAppointmentDelete}
+        onCancel={() => setShowConfirmDeletionModal(false)}
+        showComponent={showConfirmDeletionModal}
+      />
     </>
   );
 }
