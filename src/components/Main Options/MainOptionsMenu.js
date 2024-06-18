@@ -8,14 +8,19 @@ import {
   usePatientPortalStore,
 } from "../../zustandStore/store";
 import { format } from "date-fns";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import InvoicePortal from "../Pages/ICD10/InvoicePage";
 import ICD10Table from "../Pages/ICD10/ICD10-Table";
 import PaymentPage from "../Pages/Payments/PaymentPage";
 import GenericTopBar from "../miscellaneous components/GenericTopBar";
 import CreateTreatmentNote from "../Pages/PatientTreatmentNotes/CreateTreatmentNote";
 import { useNavigate } from "react-router-dom";
-import { useFetchData } from "../../CustomHooks/serverStateHooks";
+import {
+  useDeleteData,
+  useFetchData,
+} from "../../CustomHooks/serverStateHooks";
+import CustomAlertMessage from "../miscellaneous components/CustomAlertMessage";
+import { useOnSubmitButtonTextstateManager } from "../../CustomHooks/otherHooks";
 
 export default function MainOptionsMenu({ hideComponent, refetchData }) {
   const navigate = useNavigate();
@@ -27,7 +32,7 @@ export default function MainOptionsMenu({ hideComponent, refetchData }) {
     globalPatientData,
     globalAppointmentTypeData,
     globalAppointmentData,
-
+    setGlobalPatientData,
     globalInvoiceData,
   } = useGlobalStore();
   const setPatientPortalPatientId = usePatientPortalStore(
@@ -38,18 +43,44 @@ export default function MainOptionsMenu({ hideComponent, refetchData }) {
     ["financialData", globalAppointmentData.id]
   );
 
+  const { deleteMutation } = useDeleteData(`/appointments/delete`);
+  const [error, setError] = useState("");
   const {
     globalRefetchAppointmentList,
     flagToRefreshAppointmentList,
     setFlagToRefreshAppointmentList,
     setGlobalRefetchAppointmentList,
   } = useAppointmentPortalStore();
+  const deleteButtonText = useOnSubmitButtonTextstateManager(
+    "Delete",
+    "...Deleting",
+    deleteMutation
+  );
+
+  useEffect(() => {
+    return () => {
+      setGlobalPatientData("");
+    };
+  }, []);
 
   useEffect(() => {
     if (refetchData) {
       setGlobalRefetchAppointmentList(refetchData);
     }
   }, [refetchData]);
+
+  async function handleAppointmentDelete() {
+    try {
+      await deleteMutation.mutateAsync(globalAppointmentData.id);
+
+      setTimeout(() => {
+        refetchData();
+        hideComponent();
+      }, 2500);
+    } catch (error) {
+      setError(error.message);
+    }
+  }
 
   function handleExit() {
     hideComponent();
@@ -61,7 +92,7 @@ export default function MainOptionsMenu({ hideComponent, refetchData }) {
 
   return (
     <>
-      <div className=" h-fit min-w-full border-b bg-slate-600  border-slate-500">
+      <div className=" h-fit min-w-full border-b relative bg-slate-600  border-slate-500">
         <div className="h-14 pl-4 pr-3 flex font-semibold items-center justify-between  bg-sky-500">
           <p>
             {globalPatientData.first_name +
@@ -167,6 +198,7 @@ export default function MainOptionsMenu({ hideComponent, refetchData }) {
 
         <div>
           <MenuDivsWithIcon
+            onclick={handleAppointmentDelete}
             iconStart={
               <FontAwesomeIcon
                 icon="fa-solid fa-trash"
@@ -174,7 +206,7 @@ export default function MainOptionsMenu({ hideComponent, refetchData }) {
                 style={{ color: "#0284C7" }}
               />
             }
-            text="Delete"
+            text={deleteButtonText}
           />
         </div>
         {showPaymentsPage && (
@@ -227,6 +259,12 @@ export default function MainOptionsMenu({ hideComponent, refetchData }) {
             />
           </div>
         )}
+        <CustomAlertMessage
+          errorFlag={error}
+          successFlag={deleteMutation.isSuccess}
+          errorMessage={error}
+          successMessage="Appointment Successfully deleted"
+        />
       </div>
     </>
   );

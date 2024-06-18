@@ -1,7 +1,8 @@
-import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import SideBarItemsWithIconDiv from "../miscellaneous components/SideBarItemsWithIcon";
+import { motion, transform } from "framer-motion";
 import TopBarItemsLink from "../miscellaneous components/TopBarItemsLink";
+import { IconButton } from "@mui/material";
+import InputIcon from "@mui/icons-material/Input";
 
 export default function MainMenuTopBar({ toggleSideBar }) {
   return (
@@ -10,7 +11,12 @@ export default function MainMenuTopBar({ toggleSideBar }) {
         className="h-full w-full bg-sky-600 flex  items-center pl-7  justify-start gap-6
        text-white  "
       >
-        <button onClick={() => toggleSideBar()}>click me</button>
+        <motion.div>
+          <IconButton size="large" onClick={() => toggleSideBar()}>
+            <InputIcon fontSize="large" sx={{ color: "white" }} />
+          </IconButton>
+        </motion.div>
+
         <TopBarItemsLink
           toolTipText="Calendar"
           icon={<FontAwesomeIcon icon="fa-regular fa-calendar" size="xl" />}

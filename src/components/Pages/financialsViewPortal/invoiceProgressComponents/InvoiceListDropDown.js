@@ -13,11 +13,17 @@ import {
   emailInvoiceStatement,
 } from "../../../../InvoiceApiRequestFns/invoiceApiHelperFns";
 import { useNavigate } from "react-router-dom";
-import { useFetchData } from "../../../../CustomHooks/serverStateHooks";
+import {
+  useDeleteData,
+  useFetchData,
+} from "../../../../CustomHooks/serverStateHooks";
 
 import { IconButton } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import UpdatePatientContactDetails from "../../../Create and update Patient component/UpdatePatientContactDetails";
+import CustomAlertMessage from "../../../miscellaneous components/CustomAlertMessage";
+import { useOnSubmitButtonTextstateManager } from "../../../../CustomHooks/otherHooks";
+import ConfirmChoiceModal from "../../../miscellaneous components/ConfirmComponent";
 
 export default function InvoiceListDropdown({
   invoiceData,
@@ -25,8 +31,14 @@ export default function InvoiceListDropdown({
   refetch,
 }) {
   //TODO patch sent when sent to medical aid or send to patient is clicked
-  const { invoice_title, appointment_id, email, invoice_number, patient_id } =
-    invoiceData;
+  const {
+    invoice_title,
+    appointment_id,
+    invoice_id,
+    email,
+    invoice_number,
+    patient_id,
+  } = invoiceData;
   const setPatientIdForPatientPortal = usePatientPortalStore(
     (state) => state.setPatientId
   );
@@ -37,6 +49,8 @@ export default function InvoiceListDropdown({
     `/financials/view${appointment_id}`,
     ["financialData", "page:InvoiceDropDown", appointment_id]
   );
+  const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] =
+    useState(false);
   const {
     globalRefetchAppointmentList,
     flagToRefreshAppointmentList,
@@ -48,7 +62,13 @@ export default function InvoiceListDropdown({
   const [showPaymentsPage, setShowPaymentsPage] = useState(false);
   const navigate = useNavigate();
   console.log(globalPatientData);
-
+  const { deleteMutation } = useDeleteData(`/invoices/delete`);
+  const [error, setError] = useState("");
+  const deleteButtonMessage = useOnSubmitButtonTextstateManager(
+    "Delete",
+    "...Deleting",
+    deleteMutation
+  );
   useEffect(() => {
     if (refetch) {
       setFlagToRefreshAppointmentList(false);
@@ -57,6 +77,18 @@ export default function InvoiceListDropdown({
       setPatientIdForPatientPortal(invoiceData.patient_id);
     }
   }, [refetch]);
+
+  async function handleDelete() {
+    try {
+      await deleteMutation.mutateAsync(invoice_id);
+      setTimeout(() => {
+        refetch();
+        hideComponent();
+      }, 2500);
+    } catch (error) {
+      setError(error.message);
+    }
+  }
 
   useEffect(() => {
     return () => {
@@ -70,7 +102,7 @@ export default function InvoiceListDropdown({
 
   return (
     <>
-      <div className="h-fit w-full text-base  ">
+      <div className="h-fit w-full text-base relative  ">
         <GenericTopBar
           label={invoice_title}
           className="text-base text-[#000000] p-[8px] bg-[#0EA5E9]"
@@ -176,7 +208,8 @@ export default function InvoiceListDropdown({
           }
         />
         <MenuDivsWithIcon
-          text="Delete"
+          onclick={() => setShowDeleteConfirmationModal(true)}
+          text={deleteButtonMessage}
           iconStart={
             <FontAwesomeIcon
               icon="fa-solid fa-trash"
@@ -184,6 +217,12 @@ export default function InvoiceListDropdown({
               style={{ color: "#0284C7" }}
             />
           }
+        />
+        <CustomAlertMessage
+          errorFlag={error}
+          successFlag={deleteMutation.isSuccess}
+          errorMessage={error}
+          successMessage="Invoice successfully deleted"
         />
       </div>
 
@@ -218,6 +257,13 @@ export default function InvoiceListDropdown({
           </div>
         </div>
       )}
+      <ConfirmChoiceModal
+        message="Are you sure you wish to delete this invoice"
+        onAccept={handleDelete}
+        onCancel={() => setShowDeleteConfirmationModal(false)}
+        showComponent={showDeleteConfirmationModal}
+        hideComponent={() => setShowDeleteConfirmationModal(false)}
+      />
     </>
   );
 }
