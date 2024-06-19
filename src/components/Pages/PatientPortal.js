@@ -1,11 +1,10 @@
 import { Link, Outlet } from "react-router-dom";
-import PatientList from "../PatientList";
-import { useEffect } from "react";
-import {
-  useGlobalStore,
-  usePatientPortalStore,
-} from "../../zustandStore/store";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+
+import { usePatientPortalStore } from "../../zustandStore/store";
 import CustomLinearProgressBar from "../miscellaneous components/CustomLinearProgressBar";
+import { Button, IconButton } from "@mui/material";
+import { useState } from "react";
 
 export default function PatientPortal() {
   const {
@@ -13,7 +12,7 @@ export default function PatientPortal() {
     invoiceTabLoadingState,
     treatmentNotesTabLoadingState,
   } = usePatientPortalStore();
-
+  const [showOptions, setShowOptions] = useState(false);
   return (
     <>
       <div className="relative ">
@@ -30,6 +29,35 @@ export default function PatientPortal() {
             }
             className="-bottom-1 absolute left-0 w-full"
           />
+          <div className="absolute left-0 top-0">
+            <div className=" flex items-center">
+              <IconButton
+                size="small"
+                onClick={() => setShowOptions(!showOptions)}
+              >
+                <MoreVertIcon fontSize="small" />
+              </IconButton>
+              {showOptions && (
+                <Button
+                  size="small"
+                  sx={{
+                    fontSize: "10px",
+                    paddingX: "5px",
+                    textAlign: "center",
+
+                    paddingBottom: "0px",
+
+                    display: "flex",
+                    verticalAlign: "center",
+                  }}
+                  color="error"
+                  variant="contained"
+                >
+                  Delete Patient
+                </Button>
+              )}
+            </div>
+          </div>
         </div>
 
         <div className=" w-full min-full bg-white overflow-auto">

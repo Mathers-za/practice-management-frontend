@@ -7,12 +7,12 @@ import {
   usePatchData,
   usePostData,
 } from "../../../CustomHooks/serverStateHooks";
-import PaymentPage from "../Payments/PaymentPage";
+
 import {
   useAppointmentPortalStore,
   useGlobalStore,
 } from "../../../zustandStore/store";
-import PaymentReference from "./PaymentReference";
+
 import { format } from "date-fns";
 import InvoiceSendCard from "./InvoiceSendCard/InvoiceSendCard";
 import { Alert, Button, TextField } from "@mui/material";

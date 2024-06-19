@@ -7,7 +7,10 @@ export default function PaymentReference({ paymentsData, onDelete }) {
     <>
       <div className="flex justify-between  items-center w-[100%]">
         <div className="flex  items-center">
-          <IconButton onClick={() => onDelete()} aria-label="delete">
+          <IconButton
+            onClick={() => onDelete(paymentsData.id)}
+            aria-label="delete"
+          >
             <DeleteIcon />
           </IconButton>
           <div className="mb-2">

@@ -23,21 +23,30 @@ export default function PaymentsListDropDownInvoicePage({
     "paymentsList",
     globalAppointmentData.id,
   ]);
-  const { deleteMutation } = useDeleteData("/payments/delete", [
-    "financialData",
-    "paymentsList",
-    globalAppointmentData.id,
-  ]);
+  const { deleteMutation } = useDeleteData(
+    "/payments/delete",
+    queryKeyToInvalidate
+  );
+  const [error, setError] = useState("");
   const [showPaymentsPage, setShowPaymentsPage] = useState(false);
+
+  async function handleDelete(paymentId) {
+    try {
+      setError("");
+      await deleteMutation.mutateAsync(paymentId);
+      refetchPaymentsList();
+    } catch (error) {
+      setError(error.message);
+    }
+  }
   return (
     <>
-      {" "}
       <div className="bg-white w-full relative flex flex-col h-fit">
         {paymentsList && paymentsList?.length > 0 ? (
           paymentsList.map((payment) => {
             return (
               <PaymentReference
-                onDelete={() => deleteMutation.mutate(payment.id)}
+                onDelete={handleDelete}
                 paymentsData={payment}
                 key={payment.id}
               />
@@ -73,10 +82,10 @@ export default function PaymentsListDropDownInvoicePage({
         />
       )}
       <CustomAlertMessage
-        errorFlag={deleteMutation.isError}
+        errorFlag={error}
         successFlag={deleteMutation.isSuccess}
         successMessage="Successfully deleted payment"
-        errorMessage={deleteMutation.error}
+        errorMessage={error}
       />
     </>
   );
