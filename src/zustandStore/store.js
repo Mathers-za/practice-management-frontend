@@ -276,6 +276,7 @@ export const useAppointmentCard = create((set) => ({
 }));
 
 export const usePatientPortalStore = create((set) => ({
+  patientData: "",
   patientId: "",
   appointmentTabLoadingState: false,
   invoiceTabLoadingState: false,
@@ -296,6 +297,10 @@ export const usePatientPortalStore = create((set) => ({
   setPatientId: (id) =>
     set({
       patientId: id,
+    }),
+  setPatientData: (patientDataObj) =>
+    set({
+      patientData: patientDataObj,
     }),
 }));
 

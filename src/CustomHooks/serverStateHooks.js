@@ -117,6 +117,7 @@ const useDeleteData = (endpoint = "", queryKey = undefined) => {
         withCredentials: true,
       });
     },
+
     {
       onSuccess: () => {
         if (queryKey) {
@@ -199,4 +200,30 @@ export {
   usePagination,
   useBatchDeleteData,
   usePagination as usePagination1,
+};
+
+export const useDeleteDataWithParams = (
+  // passing params as an arguemnt does nit work due to asyn nature of the code. only way to do it is through the usemutation mutate fucntion
+  endpoint = "",
+  queryKey = undefined
+) => {
+  const queryClient = useQueryClient();
+  const deleteMutation = useMutation(
+    async ({ id, params }) => {
+      return await axios.delete(`http://localhost:4000${endpoint}${id}`, {
+        withCredentials: true,
+        params: params && params,
+      });
+    },
+
+    {
+      onSuccess: () => {
+        if (queryKey) {
+          queryClient.invalidateQueries(queryKey);
+        }
+      },
+    }
+  );
+
+  return { deleteMutation };
 };

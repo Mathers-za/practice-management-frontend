@@ -1,18 +1,51 @@
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 import { usePatientPortalStore } from "../../zustandStore/store";
 import CustomLinearProgressBar from "../miscellaneous components/CustomLinearProgressBar";
 import { Button, IconButton } from "@mui/material";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import DeletePopMessageForPatientsPortal from "../miscellaneous components/DeletePopUpForPatientsPortal";
+import {
+  useDeleteData,
+  useDeleteDataWithParams,
+} from "../../CustomHooks/serverStateHooks";
+import CustomAlertMessage from "../miscellaneous components/CustomAlertMessage";
 
 export default function PatientPortal() {
+  const deletionQueryParams = useRef();
   const {
     appointmentTabLoadingState,
     invoiceTabLoadingState,
     treatmentNotesTabLoadingState,
   } = usePatientPortalStore();
   const [showOptions, setShowOptions] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const { patientId } = usePatientPortalStore();
+  const { deleteMutation } = useDeleteDataWithParams(
+    "/patients/delete",
+    "listOfPatients"
+  );
+
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  async function handleDeletePatient(optionsObj) {
+    try {
+      deletionQueryParams.current = optionsObj;
+      console.log("optins obj is " + JSON.stringify(optionsObj));
+
+      await deleteMutation.mutateAsync({
+        id: optionsObj.patient_id,
+        params: optionsObj,
+      });
+      setTimeout(() => {
+        navigate("/patient/search");
+      }, 2500);
+    } catch (error) {
+      setError(error.message);
+    }
+  }
   return (
     <>
       <div className="relative ">
@@ -29,6 +62,12 @@ export default function PatientPortal() {
             }
             className="-bottom-1 absolute left-0 w-full"
           />
+          <CustomAlertMessage
+            errorFlag={error}
+            successFlag={deleteMutation.isSuccess}
+            errorMessage={error}
+            successMessage="Successfully deleted patient"
+          />
           <div className="absolute left-0 top-0">
             <div className=" flex items-center">
               <IconButton
@@ -39,6 +78,7 @@ export default function PatientPortal() {
               </IconButton>
               {showOptions && (
                 <Button
+                  onClick={() => setShowDeleteModal(!showDeleteModal)}
                   size="small"
                   sx={{
                     fontSize: "10px",
@@ -57,6 +97,13 @@ export default function PatientPortal() {
                 </Button>
               )}
             </div>
+            <DeletePopMessageForPatientsPortal
+              showComponent={showDeleteModal}
+              hideComponent={() => setShowDeleteModal(!showDeleteModal)}
+              onCancel={() => setShowDeleteModal(!showDeleteModal)}
+              onConfirm={handleDeletePatient}
+              patient_id={patientId}
+            />
           </div>
         </div>
 

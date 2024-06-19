@@ -1,16 +1,20 @@
 import { useNavigate } from "react-router-dom";
 
 import PatientPickerComponent from "./miscellaneous components/PatientPicker";
-import { usePatientPortalStore } from "../zustandStore/store";
+import { useGlobalStore, usePatientPortalStore } from "../zustandStore/store";
+import { useEffect } from "react";
 export default function PatientList({ profileId, setPatientId }) {
   const navigate = useNavigate();
   const setPatientIdForPatientPortal = usePatientPortalStore(
     (state) => state.setPatientId
   );
+  const setPatientData = usePatientPortalStore((state) => state.setPatientData);
+
   function handleClickProp(patientObj) {
     navigate(`/patientPortal`);
     setPatientId(patientObj.id);
     setPatientIdForPatientPortal(patientObj.id);
+    setPatientData(patientObj);
   }
 
   return (
