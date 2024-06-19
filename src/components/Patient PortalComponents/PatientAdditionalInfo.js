@@ -109,7 +109,13 @@ export default function PatientAdditionalInformation() {
 
   return (
     <>
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-6 bg-white p-5 shadow-md shadow-black/20 rounded-sm "
+      >
+        <div className="border-b border-black ">
+          <h1 className="mb-3 text-lg">Additional patient information</h1>
+        </div>
         <MobileDatePicker
           yearsPerRow={3}
           value={

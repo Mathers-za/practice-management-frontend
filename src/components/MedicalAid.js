@@ -94,7 +94,7 @@ export default function MedicalAid() {
         onSubmit={handleSubmit}
       >
         <div className="space-y-6">
-          <div className="border-b ">
+          <div className="border-b border-black ">
             <h1 className="mb-3 text-lg">Medical Aid</h1>
           </div>{" "}
           <TextField
