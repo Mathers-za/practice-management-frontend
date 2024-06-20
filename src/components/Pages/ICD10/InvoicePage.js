@@ -278,16 +278,19 @@ export default function InvoicePortal({
                   </div>
 
                   {showInvoiceTitleDropdown && (
-                    <div>
-                      <TextField
-                        fullWidth
-                        onChange={(event) => handleInvoiceChanges(event)}
-                        type="text"
-                        name="invoice_title"
-                        value={invoicePayload?.invoice_title ?? ""}
-                        label="Invoice title"
-                        variant="standard"
-                      />
+                    <div className="border-b border-slate-300">
+                      <div className="ml-4 mr-4 py-4 ">
+                        <TextField
+                          fullWidth
+                          onChange={(event) => handleInvoiceChanges(event)}
+                          type="text"
+                          name="invoice_title"
+                          value={invoicePayload?.invoice_title ?? ""}
+                          label="Invoice title"
+                          variant="standard"
+                          helperText="Change the title as it appears in the invoice"
+                        />
+                      </div>
                     </div>
                   )}
 
@@ -309,11 +312,13 @@ export default function InvoicePortal({
                   />
 
                   {showIcd10Table && (
-                    <ICD10Table
-                      appointmentId={globalAppointmentData.id}
-                      appointmentTypeId={globalAppointmentTypeData.id}
-                      queryKeyToInvalidate={queryKeyToInvalidate}
-                    />
+                    <div className="border-b border-slate-300 mt-5">
+                      <ICD10Table
+                        appointmentId={globalAppointmentData.id}
+                        appointmentTypeId={globalAppointmentTypeData.id}
+                        queryKeyToInvalidate={queryKeyToInvalidate}
+                      />
+                    </div>
                   )}
 
                   <MenuDivsWithIcon
@@ -334,8 +339,8 @@ export default function InvoicePortal({
                   />
 
                   {showDatePickers && (
-                    <div className="flex gap-4 mt-4">
-                      <div>
+                    <div className=" px-4 py-4 border-b border-slate-300  flex items-center gap-4 ">
+                      <div className="">
                         <MobileDatePicker
                           value={new Date(invoicePayload.invoice_start_date)}
                           format="yyyy-MM-dd"
@@ -407,7 +412,7 @@ export default function InvoicePortal({
                   />
 
                   {showPaymentsReference && (
-                    <div className="p-4">
+                    <div className="p-4 border-b border-slate-300 ">
                       <div>
                         <PaymentsListDropDownInvoicePage
                           financialsData={financialsData}
