@@ -6,8 +6,8 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import CreatePatient from "../Create and update Patient component/CreatePatient";
 import { useGlobalStore } from "../../zustandStore/store";
 import CustomLinearProgressBar from "./CustomLinearProgressBar";
+
 export default function PatientPickerComponent({
-  profileId,
   hideComponent,
   onclick,
   showTopBar = true,
@@ -17,10 +17,12 @@ export default function PatientPickerComponent({
     hideComponent: false,
   },
 }) {
+  const profileId = useGlobalStore((state) => state.globalProfileData.id);
   const { data: patientData, isLoading } = useFetchData(
     `/patients/viewAll${profileId}`,
     "listOfPatients"
   );
+
   const [forceRerender, setForceRender] = useState(false);
   const [searchBarInput, setSearchBarInput] = useState("");
   const [filteredSearch, setFilteredSearch] = useState([]);
@@ -120,9 +122,7 @@ export default function PatientPickerComponent({
             <div className="w-4/5 h-3/4 ">
               <CreatePatient
                 actionOnSave={showAddPatientButton?.actionOnSave}
-                hideComponent={() =>
-                  setShowCreatePatientPage(!showCreatePatientPage)
-                }
+                hideComponent={showAddPatientButton.hideComponent}
               />
             </div>
           </div>

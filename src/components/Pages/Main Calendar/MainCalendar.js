@@ -152,7 +152,7 @@ export default function MainCalendar({ profileId }) {
 
   return (
     <>
-      <div className="bg-white p-3 relative ">
+      <div className="bg-white z-0 p-3 relative ">
         <FullCalendar
           eventContent={(eventInfo) => handleEventCssCustomization(eventInfo)}
           displayEventEnd={true}

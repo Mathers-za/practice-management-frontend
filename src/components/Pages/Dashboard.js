@@ -11,6 +11,7 @@ import {
 } from "../../zustandStore/store";
 import { motion, AnimatePresence } from "framer-motion";
 import axiosRequest from "../../apiRequests/apiRequests";
+import DashboardMenuButton from "../miscellaneous components/DashboardMenuButton";
 
 export default function DashBoard({ profileIdStateSetter }) {
   const [showSideBar, setShowSideBar] = useState(true);
@@ -112,6 +113,7 @@ export default function DashBoard({ profileIdStateSetter }) {
           </div>
         </div>
       </div>
+      <DashboardMenuButton />
     </>
   );
 }

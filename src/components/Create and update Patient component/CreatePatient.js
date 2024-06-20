@@ -14,7 +14,10 @@ import CustomAlertMessage from "../miscellaneous components/CustomAlertMessage";
 
 export default function CreatePatient({ hideComponent, actionOnSave }) {
   const profileId = useGlobalStore((state) => state.globalProfileData.id);
-  const { createMutation } = usePostData(`/patients/create${profileId}`);
+  const { createMutation } = usePostData(
+    `/patients/create${profileId}`,
+    "listOfPatients"
+  );
   const [patientInfo, setPatientInfo] = useState({});
   const [errorMessage, setErrorMessage] = useState();
   const [guidanceMessage, setGuidanceMessage] = useState();
@@ -24,6 +27,7 @@ export default function CreatePatient({ hideComponent, actionOnSave }) {
     undefined,
     createMutation
   );
+  const { setPatientId, setPatientData } = usePatientPortalStore();
 
   useEffect(() => {
     const message = patientCreationGuidance(patientInfo);
@@ -40,6 +44,8 @@ export default function CreatePatient({ hideComponent, actionOnSave }) {
         patientInfo
       );
       const response = await createMutation.mutateAsync(validatedData);
+      setPatientId(response.id);
+      setPatientData(response);
       setErrorMessage();
       actionOnSave
         ? actionOnSave(response)
@@ -88,7 +94,7 @@ export default function CreatePatient({ hideComponent, actionOnSave }) {
         <div className="fixed left-0 top-0  w-full h-screen z-20">
           <div className="w-full h-full">
             <CreatePatientSuccessPage
-              hideComponent={() => setShowSuccessPage(!showSuccessPage)}
+              hideComponent={() => hideComponent()}
               resetCreateAppointmentFn={() => {
                 setGuidanceMessage();
                 setPatientInfo({});

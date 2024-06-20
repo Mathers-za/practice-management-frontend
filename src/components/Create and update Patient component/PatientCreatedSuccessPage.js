@@ -23,19 +23,25 @@ export default function CreatePatientSuccessPage({
     <>
       <div className="h-full bg-white w-full">
         <GenericTopBar
-          onclick={() => navigate("/")}
+          onclick={() => hideComponent()}
           label={"Patient successfully created"}
           showCloseOption={true}
         />
         <MenuDivsWithIcon
           iconStart={<ArrowForward />}
           text={"Go to client page"}
-          onclick={() => navigate("/patientPortal/clientInfo")}
+          onclick={() => {
+            hideComponent();
+            navigate("/patientPortal/clientInfo");
+          }}
           iconEnd={<KeyboardArrowRight />}
         />
         <MenuDivsWithIcon
           text={"Add medical Aid information"}
-          onclick={() => navigate("/patientPortal/clientInfo/medicalAid")}
+          onclick={() => {
+            hideComponent();
+            navigate("/patientPortal/clientInfo/medicalAid");
+          }}
           iconStart={<Info />}
           iconEnd={<KeyboardArrowRight />}
         />

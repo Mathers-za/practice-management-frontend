@@ -25,7 +25,7 @@ export default function PatientContactDetailsForm({
   return (
     <>
       <form
-        className="rounded-sm h-full w-full   relative  shadow-md shadow-black/30 "
+        className="rounded-sm h-full w-full overflow-auto   relative  shadow-md shadow-black/30 "
         onSubmit={handleSubmit}
       >
         {showTopBar.show && (
@@ -93,7 +93,7 @@ export default function PatientContactDetailsForm({
               <p>{guidanceMessage}</p>
             </div>
           )}
-          <div className="flex-grow flex items-end ">
+          <div className="h-full flex items-end ">
             <Button
               sx={{ borderRadius: "0px" }}
               size="large"
