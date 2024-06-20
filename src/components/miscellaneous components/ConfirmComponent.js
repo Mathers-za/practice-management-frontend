@@ -1,17 +1,23 @@
 import { Button, CircularProgress } from "@mui/material";
 import { motion, AnimatePresence } from "framer-motion";
 import GenericTopBar from "./GenericTopBar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function ConfirmChoiceModal({
   onCancel,
   onAccept,
   message,
   showComponent = false,
-  className = "  w-1/2 h-1/3 bg-orange-50 shadow-md shadow-black/30 flex flex-col p-0 justify-between border      border-inherit ",
+  className = "  w-1/2 h-1/3 bg-white shadow-md shadow-black/30 flex flex-col p-0 justify-between border      border-inherit ",
   hideComponent,
 }) {
   const [spinOnClick, setSpinOnClick] = useState(false);
+
+  useEffect(() => {
+    return () => {
+      setSpinOnClick(false);
+    };
+  }, [showComponent]);
   return (
     <>
       <AnimatePresence>
@@ -27,11 +33,12 @@ export default function ConfirmChoiceModal({
                 label="Confirm deletion"
                 showCloseOption={true}
                 onclick={hideComponent}
-                className="bg-[#f97316] h-12 "
+                additionalClassName="bg-orange-500 h-12  "
               />
               <p className="p-5 text-black text-base ">{message}</p>
               <div className="flex px-1  items-end justify-between mb-1">
                 <Button
+                  disabled={spinOnClick}
                   sx={{ height: "fit-content" }}
                   color="inherit"
                   variant="contained"
@@ -40,6 +47,7 @@ export default function ConfirmChoiceModal({
                   Cancel
                 </Button>
                 <Button
+                  disabled={spinOnClick}
                   sx={{ height: "fit-content" }}
                   color="warning"
                   variant="contained"

@@ -80,6 +80,7 @@ export default function AppointmentTypeList({ profileId }) {
                 .map((type) => (
                   <div className=" w-1/4 h-fit  bg-pink-500 ">
                     <AppointmentTypeCard
+                      queryKeyToInvalidate={["appointmentTypeList", page]}
                       appointmentTypeData={type}
                       predefinedIcdcodes={appTypeAndIcdData.data.predefinedIcd10Data.find(
                         (arr) => {

@@ -4,13 +4,17 @@ import {
   useGlobalStore,
   useAppointmentTypeAndIcdAutomationsPage,
 } from "../../zustandStore/store";
-
+import DeleteIcon from "@mui/icons-material/Delete";
 import ApptypeEditsAndIcdAutomationsPage from "./ApptypeUpdateAndIcdAutomations{age";
-import { Button } from "@mui/material";
+import { Button, IconButton } from "@mui/material";
+import { useDeleteData } from "../../CustomHooks/serverStateHooks";
+import CustomAlertMessage from "../miscellaneous components/CustomAlertMessage";
+import ConfirmChoiceModal from "../miscellaneous components/ConfirmComponent";
 
 export default function AppointmentTypeCard({
   appointmentTypeData,
   predefinedIcdcodes,
+  queryKeyToInvalidate,
 }) {
   console.log(predefinedIcdcodes);
   const { globalPracticeDetailsData } = useGlobalStore();
@@ -19,6 +23,25 @@ export default function AppointmentTypeCard({
   const [showApptypeEdit, setShowAppTypeEdit] = useState(false);
   console.log(globalPracticeDetailsData);
   const [total, setTotal] = useState();
+  const { deleteMutation } = useDeleteData(
+    `/appointmentTypes/delete`,
+    queryKeyToInvalidate && queryKeyToInvalidate
+  );
+  const [error, setError] = useState();
+  const [showConfirmDeletionModal, setShowConfirmDeletionModal] =
+    useState(false);
+
+  async function handleDelete() {
+    try {
+      setError();
+      await deleteMutation.mutateAsync(appointmentTypeData.id);
+      setTimeout(() => {
+        setShowConfirmDeletionModal(false);
+      }, 2000);
+    } catch (error) {
+      setError(error.message);
+    }
+  }
 
   useEffect(() => {
     let sum = 0;
@@ -37,7 +60,15 @@ export default function AppointmentTypeCard({
         <div className="relative">
           {" "}
           <img src="../images/qb0FeYn.jpeg" alt="working" />
-          <div className="absolute top-1 right-1">
+          <div className="absolute flex justify-between items-center w-full top-1 right-1">
+            <IconButton
+              onClick={() =>
+                setShowConfirmDeletionModal(!showConfirmDeletionModal)
+              }
+              size="small"
+            >
+              <DeleteIcon sx={{ fontSize: 28 }} color="error" />
+            </IconButton>
             <Button
               size="small"
               sx={{
@@ -129,6 +160,21 @@ export default function AppointmentTypeCard({
           </div>
         )}
       </div>
+      <CustomAlertMessage
+        errorFlag={error}
+        successFlag={deleteMutation.isSuccess}
+        errorMessage={error}
+        successMessage="Appointment type successfully deleted"
+      />
+      <ConfirmChoiceModal
+        onAccept={handleDelete}
+        hideComponent={() =>
+          setShowConfirmDeletionModal(!showConfirmDeletionModal)
+        }
+        showComponent={showConfirmDeletionModal}
+        onCancel={() => setShowConfirmDeletionModal(!showConfirmDeletionModal)}
+        message="Are you sure you would like to delete this appointment type?"
+      />
     </>
   );
 }
