@@ -1,22 +1,20 @@
 import { useEffect, useState } from "react";
 import defaultData from "../../DefaultData/defaultData";
-import SideBar from "../SideBar/SideBar";
 import { Outlet } from "react-router-dom";
 import { useFetchData, usePostData } from "../../CustomHooks/serverStateHooks";
 import MainMenuSideBar from "../mainMenuSideBar/MainMenuSideBar";
 import MainMenuTopBar from "../MainMenuTopBar/MainMenuTopBar";
-import {
-  useGlobalStore,
-  useGlobalSubmissionAert,
-} from "../../zustandStore/store";
+import { useGlobalStore } from "../../zustandStore/store";
 import { motion, AnimatePresence } from "framer-motion";
 import axiosRequest from "../../apiRequests/apiRequests";
 import DashboardMenuButton from "../miscellaneous components/DashboardMenuButton";
+import WelcomingMessageAndSpinner from "../miscellaneous components/WelcomingMessageAndSpinner";
 
 export default function DashBoard({ profileIdStateSetter }) {
   const [showSideBar, setShowSideBar] = useState(true);
 
-  const { setGlobalProfileData, setGlobalPracticeDetails } = useGlobalStore();
+  const { setGlobalProfileData, setGlobalPracticeDetails, globalProfileData } =
+    useGlobalStore();
   const { data, httpStatus } = useFetchData(
     `/profile/view`,
     "profileDataDashboard"
@@ -56,6 +54,18 @@ export default function DashBoard({ profileIdStateSetter }) {
   const { createMutation: emailNotificationMutation } = usePostData(
     `/emailNotifications/create`
   );
+
+  const [isLoaded, setIsloaded] = useState(false);
+
+  useEffect(() => {
+    let timeoutId = "";
+    if (globalProfileData?.id) {
+      timeoutId = setTimeout(() => {
+        setIsloaded(true);
+      }, 1700);
+    }
+    return () => clearTimeout(timeoutId);
+  }, [globalProfileData?.id]);
 
   useEffect(() => {
     async function createInitialRowProfileAndPractice() {
@@ -109,7 +119,11 @@ export default function DashBoard({ profileIdStateSetter }) {
           </div>
 
           <div className=" w-full p-2 h-full max-h-full overflow-auto  bg-slate-200 ">
-            <Outlet />
+            {isLoaded ? (
+              <Outlet />
+            ) : (
+              <WelcomingMessageAndSpinner showComponent={isLoaded} />
+            )}
           </div>
         </div>
       </div>

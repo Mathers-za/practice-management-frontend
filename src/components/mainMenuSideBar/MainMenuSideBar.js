@@ -4,11 +4,14 @@ import { useState } from "react";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { motion, AnimatePresence } from "framer-motion";
 import { useGlobalStore } from "../../zustandStore/store";
-import { duration } from "@mui/material";
+import LogoutIcon from "@mui/icons-material/Logout";
+import { usePostData } from "../../CustomHooks/serverStateHooks";
 
 export default function MainMenuSideBar() {
   const [showDropDownSettings, setShowDropDownSettings] = useState(false);
   const { globalProfileData } = useGlobalStore();
+  const { createMutation } = usePostData(`/users/logout`);
+
   return (
     <>
       <div className="min-w-full bg-slate-500 h-full  sticky left-0 top-0 bottom-0 flex flex-col text-nowrap  ">
@@ -101,6 +104,13 @@ export default function MainMenuSideBar() {
           linkTo={"componentStyling"}
           icon={<FontAwesomeIcon icon="fa-solid fa-mortar-pestle" size="lg" />}
         />
+        <div onClick={() => createMutation.mutate()}>
+          <SideBarItemsWithIconDiv
+            linkText="Logout"
+            icon={<LogoutIcon />}
+            linkTo="/entry"
+          />
+        </div>
       </div>
     </>
   );

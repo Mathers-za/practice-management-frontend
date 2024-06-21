@@ -17,7 +17,8 @@ import { useGlobalStore } from "../../../zustandStore/store.js";
 import { useFetchData } from "../../../CustomHooks/serverStateHooks.js";
 import CustomLinearProgressBar from "../../miscellaneous components/CustomLinearProgressBar.js";
 
-export default function MainCalendar({ profileId }) {
+export default function MainCalendar() {
+  const profileId = useGlobalStore((state) => state.globalProfileData.id);
   const { startOfWeekDate, endOfWeekDate } =
     getStartAndEndDatesOfCurrentWeek("yyyy-MM-dd");
   const [searchDates, setSearchDates] = useState({
