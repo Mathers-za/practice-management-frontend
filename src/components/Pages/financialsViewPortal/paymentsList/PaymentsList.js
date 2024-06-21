@@ -11,7 +11,7 @@ import Pagination from "@mui/material/Pagination";
 import { useGlobalStore } from "../../../../zustandStore/store";
 import CustomLinearProgressBar from "../../../miscellaneous components/CustomLinearProgressBar";
 
-export default function PaymentsList({ profileId }) {
+export default function PaymentsList() {
   const [searchDateCriteria, setSearchDateCriteria] = useState({
     start_date: formatDateYearMonthDay(new Date()),
     end_date: formatDateYearMonthDay(new Date()),
@@ -63,10 +63,10 @@ export default function PaymentsList({ profileId }) {
 
   return (
     <>
-      <div className="w-full min-h-full h-fit p-3 bg-white">
-        <div className="border border-slate-500 shadow-md relative shadow-black/40 rounded-sm p-4">
+      <div className="w-full min-h-full h-fit p-2 bg-white">
+        <div className="border border-slate-500 shadow-md relative shadow-black/40 rounded-sm  p-4">
           <div>
-            <div className="flex gap-5">
+            <div className="flex ml-8  gap-5">
               <div className="w-2/4">
                 <h2 className=" text-lg">Payments</h2>
                 <div className="  flex gap-2 ">
@@ -111,7 +111,7 @@ export default function PaymentsList({ profileId }) {
             </div>
           </div>
           <div className="flex mt-4 items-end justify-between">
-            <div>
+            <div className="ml-8">
               {paymentsData?.metadata?.totalResults ?? 0} payments found
             </div>
             <div>

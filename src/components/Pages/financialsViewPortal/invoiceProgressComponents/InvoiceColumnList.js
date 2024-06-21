@@ -9,7 +9,10 @@ import {
   formatDateYearMonthDay,
 } from "./progressUtilFunctions";
 import { filterPastDueInvoices } from "./progressUtilFunctions";
-import { useInvoiceProgessComponent } from "../../../../zustandStore/store";
+import {
+  useGlobalStore,
+  useInvoiceProgessComponent,
+} from "../../../../zustandStore/store";
 import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
 import { TextField } from "@mui/material";
 import Badge from "./Badge";
@@ -50,7 +53,6 @@ function setCountAndTotalWhenProgressFlagFalse(
 }
 
 export default function InvoiceColumnList({
-  profileId,
   progressFlag,
   leftColHeading,
   middleColHeading,
@@ -59,7 +61,7 @@ export default function InvoiceColumnList({
   const [leftColumnList, setLeftColumnList] = useState([]);
   const [middleColumnList, setMiddleColumnList] = useState([]);
   const [rightColumnList, setRightColumnList] = useState([]);
-
+  const profileId = useGlobalStore((state) => state.globalProfileData.id);
   const [searchDateCriteria, setSearchDateCriteria] = useState({
     invoice_start_date: formatDateYearMonthDay(startOfWeek(new Date())),
     invoice_end_date: formatDateYearMonthDay(endOfWeek(new Date())),
@@ -123,7 +125,7 @@ export default function InvoiceColumnList({
     <>
       <div className="w-full  h-fit p-2 min-h-full  bg-white">
         <div className="h-fit relative border shadow-md shadow-black/40 w-full mb-2 items-start justify-between flex px-3 pt-2 pb-3 ">
-          <div className=" flex flex-col gap-3  h-full w-1/3">
+          <div className=" flex flex-col gap-3 ml-8  h-full w-1/3">
             <MobileDatePicker
               label="Start Date"
               onAccept={(date) => handleDateChange(date, "invoice_start_date")}

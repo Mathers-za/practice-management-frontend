@@ -12,7 +12,7 @@ export default function MainMenuSideBar() {
   return (
     <>
       <div className="min-w-full bg-slate-500 h-full  sticky left-0 top-0 bottom-0 flex flex-col text-nowrap  ">
-        <div className=" flex items-center pl-4  mb-5  py-2">
+        <div className=" flex items-center pl-4  mb-2 mt-1  py-2">
           <h2 className="text-2xl text-white">
             Welcome{" "}
             {(globalProfileData?.first_name || "") +
@@ -82,8 +82,8 @@ export default function MainMenuSideBar() {
           icon={<i class="fa-regular fa-calendar-check fa-lg"></i>}
         />
         <SideBarItemsWithIconDiv
-          linkText={"Payments Tracker"}
-          linkTo={"paymentsTracker"}
+          linkText={"Invoice And Payments tracking"}
+          linkTo={"invoicesAndpaymentsPortal"}
           icon={<FontAwesomeIcon icon="fa-solid fa-chart-column" size="lg" />}
         />
         <SideBarItemsWithIconDiv
@@ -100,15 +100,6 @@ export default function MainMenuSideBar() {
           linkText={"Custom Component styling"}
           linkTo={"componentStyling"}
           icon={<FontAwesomeIcon icon="fa-solid fa-mortar-pestle" size="lg" />}
-        />
-        <SideBarItemsWithIconDiv
-          linkText={"Invoice Progress"}
-          linkTo={"invoiceProgress"}
-          icon={<FontAwesomeIcon icon="fa-solid fa-receipt" size="lg" />}
-        />
-        <SideBarItemsWithIconDiv
-          linkTo={"invoicesPastDue"}
-          linkText={"Invoice past due"}
         />
       </div>
     </>

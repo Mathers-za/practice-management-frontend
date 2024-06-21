@@ -1,10 +1,9 @@
 import InvoiceColumnList from "./InvoiceColumnList";
 
-export default function InvoiceProgressPage({ profileId }) {
+export default function InvoiceProgressPage() {
   return (
     <>
       <InvoiceColumnList
-        profileId={profileId}
         leftColHeading="In progress"
         middleColHeading="Sent"
         rightColHeading="Paid"

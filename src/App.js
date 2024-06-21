@@ -43,6 +43,7 @@ import UpdatePatientContactDetails from "./components/Create and update Patient 
 import PatientAdditionalInformation from "./components/Patient PortalComponents/PatientAdditionalInfo";
 import AppointmentsTab from "./components/Patient PortalComponents/AppointmentsTab";
 import PatientPortalInvoiceTab from "./components/Patient PortalComponents/PatientPortalInvoiceTab";
+import InvoicesAndPaymentsPortal from "./components/Pages/financialsViewPortal/InvoicesAndPaymentsPortal";
 
 const queryClient = new QueryClient();
 
@@ -100,6 +101,20 @@ function App() {
                   path="practice"
                   element={<PracticeDetails profileId={profileId} />}
                 />
+
+                <Route
+                  path="invoicesAndpaymentsPortal"
+                  element={<InvoicesAndPaymentsPortal />}
+                >
+                  <Route index element={<InvoiceProgressPage />} />
+
+                  <Route
+                    path="invoiceProgress"
+                    element={<InvoiceProgressPage />}
+                  />
+                  <Route path="invoicePastDue" element={<PastDueInvoices />} />
+                  <Route path="paymentsTracker" element={<PaymentsList />} />
+                </Route>
 
                 <Route
                   path="patient/search"
@@ -202,23 +217,8 @@ function App() {
                 <Route path="invoicePortal" element={<InvoicePortal />} />
 
                 <Route
-                  path="invoiceProgress"
-                  element={<InvoiceProgressPage profileId={profileId} />}
-                />
-
-                <Route
-                  path="invoicesPastDue"
-                  element={<PastDueInvoices profileId={profileId} />}
-                />
-
-                <Route
                   path="emailNotifications"
                   element={<EmailCustomizationPage profileId={profileId} />}
-                />
-
-                <Route
-                  path="paymentsTracker"
-                  element={<PaymentsList profileId={profileId} />}
                 />
 
                 <Route
