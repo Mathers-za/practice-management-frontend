@@ -8,12 +8,14 @@ import DisplaySingleError from "./WarningMessage";
 import { TextField, Button } from "@mui/material";
 import { useOnSubmitButtonTextstateManager } from "../../CustomHooks/otherHooks";
 import CustomAlertMessage from "./CustomAlertMessage";
+import { useGlobalStore } from "../../zustandStore/store";
 
 export default function CreateAppointmentType({
-  profileId,
   queryKeyToInvalidate,
   hideComponent,
+  onHandleSumbitAction,
 }) {
+  const profileId = useGlobalStore((state) => state.globalProfileData.id);
   const [errorMessage, setErrorMessage] = useState();
   const { createMutation } = usePostData(
     `/appointmentTypes/create${profileId}`,
@@ -58,7 +60,11 @@ export default function CreateAppointmentType({
       );
 
       await createAppointmentTypeValidationSchema.validate(cleanedData);
-      await createMutation.mutateAsync(cleanedData);
+      const response = await createMutation.mutateAsync(cleanedData);
+      console.log(
+        "The respons efrom create app type is " + JSON.stringify(response)
+      );
+      onHandleSumbitAction && onHandleSumbitAction(response);
     } catch (error) {
       setErrorMessage(error.message);
     }

@@ -3,6 +3,11 @@ import { useFetchData, usePatchData } from "../CustomHooks/serverStateHooks";
 import { useGlobalStore } from "../zustandStore/store";
 import { profileValidationSchema } from "../form validation Schemas/validationSchemas";
 import { Button, TextField } from "@mui/material";
+import defaultData from "../DefaultData/defaultData";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+
+import Select from "@mui/material/Select";
 
 import { useOnSubmitButtonTextstateManager } from "../CustomHooks/otherHooks";
 
@@ -141,15 +146,23 @@ export default function Profile() {
                 />
               </div>
               <div>
-                <TextField
+                <InputLabel sx={{ fontSize: 12.5 }}>Profession</InputLabel>
+                <Select
                   fullWidth
                   variant="standard"
-                  label="Profession"
-                  name="profession"
-                  onChange={handleChange}
-                  type="text"
                   value={profileData?.profession || ""}
-                />
+                  label="Age"
+                  onChange={handleChange}
+                  name="profession"
+                >
+                  {defaultData.defaultHealthcareProfessions.map(
+                    (profession) => {
+                      return (
+                        <MenuItem value={profession}>{profession}</MenuItem>
+                      );
+                    }
+                  )}
+                </Select>
               </div>
 
               <CustomAlertMessage

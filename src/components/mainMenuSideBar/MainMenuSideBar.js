@@ -14,8 +14,8 @@ export default function MainMenuSideBar() {
 
   return (
     <>
-      <div className="min-w-full bg-slate-500 h-full  sticky left-0 top-0 bottom-0 flex flex-col text-nowrap  ">
-        <div className=" flex items-center pl-4  mb-2 mt-1  py-2">
+      <div className="min-w-full bg-slate-500 h-full justify-around sticky left-0 top-0 bottom-0 flex flex-col text-nowrap  ">
+        <div className=" flex items-start pt-5 pl-4 h-28 mb-2 mt-1  py-2">
           <h2 className="text-2xl text-white">
             Welcome{" "}
             {(globalProfileData?.first_name || "") +
@@ -49,11 +49,13 @@ export default function MainMenuSideBar() {
         <AnimatePresence>
           {showDropDownSettings && (
             <motion.div
-              initial={{ height: 0, zIndex: -1 }}
+              initial={{ height: 0, zIndex: -1, opacity: 0 }}
               animate={{
                 height: "auto",
                 zIndex: 1,
+                opacity: 1,
               }}
+              exit={{ height: 0, zIndex: -1, opacity: 0 }}
               transition={{ duration: 0.1 }}
               className="flex flex-col justify-center border-b border-white pb-2 "
             >
@@ -104,12 +106,17 @@ export default function MainMenuSideBar() {
           linkTo={"componentStyling"}
           icon={<FontAwesomeIcon icon="fa-solid fa-mortar-pestle" size="lg" />}
         />
-        <div onClick={() => createMutation.mutate()}>
-          <SideBarItemsWithIconDiv
-            linkText="Logout"
-            icon={<LogoutIcon />}
-            linkTo="/entry"
-          />
+        <div
+          className="flex-grow flex items-end pb-1  "
+          onClick={() => createMutation.mutate()}
+        >
+          <div className="h-fit w-full border-t-2 border-b-2 border-white">
+            <SideBarItemsWithIconDiv
+              linkText="Logout"
+              icon={<LogoutIcon />}
+              linkTo="/entry"
+            />
+          </div>
         </div>
       </div>
     </>
