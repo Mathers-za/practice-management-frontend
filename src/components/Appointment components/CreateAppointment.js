@@ -269,6 +269,32 @@ export default function CreateAppointment({
             />
           </div>
         )}
+        <DivSvgDisplayCombo
+          icon={
+            <FontAwesomeIcon
+              icon="fa-regular fa-star"
+              size="2xl"
+              style={{ color: "#055bf0", marginRight: "30px" }}
+            />
+          }
+          displayText={
+            appointmentTypeSelectionDisplay || "Select an Apppointment Type"
+          }
+          onclick={() =>
+            setShowAppointmentTypePicker(!showAppointmentTypeIcker)
+          }
+        />
+        {showAppointmentTypeIcker && (
+          <div className="  fixed left-0 top-0 bg-black bg-opacity-40  min-w-full min-h-screen z-10 flex  justify-center items-center">
+            <AppointmentTypePicker
+              hideComponent={() =>
+                setShowAppointmentTypePicker(!showAppointmentTypeIcker)
+              }
+              profileId={globalProfileData.id}
+              onclick={handleAppointmentTypeSelect}
+            />
+          </div>
+        )}
         <div>
           <DivSvgDisplayCombo
             icon={
@@ -345,32 +371,6 @@ export default function CreateAppointment({
                   }}
                 />
               </div>
-            </div>
-          )}
-          <DivSvgDisplayCombo
-            icon={
-              <FontAwesomeIcon
-                icon="fa-regular fa-star"
-                size="2xl"
-                style={{ color: "#055bf0", marginRight: "30px" }}
-              />
-            }
-            displayText={
-              appointmentTypeSelectionDisplay || "Select an Apppointment Type"
-            }
-            onclick={() =>
-              setShowAppointmentTypePicker(!showAppointmentTypeIcker)
-            }
-          />
-          {showAppointmentTypeIcker && (
-            <div className="  fixed left-0 top-0 bg-black bg-opacity-40  min-w-full min-h-screen z-10 flex  justify-center items-center">
-              <AppointmentTypePicker
-                hideComponent={() =>
-                  setShowAppointmentTypePicker(!showAppointmentTypeIcker)
-                }
-                profileId={globalProfileData.id}
-                onclick={handleAppointmentTypeSelect}
-              />
             </div>
           )}
         </div>

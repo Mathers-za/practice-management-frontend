@@ -110,6 +110,7 @@ export default function TextContent({ columnName, data, refetch, label }) {
           <div className="w-3/4 space-y-3 ">
             <div className="shadow-md  relative">
               <TextField
+                inputProps={{ style: { fontSize: 14 } }}
                 required
                 fullWidth
                 label={label}
