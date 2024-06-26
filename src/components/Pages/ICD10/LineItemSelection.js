@@ -25,8 +25,6 @@ export default function CodeLineItem({
     }
   }, [codeData]);
 
-  console.log(globalAppointmentData);
-
   const { createMutation } = usePostData(
     `/icd10Codes/create${globalAppointmentData?.id}`,
     QueryKeyToInvalidate

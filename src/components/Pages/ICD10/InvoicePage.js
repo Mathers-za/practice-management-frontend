@@ -38,7 +38,6 @@ export default function InvoicePortal({
     setGlobalInvoiceData,
   } = useGlobalStore();
 
-  console.log(globalProfileData);
   const [showDatePickers, setShowDatePickers] = useState(false);
   const [showInvoiceTitleDropdown, setShowInvoiceDropdown] = useState(false);
 
@@ -107,7 +106,6 @@ export default function InvoicePortal({
       [name]: value === "" ? "0.00" : value,
     });
   }
-  console.log("invoice title " + invoicePayload.invoice_title);
 
   useEffect(() => {
     if (invoiceData) {
@@ -184,9 +182,8 @@ export default function InvoicePortal({
     } catch (error) {
       if (error.name === "ValidationError") {
         //FIXME fix the validation here
-        console.log(error.name);
+
         setError(error.message);
-        console.log("the error path is " + error.path);
 
         setAppointmentTotalAndDiscountChanges({});
       }

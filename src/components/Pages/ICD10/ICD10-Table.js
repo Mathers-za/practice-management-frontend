@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import {
   useDeleteData,
   useFetchData,
+  usePatchData,
 } from "../../../CustomHooks/serverStateHooks";
 import styles from "./ICDTable.module.css";
 import CodeLineItem from "./LineItemSelection";
@@ -33,11 +34,22 @@ export default function ICD10Table({
     `/icd10Codes/delete`,
     queryKeyToInvalidate && queryKeyToInvalidate
   );
+  const [deletionsHaveOccured, setDeletionsHaveOccured] = useState(false);
 
   const { data: predefinedICDCData } = useFetchData(
     `/predefinedIcd10/view${appointmentTypeId}`,
     "predefinedICDData"
   );
+  const { patchMutation } = usePatchData(
+    `/financials/update${appointmentId}`,
+    queryKeyToInvalidate && queryKeyToInvalidate
+  );
+
+  async function handleDelete(id) {
+    await deleteMutation.mutateAsync(id);
+    setDeletionsHaveOccured(true);
+    refetchIcd10Data();
+  }
 
   const {
     isSuccessfullMutation,
@@ -48,7 +60,7 @@ export default function ICD10Table({
     setSuccessfullMutationFeedbackMessage,
   } = useIcd10Component();
 
-  console.log("issucces global is " + isSuccessfullMutation); //TODO instead of this ugly use effect have a a handle dlete function
+  //TODO instead of this ugly use effect have a a handle dlete function
   useEffect(() => {
     let timeoutId = "";
     if (deleteMutation.isSuccess) {
@@ -74,6 +86,9 @@ export default function ICD10Table({
       setCodesForMapping(ICD10Data);
     } else if (!ICD10Data && !predefinedICDCData) {
       setCodesForMapping([]);
+    }
+    if (!ICD10Data && deletionsHaveOccured) {
+      patchMutation.mutate({ source_icd: false });
     }
   }, [ICD10Data, predefinedICDCData]);
 
@@ -111,7 +126,7 @@ export default function ICD10Table({
                             <Edit />
                           </IconButton>
                           <IconButton
-                            onClick={() => deleteMutation.mutate(code.id)}
+                            onClick={() => handleDelete(code.id)}
                             color="error"
                             sx={{
                               "&.MuiButtonBase-root": { padding: "0px" },

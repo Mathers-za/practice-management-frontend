@@ -204,16 +204,22 @@ export const createPaymentValidationSchema = object({
 export const invoicePageFinancialsValidation = object({
   total_amount: number()
     .transform((value) => (isNaN(value) ? null : value))
-    .nonNullable("Appointment total needs to be a minimum of zero")
-    .positive("Appointment amount cannot be zero or negative")
+
+    .min(0, "Price cannot be negative")
 
     .test(
       "newAmountCantBeLessThanAmountPaid",
       "The appointment amount cannot be less than the amount paid",
       function (value, context) {
-        const { amount_paid } = context.options;
-        if (typeof value === "number") {
-          return value <= amount_paid;
+        if (value === undefined || value === null) {
+          return true;
+        } else {
+          const { amount_paid } = context.options;
+          console.log("the amount_paid is " + typeof amount_paid);
+          console.log("the value is " + typeof value);
+          if (typeof value === "number") {
+            return parseFloat(value) >= parseFloat(amount_paid);
+          }
         }
       }
     )
@@ -221,23 +227,32 @@ export const invoicePageFinancialsValidation = object({
       "2Decimals",
       "Invalid amount.ie Cannot exceed 2 decimal places",
       (value) => {
-        if (typeof value === number) {
-          const regEx = /^\d+(\.\d{1,2})?$/;
+        if (value === undefined || value === null) {
+          return true;
+        } else {
+          if (typeof value === "number") {
+            const regEx = /^\d+(\.\d{1,2})?$/;
 
-          return regEx.test(value);
+            return regEx.test(value);
+          }
         }
       }
     ),
   discount: number()
     .transform((value) => (isNaN(value) ? null : value))
-    .positive("Discount value cannot be 0 or negative")
-    .nonNullable("If discount is present it cannot be empty")
+
+    .min(0, "Price cannot be negative")
 
     .test(
       "compareAgainstTotalAmount",
       "The Discount cannot exceed the total appointment amount",
       function (value, context) {
+        if (value === undefined || value === null) {
+          return true;
+        }
+
         const { total_amount } = context.options;
+        console.log("the total amount is " + total_amount);
 
         if (typeof value === "number") {
           return value <= total_amount;
@@ -248,10 +263,37 @@ export const invoicePageFinancialsValidation = object({
       "2Decimals",
       "Invalid amount.ie Cannot exceed 2 decimal places",
       (value, context) => {
+        if (value === undefined || value === null) {
+          return true;
+        }
         if (typeof value === "number") {
           const regEx = /^\d+(\.\d{1,2})?$/;
           console.log(context);
           return regEx.test(value);
+        }
+      }
+    )
+    .test(
+      "CheckFornegativeAmountDue",
+      "The discount you are trying to add will result in a negative balance which is invalid",
+      (value, context) => {
+        if (value === undefined || value === null) {
+          return true;
+        } else {
+          const { total_amount, amount_paid } = context.options;
+          console.log("total amount is " + total_amount);
+          console.log("amount paid is " + amount_paid);
+
+          if (
+            parseFloat(total_amount) -
+              parseFloat(amount_paid) -
+              parseFloat(value) <
+            0
+          ) {
+            return false;
+          } else {
+            return true;
+          }
         }
       }
     ),
@@ -288,7 +330,7 @@ export const icdCodeValidationSchema = object({
     .notOneOf(["", null], "price cannot be nothing")
     .test("decimalCheck", "Price cannot exceed 2 decimal places", (value) => {
       if (value === undefined) {
-        return;
+        return true;
       } else {
         const regEx = /^\d+(\.\d{1,2})?$/;
 
