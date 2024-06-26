@@ -122,10 +122,9 @@ export default function Profile() {
                   name="contact_num"
                   label="Phone number"
                   type="tel"
-                  pattern="^\+27\d{9}$"
                   onChange={handleChange}
                   value={profileData?.contact_num || ""}
-                  helperText="Valid format expected ie +27716489364"
+                  helperText="A valid phone number is expected eg 0718634907"
                 />
               </div>
 

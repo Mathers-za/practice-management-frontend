@@ -9,7 +9,7 @@ import {
   string,
 } from "yup";
 import axiosRequest from "../apiRequests/apiRequests";
-import { Discount } from "@mui/icons-material";
+
 import defaultData from "../DefaultData/defaultData";
 
 addMethod(Schema, "stripEmptyString", function () {
@@ -64,7 +64,7 @@ export const createPatientValidationSchema = object({
   last_name: string().nullable(),
   email: string().email().nullable(),
   contact_number: string("invalid format")
-    .matches(/^\+27[6-8][0-9]{8}$/, "Invalid phone number")
+    .matches(/^0[1-9]{1}[0-9]{8}$/, "Invalid phone number")
     .nullable(),
 });
 
@@ -111,32 +111,11 @@ export const updateAppointmentTypeValidatiionSchema = object({
       "2Decimals",
       "Invalid price. Cannot exceed 2 decimal places",
       (value) => {
-        if (typeof value === "number") {
-          const regEx = /^\d+(\.\d{1,2})?$/;
-
-          return regEx.test(value);
+        if (value === undefined) {
+          return true;
         }
-      }
-    )
-    .optional(),
-});
-
-export const validatepreDefinedICD10CodeCreation = object({
-  icd10_code: string().nullable(),
-  procedural_code: string().nullable(),
-  price: number()
-    .transform((value) => (isNaN(value) ? null : value))
-    .nullable()
-    .positive("price cannot be zero or negative")
-    .test(
-      "2Decimals",
-      "Invalid price. Cannot exceed 2 decimal places",
-      (value, context) => {
-        if (typeof value === "number") {
-          const regEx = /^\d+(\.\d{1,2})?$/;
-          console.log(context);
-          return regEx.test(value);
-        }
+        const regEx = /^\d+(\.\d{1,2})?$/;
+        return regEx.test(value);
       }
     ),
 });
@@ -148,7 +127,7 @@ export const profileValidationSchema = object({
   council_reg_num: string("Invalid format").nullable(),
   profession: string("invalid format").nullable(),
   contact_num: string("invalid format")
-    .matches(/^\+27[6-8][0-9]{8}$/, "Invalid phone number")
+    .matches(/^0[1-9]{1}[0-9]{8}$/, "Invalid phone number")
     .nullable(),
 });
 
@@ -295,4 +274,25 @@ export const patientAdditionalInformationValidationSchema = object({
     )
     .nullable(),
   bio: string().nullable(),
+});
+
+export const icdCodeValidationSchema = object({
+  icd10_code: string("invalid format").transform((value) =>
+    value === undefined ? null : value
+  ),
+  procedural_code: string().nullable(),
+  price: number("Invalid format")
+    .transform((value) => (isNaN(value) ? null : value))
+
+    .min(0, "Price must be a minimum of 0")
+    .notOneOf(["", null], "price cannot be nothing")
+    .test("decimalCheck", "Price cannot exceed 2 decimal places", (value) => {
+      if (value === undefined) {
+        return;
+      } else {
+        const regEx = /^\d+(\.\d{1,2})?$/;
+
+        return regEx.test(value);
+      }
+    }),
 });

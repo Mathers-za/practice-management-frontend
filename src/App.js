@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import Profile from "./components/Profile";
 import PracticeDetails from "./components/PracticeDetails";
 import PatientList from "./components/PatientList";
-import Patient from "./components/Patient";
+
 import { QueryClient, QueryClientProvider } from "react-query";
 
 import AppTypeCreation from "./components/AppointmentTypes";

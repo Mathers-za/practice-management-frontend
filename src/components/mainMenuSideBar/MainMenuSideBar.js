@@ -101,11 +101,7 @@ export default function MainMenuSideBar() {
           linkTo={"calendar"}
           icon={<FontAwesomeIcon icon="fa-regular fa-calendar" size="lg" />}
         />
-        <SideBarItemsWithIconDiv
-          linkText={"Custom Component styling"}
-          linkTo={"componentStyling"}
-          icon={<FontAwesomeIcon icon="fa-solid fa-mortar-pestle" size="lg" />}
-        />
+
         <div
           className="flex-grow flex items-end pb-1  "
           onClick={() => createMutation.mutate()}

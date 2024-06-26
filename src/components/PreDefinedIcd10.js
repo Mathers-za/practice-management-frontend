@@ -11,14 +11,15 @@ import {
   useOnSubmitButtonTextstateManager,
   useSetLoadingStates,
 } from "../CustomHooks/otherHooks";
-import { validatepreDefinedICD10CodeCreation } from "../form validation Schemas/validationSchemas";
+
 import DisplaySingleError from "./miscellaneous components/WarningMessage";
 import { Button, TextField } from "@mui/material";
+import { icdCodeValidationSchema } from "../form validation Schemas/validationSchemas";
 
 export default function PreDefinedIcdCoding({ appTypeId, hideComponent }) {
   const { data: originalICDData, isFetching } = useFetchData(
     `/predefinedIcd10/view${appTypeId}`,
-    "icd10Data",
+    ["appointmentTypeList,icdCodes"],
     undefined,
     0
   );
@@ -40,10 +41,11 @@ export default function PreDefinedIcdCoding({ appTypeId, hideComponent }) {
   } = useAppointmentTypeAndIcdAutomationsPage();
   const { createMutation } = usePostData(
     `/predefinedIcd10/batchCreate${appTypeId}`,
-    "icd10Data"
+    ["appointmentTypeList,icdCodes"]
   );
   const { deleteMutation } = useBatchDeleteData(
-    `/predefinedIcd10/batchDeletion`
+    `/predefinedIcd10/batchDeletion`,
+    ["appointmentTypeList,icdCodes"]
   );
   const saveButtonText = useOnSubmitButtonTextstateManager(
     "Save",
@@ -62,11 +64,17 @@ export default function PreDefinedIcdCoding({ appTypeId, hideComponent }) {
   useSetLoadingStates(isFetching, setPredefinedIcdComponentLoadingState);
   function handleIcdInputChange(e) {
     const { name, value } = e.target;
-
-    setPreDefinedIcdInputData((prev) => ({
-      ...prev,
-      [name]: value === "" ? null : value,
-    }));
+    setPreDefinedIcdInputData((prev) => {
+      if (name === "price" && (value === null || value === "")) {
+        const { price, ...otherProperties } = prev;
+        return otherProperties;
+      } else {
+        return {
+          ...prev,
+          [name]: value === "" ? null : value,
+        };
+      }
+    });
   }
 
   function handleDelete(codeObj) {
@@ -97,13 +105,13 @@ export default function PreDefinedIcdCoding({ appTypeId, hideComponent }) {
 
   async function addIcdToList() {
     setErrorMessage();
+    console.log("runs addicd function");
+    console.log(
+      "predfeined icd inout data " + JSON.stringify(preDefinedIcdInputData)
+    );
     try {
-      const cleanedData = validatepreDefinedICD10CodeCreation.cast(
-        preDefinedIcdInputData,
-        { assert: false }
-      );
-      const validatedData = await validatepreDefinedICD10CodeCreation.validate(
-        cleanedData
+      const validatedData = await icdCodeValidationSchema.validate(
+        preDefinedIcdInputData
       );
 
       updateIcdList(validatedData);
@@ -115,8 +123,6 @@ export default function PreDefinedIcdCoding({ appTypeId, hideComponent }) {
       setErrorMessage(error.message);
     }
   }
-
-  //TODO refactor this page, make a resuable add button and fix the rations of the inputs
 
   return (
     <>
@@ -201,7 +207,6 @@ export default function PreDefinedIcdCoding({ appTypeId, hideComponent }) {
           )}
         </table>
 
-        {errorMessage && <DisplaySingleError errorMessage={errorMessage} />}
         <div className="flex justify-between">
           <Button
             type="button"

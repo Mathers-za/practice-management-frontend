@@ -79,7 +79,7 @@ export default function PatientContactDetailsForm({
               variant="standard"
               name="contact_number"
               type="number"
-              helperText="A valid phone number ie +2771654378"
+              helperText="A valid phone number is expected eg: 0718634907"
               onChange={handleChange}
               fullWidth
               label="Contact number"
