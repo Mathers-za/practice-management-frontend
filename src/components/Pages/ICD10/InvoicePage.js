@@ -1,7 +1,6 @@
 import ICD10Table from "./ICD10-Table";
 import { useEffect, useState } from "react";
-import styles from "./invoicePage.module.css";
-import { checkAndSetIcds } from "../../../apiRequests/apiRequests";
+
 import {
   useFetchData,
   usePatchData,
@@ -22,14 +21,13 @@ import MenuDivsWithIcon from "../../miscellaneous components/MenuListDivsWithIco
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { invoicePageFinancialsValidation } from "../../../form validation Schemas/validationSchemas";
 import PaymentsListDropDownInvoicePage from "./PaymentsDropDownInInvoicePage";
+import CustomAlertMessage from "../../miscellaneous components/CustomAlertMessage";
 
 export default function InvoicePortal({
   hideComponent,
   financialsData,
   queryKeyToInvalidate,
 }) {
-  //validation functuion has been made. make sur eyou having mathcing sttae names
-
   const {
     globalProfileData,
     globalAppointmentData,
@@ -47,7 +45,7 @@ export default function InvoicePortal({
   );
   const [error, setError] = useState();
   const [showInvoiceSendCard, setShowInvoiceSendCard] = useState(false);
-  const [showPaymentsPage, setShowPaymentsPage] = useState(false);
+
   const [showIcd10Table, setShowIcd10Table] = useState(false);
 
   const [invoiceExist, setInvoiceExist] = useState(false);
@@ -95,6 +93,22 @@ export default function InvoicePortal({
       return "Paid";
     }
   }
+
+  useEffect(() => {
+    let timeoutId = "";
+    if (createMutation.isSuccess || patchMutation.isSuccess) {
+      timeoutId = setTimeout(() => {
+        createMutation.reset();
+        patchMutation.reset();
+      }, 2000);
+    }
+    return () => clearTimeout(timeoutId);
+  }, [
+    createMutation.isIdle,
+    patchMutation.isIdle,
+    createMutation.isSuccess,
+    patchMutation.isSuccess,
+  ]);
   function handleFinancialDataChanges(event) {
     const { name, value } = event.target;
 
@@ -135,6 +149,8 @@ export default function InvoicePortal({
 
   async function handleSubmission() {
     if (invoiceExist && Object.keys(invoicePayloadChanges).length > 0) {
+      try {
+      } catch (error) {}
       const responseFromPatch = await invoiceMutation.mutateAsync({
         ...invoicePayloadChanges,
         invoice_status: determineInvoiceStatus(
@@ -164,12 +180,14 @@ export default function InvoicePortal({
 
   async function handleAppointmentPriceAndDiscountMutations(event) {
     try {
+      setError();
       if (Object.keys(appoinmentTotalAndDiscountChanges).length > 0) {
         const validatedData = await invoicePageFinancialsValidation.validate(
           appoinmentTotalAndDiscountChanges,
           {
             total_amount: financialsData.total_amount,
             amount_paid: financialsData.amount_paid,
+            discount: financialsData.discount,
           }
         );
         await patchMutation.mutateAsync(validatedData);
@@ -180,13 +198,9 @@ export default function InvoicePortal({
         setAppointmentTotalAndDiscountChanges({});
       }
     } catch (error) {
-      if (error.name === "ValidationError") {
-        //FIXME fix the validation here
+      setError(error.message);
 
-        setError(error.message);
-
-        setAppointmentTotalAndDiscountChanges({});
-      }
+      setAppointmentTotalAndDiscountChanges({});
     }
   }
 
@@ -214,13 +228,6 @@ export default function InvoicePortal({
           <div className="w-[98%] h-fit  ">
             <div className="w-full ">
               <div className="h-fit mt-4 mb-4 relative">
-                {error && (
-                  <div className="absolute right-0 top-40">
-                    <Alert onClose={() => setError()} severity="warning">
-                      {error}
-                    </Alert>
-                  </div>
-                )}
                 <div className="space-y-2 p-2  w-1/3 shadow-md shadow-black/40  flex flex-col">
                   <TextField
                     onChange={(event) => handleFinancialDataChanges(event)}
@@ -510,7 +517,16 @@ export default function InvoicePortal({
           hideComponent={() => setShowInvoiceSendCard(false)}
         />
       )}
-      ;
+      <CustomAlertMessage
+        errorFlag={error}
+        errorMessage={error}
+        successFlag={
+          !patchMutation?.isIdle
+            ? patchMutation?.isSuccess
+            : createMutation?.isSuccess
+        }
+        successMessage="Success"
+      />
     </>
   );
 }

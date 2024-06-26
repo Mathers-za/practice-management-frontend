@@ -224,6 +224,22 @@ export const invoicePageFinancialsValidation = object({
       }
     )
     .test(
+      "CheckThatbalanceIsNotNegative",
+      "The appointment balance cannot be negative ie appointment total - discount - amount paid is currently negative",
+      (value, context) => {
+        if (value === undefined || value === null) {
+          return true;
+        }
+        const { amount_paid, discount = 0 } = context.options;
+        if (
+          parseFloat(value) - parseFloat(discount) - parseFloat(amount_paid) <
+          0
+        ) {
+          return false;
+        } else return true;
+      }
+    )
+    .test(
       "2Decimals",
       "Invalid amount.ie Cannot exceed 2 decimal places",
       (value) => {
