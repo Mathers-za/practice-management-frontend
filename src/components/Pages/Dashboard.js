@@ -62,7 +62,7 @@ export default function DashBoard({ profileIdStateSetter }) {
     if (globalProfileData?.id) {
       timeoutId = setTimeout(() => {
         setIsloaded(true);
-      }, 1700);
+      }, 1000);
     }
     return () => clearTimeout(timeoutId);
   }, [globalProfileData?.id]);
@@ -71,7 +71,7 @@ export default function DashBoard({ profileIdStateSetter }) {
     async function createInitialRowProfileAndPractice() {
       try {
         const data = await profileMutation.mutateAsync(defaultData.profileData);
-
+        setGlobalProfileData(data);
         profileIdStateSetter(data.id);
 
         const { data: practiceDetailsData } =

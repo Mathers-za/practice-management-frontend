@@ -58,8 +58,10 @@ function App() {
     async function checkSession() {
       try {
         const response = await axiosRequest("get", "/session/validate");
-
-        if (response.data === true) {
+        console.log(
+          "respnse from validate is " + JSON.stringify(response.data)
+        );
+        if (response.data) {
           navigate("/", { replace: true });
         } else {
           navigate("/entry");

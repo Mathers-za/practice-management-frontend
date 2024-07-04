@@ -73,7 +73,8 @@ export default function AppointmentTypeList({ profileId }) {
               />
             </div>
           )}
-          {appTypeAndIcdData?.data ? (
+          {appTypeAndIcdData?.data &&
+          appTypeAndIcdData.data.appointmentTypeData.length > 0 ? (
             <div className="flex  min-w-full min-h-full bg-white  gap-16 justify-center   gap-y-2 flex-wrap">
               {appTypeAndIcdData.data.appointmentTypeData
                 .sort((a, b) => b.id - a.id)

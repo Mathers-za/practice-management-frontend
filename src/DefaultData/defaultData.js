@@ -1,5 +1,4 @@
 const defaultData = {
-  //this data is used to automatically generate the first row in the following tables.
   profileData: {
     first_name: null,
     last_name: null,
