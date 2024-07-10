@@ -34,19 +34,24 @@ function getEndTimeBasedOffDuration(
 
   duration
 ) {
-  console.log("the getendtime fucntion ran");
-  const [hours, minutes] = startTime
-    .split(":")
-    .map((number) => parseInt(number));
+  if (startTime) {
+    console.log("the getendtime fucntion ran");
+    const [hours, minutes] = startTime
+      .split(":")
+      .map((number) => parseInt(number));
 
-  const dateTimeCombined = set(new Date(), { hours: hours, minutes: minutes });
+    const dateTimeCombined = set(new Date(), {
+      hours: hours,
+      minutes: minutes,
+    });
 
-  const endTime = format(
-    addMinutes(dateTimeCombined, parseInt(duration)),
-    "HH:mm"
-  );
+    const endTime = format(
+      addMinutes(dateTimeCombined, parseInt(duration)),
+      "HH:mm"
+    );
 
-  return endTime;
+    return endTime;
+  }
 }
 
 export default function CreateAppointment({
@@ -400,7 +405,7 @@ export default function CreateAppointment({
           onclick={() => setShowPatientPicker(!showPatientPicker)}
         />
         {showPatientPicker && (
-          <div className="fixed top-0 left-0 min-w-full min-h-full max-h-fit bg-white z-10 overflow-y-scroll ">
+          <div className="fixed top-0 left-0 w-full h-screen max-h-fit bg-white z-10 overflow-auto ">
             <PatientPicker
               showTopBar={true}
               profileId={globalProfileData.id}

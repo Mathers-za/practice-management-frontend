@@ -28,7 +28,7 @@ export default function MedicalAid() {
   const { createMutation } = usePostData(`/medicalAid/create${patientId}`, [
     "medicalAidData",
     patientId,
-  ]);
+  ]); //TODO there seems to be an issue where the first time medical aid is posted, when is depdant is clicked it doesnt change the request to true. Fix it
   //TODO not in this folder but you do need to add some user feedback when invoices are sent
   const [medAidInformation, setMedAidInformation] = useState({});
   const { setMedicalAidLoadingState } = useClientInfoPortal();

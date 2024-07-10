@@ -248,6 +248,7 @@ export default function MainOptionsMenu({ hideComponent, refetchData }) {
               hideComponent={() => setShowInvoicePage(!showInvoicePage)}
               financialsData={financialData}
               queryKeyToInvalidate={["financialData", globalAppointmentData.id]}
+              hideTree={hideComponent}
             />
           </div>
         )}

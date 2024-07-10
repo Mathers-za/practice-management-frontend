@@ -27,6 +27,7 @@ export default function InvoicePortal({
   hideComponent,
   financialsData,
   queryKeyToInvalidate,
+  hideTree,
 }) {
   const {
     globalProfileData,
@@ -117,7 +118,7 @@ export default function InvoicePortal({
       [name]: value === "" ? "0,00" : value,
     }));
     setAppointmentTotalAndDiscountChanges({
-      [name]: value === "" ? "0.00" : value,
+      [name]: value === "" ? "0,00" : value,
     });
   }
 
@@ -130,8 +131,9 @@ export default function InvoicePortal({
         invoice_start_date: new Date(),
         invoice_end_date: new Date(),
         invoice_title: `${
-          globalPatientData.first_name + " " + globalPatientData?.last_name ||
-          ""
+          globalPatientData.first_name +
+          " " +
+          (globalPatientData?.last_name || "")
         } - ${format(globalAppointmentData.appointment_date, "yyyy-MM-dd")}`,
         invoice_status: "In progress",
       });
@@ -507,6 +509,7 @@ export default function InvoicePortal({
       </div>
       {showInvoiceSendCard && (
         <InvoiceSendCard
+          hideTree={hideTree}
           patientData={{
             patientId: globalPatientData.id,
             patient_first_name: globalPatientData.first_name,

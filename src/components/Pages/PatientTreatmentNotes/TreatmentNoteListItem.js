@@ -61,7 +61,7 @@ export default function TreatmentNoteListItem({
             size="small"
             variant="contained"
             onClick={() => editButtonclickFn(treatmentNoteData?.id)}
-            color="inherit"
+            color="warning"
           >
             Edit/view
           </Button>

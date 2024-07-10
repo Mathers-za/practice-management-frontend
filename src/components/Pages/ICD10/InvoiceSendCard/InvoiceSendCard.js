@@ -6,7 +6,7 @@ import {
   emailInvoiceStatement,
 } from "../../../../InvoiceApiRequestFns/invoiceApiHelperFns";
 import { useFetchData } from "../../../../CustomHooks/serverStateHooks";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import GenericTopBar from "../../../miscellaneous components/GenericTopBar";
 import MenuDivsWithIcon from "../../../miscellaneous components/MenuListDivsWithIcon";
 import SendIcon from "@mui/icons-material/Send";
@@ -24,12 +24,15 @@ export default function InvoiceSendCard({
   profileId,
   appointmentId,
   hideComponent,
+  hideTree,
 }) {
   const { globalInvoiceData, globalPatientData } = useGlobalStore();
   const [showUpdatePatientPage, setShowUpdatePatientPage] = useState(false);
 
   //TODO add flow step if patient email isnt present. ideally the option to edit the patients email
   console.log(globalPatientData.email);
+  const location = useLocation();
+  console.log(location);
   const { data: invoiceData } = useFetchData(
     `/invoices/view${appointmentId}`,
     "invDataInSendInvoices" // take this out. set invoicedatat global in invoice page during api request and make sure you captur chnages in the patch and post routes. then pass diretcly and save an api request
@@ -114,7 +117,9 @@ export default function InvoiceSendCard({
         />
         <MenuDivsWithIcon
           text="Return home"
-          onclick={() => navigate("/")}
+          onclick={() =>
+            location.pathname === "/" ? hideTree() : navigate("/")
+          }
           iconStart={<HomeIcon sx={{ color: "#0284C7" }} />}
         />
       </div>

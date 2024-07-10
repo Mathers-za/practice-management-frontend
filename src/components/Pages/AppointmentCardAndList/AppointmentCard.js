@@ -95,9 +95,9 @@ export default function AppointmentCard({ appointmentData, refetchData }) {
                   variant="filled"
                   label={chipProperties?.label}
                 />{" "}
-                {appointmentData.patient_first_name +
+                {appointmentData?.patient_first_name +
                   " " +
-                  appointmentData.patient_last_name ?? ""}
+                  (appointmentData?.patient_last_name || "")}
               </p>
               <p className="text-sm">
                 {format(
@@ -114,7 +114,8 @@ export default function AppointmentCard({ appointmentData, refetchData }) {
                   appointmentData?.practitioner_first_name +
                   " " +
                   appointmentData?.practitioner_last_name || ""}{" "}
-                at dentmaed medical centre
+                {appointmentData?.practice_name &&
+                  "at" + " " + appointmentData?.practice_name}
               </p>
             </div>
           </div>

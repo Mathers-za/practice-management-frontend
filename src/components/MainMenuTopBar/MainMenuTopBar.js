@@ -12,7 +12,11 @@ export default function MainMenuTopBar({ toggleSideBar }) {
        text-white  "
       >
         <motion.div>
-          <IconButton size="large" onClick={() => toggleSideBar()}>
+          <IconButton
+            sx={{ "&:hover": { backgroundColor: "transparent" } }}
+            size="large"
+            onClick={() => toggleSideBar()}
+          >
             <InputIcon fontSize="large" sx={{ color: "white" }} />
           </IconButton>
         </motion.div>
@@ -31,7 +35,7 @@ export default function MainMenuTopBar({ toggleSideBar }) {
         />
 
         <TopBarItemsLink
-          linkTo={"invoiceProgress"}
+          linkTo={"invoicesAndpaymentsPortal"}
           icon={<FontAwesomeIcon icon="fa-solid fa-receipt" size="xl" />}
           toolTipText={"invoices"}
           toolTipUnqiueId={"invoices"}
@@ -41,6 +45,7 @@ export default function MainMenuTopBar({ toggleSideBar }) {
           toolTipText={"Appointments"}
           toolTipUnqiueId={"appointmentsSearch"}
           icon={<FontAwesomeIcon icon="fa-brands fa-old-republic" size="xl" />}
+          linkTo={"appointmentPortal"}
         />
       </div>
     </>
