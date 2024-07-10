@@ -1,70 +1,45 @@
-# Getting Started with Create React App
+Project Title
+Practice management applcation bulit to make the useres (helathcare providers) adminstartive tasks easier and more streamlined.
+Running a private helathcare practice is hard, but with this practice managent applcation that ive built, it just got a whole lot easier.
+Description
+Before the big inetrnet boom, helat are providers relied on paper based administarive systems to track patient, appoitnment and  financial data. Fast forward to the present, and you will still find many hleathcare prviders using this method. My aim was to create an easy to use and free practice management system that anyone could use, allowing them to spend more time treating patients sintead of dealing with paperwork. The applcation allows users(hleathcare providers) to create patients, create appointments sfor patients and bill them for those appointments directly through the application either through invices sent to thier medical aid or through invoices sent to thier personal email addresses. Payments can be made and tracked for each appointment, as well as invoices. The invoices template that i have cerated on the backend meets teh instudtry required standard by medical aids in order for successful reimberment to the hl;eathcare provider. With each appoitnment creaetion, the user has the abilty to send ocnfrmationa and reminder emails reuslting in higher appoitnment attendace rates.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+Getting Started
+Dependencies
+Describe any prerequisites, libraries, OS version, etc., needed before installing program.
+ex. Windows 10
+Installing
+How/where to download your program
+Any modifications needed to be made to files/folders
+Executing program
+How to run the program
+Step-by-step bullets
+code blocks for commands
+Help
+Any advise for common problems or issues.
 
-In the project directory, you can run:
+command to run if program contains helper info
+Authors
+Contributors names and contact info
 
-### `npm start`
+ex. Dominique Pizzie
+ex. @DomPizzie
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Version History
+0.2
+Various bug fixes and optimizations
+See commit change or See release history
+0.1
+Initial Release
+License
+This project is licensed under the [NAME HERE] License - see the LICENSE.md file for details
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Acknowledgments
+Inspiration, code snippets, etc.
 
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+awesome-readme
+PurpleBooth
+dbader
+zenorocha
+fvcproductions
