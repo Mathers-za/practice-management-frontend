@@ -24,6 +24,17 @@ export default function MainMenuSideBar() {
           </h2>
         </div>
         <SideBarItemsWithIconDiv
+          linkText={"Home"}
+          linkTo={"home"}
+          icon={
+            <FontAwesomeIcon
+              icon="fa-solid fa-house"
+              size="lg"
+              style={{ color: "white" }}
+            />
+          }
+        />
+        <SideBarItemsWithIconDiv
           linkText={"Patient List"}
           linkTo={"patient/search"}
           icon={<FontAwesomeIcon icon="fa-solid fa-rectangle-list" size="lg" />}

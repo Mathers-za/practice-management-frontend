@@ -44,6 +44,7 @@ import PatientAdditionalInformation from "./components/Patient PortalComponents/
 import AppointmentsTab from "./components/Patient PortalComponents/AppointmentsTab";
 import PatientPortalInvoiceTab from "./components/Patient PortalComponents/PatientPortalInvoiceTab";
 import InvoicesAndPaymentsPortal from "./components/Pages/financialsViewPortal/InvoicesAndPaymentsPortal";
+import HomePage from "./components/HomePage";
 
 const queryClient = new QueryClient();
 
@@ -99,6 +100,7 @@ function App() {
                   path="profile"
                   element={<Profile profileId={profileId} />}
                 />
+                <Route path="home" element={<HomePage />} />
                 <Route
                   path="practice"
                   element={<PracticeDetails profileId={profileId} />}
