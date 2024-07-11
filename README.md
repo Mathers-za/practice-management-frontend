@@ -1,4 +1,4 @@
-Project Title
+#Project Title
 Practice management applcation bulit to make the useres (helathcare providers) adminstartive tasks easier and more streamlined.
 Running a private helathcare practice is hard, but with this practice managent applcation that ive built, it just got a whole lot easier.
 Description
