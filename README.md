@@ -49,4 +49,4 @@ Contact number - 071 8634 907
 
 ## Final note
 
-The project is still a work in progress but the core if it has been completed.
+The project is still a work in progress but the core of it has been completed.
