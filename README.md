@@ -1,70 +1,52 @@
-# Getting Started with Create React App
+# Project Title
+A practice management application built for healthcare providers to streamline their patient management and financial administrative tasks.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Description
 
-## Available Scripts
+This application is suited for healthcare providers looking to move away from paper-based filing systems or simply those seeking a more user-friendly and straightforward practice management application.
 
-In the project directory, you can run:
+The application allows users (healthcare providers) to create their own profiles, create new patients, and create appointments for these patients. Payments for these appointments can also be managed.
 
-### `npm start`
+To maximize patient follow-up rates, users have the ability to choose whether they would like to send email notifications through the application. Users can also customize these emails if they wish.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Invoices for each appointment can be generated and sent via email in PDF format to the patient or their medical aid.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Appointment, patient, and financial data have multiple pages within the application that provide easy visualization for users to track their data.
 
-### `npm test`
+## Getting Started
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Executing program
 
-### `npm run build`
+1. Clone the practice-managment-api, and practice-managment-frontend repos
+2. For the practice-management-api (development server): 
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```
+npm init
+```
+```
+nodemon server.js
+```
+3. For practice-mangment-frontend:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```
+cd my-front-end
+```
+```
+npm init
+```
+```
+npm start
+ ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+4. The browser should automitcally open with the app running, but if it doesnt type http://localhost:3000 in your browser
 
-### `npm run eject`
+## Authors 
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Created by Dr Daniel Mathers - aspiring web developer:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Email - danielmathers97@gmail.com
+Contact number - 071 8634 907
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Final note
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+The project is still a work in progress but the core of it has been completed.
