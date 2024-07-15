@@ -122,7 +122,7 @@ export default function PatientPickerComponent({
             <div className="w-4/5 h-3/4 ">
               <CreatePatient
                 actionOnSave={showAddPatientButton?.actionOnSave}
-                hideComponent={showAddPatientButton.hideComponent}
+                hideComponent={hideComponent}
               />
             </div>
           </div>

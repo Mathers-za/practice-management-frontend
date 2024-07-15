@@ -32,7 +32,7 @@ export default function PatientTreatmentNotesList() {
 
   return (
     <>
-      <div className="h-screen  max-h-screen flex flex-col   w-full max-w-full overflow-y-auto">
+      <div className=" h-screen flex flex-col  bg-white w-full max-w-full overflow-y-auto">
         <div className="absolute right-5 top-9">
           <Fab
             sx={{ zIndex: "10" }}

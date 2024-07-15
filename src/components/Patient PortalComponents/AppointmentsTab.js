@@ -32,7 +32,7 @@ export default function AppointmentsTab() {
 
   return (
     <>
-      <div className="flex flex-col h-full w-full">
+      <div className="flex flex-col bg-white min-h-screen  w-full">
         {patientAppointmentDataAndMetaData &&
         patientAppointmentDataAndMetaData.data.length > 0
           ? patientAppointmentDataAndMetaData.data.map((appointment) => {

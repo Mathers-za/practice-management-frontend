@@ -107,7 +107,7 @@ export default function PatientPortal() {
           </div>
         </div>
 
-        <div className=" w-full min-full bg-white overflow-auto">
+        <div className=" w-full h-screen bg-white overflow-auto">
           <Outlet />
         </div>
       </div>

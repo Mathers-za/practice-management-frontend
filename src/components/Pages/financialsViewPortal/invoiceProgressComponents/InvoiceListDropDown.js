@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 import {
   useDeleteData,
   useFetchData,
+  usePatchData,
 } from "../../../../CustomHooks/serverStateHooks";
 
 import { IconButton } from "@mui/material";
@@ -24,7 +25,21 @@ import UpdatePatientContactDetails from "../../../Create and update Patient comp
 import CustomAlertMessage from "../../../miscellaneous components/CustomAlertMessage";
 import { useOnSubmitButtonTextstateManager } from "../../../../CustomHooks/otherHooks";
 import ConfirmChoiceModal from "../../../miscellaneous components/ConfirmComponent";
-
+function setInvoiceStatus(currentStatus, amountDue) {
+  if (currentStatus && amountDue) {
+    amountDue = parseFloat(amountDue); //TODO add a simialr fucntion in payments page to taht if they pay fiull it puts it in the paid coloumn. will also nned to sync
+    if (currentStatus !== "Paid") {
+      console.log(
+        "Made it into the fn, cureent status is" +
+          " " +
+          currentStatus +
+          " and amount due is " +
+          amountDue
+      );
+      return amountDue <= 0 ? "Paid" : "Sent";
+    } else return "Paid";
+  }
+}
 export default function InvoiceListDropdown({
   invoiceData,
   hideComponent,
@@ -36,6 +51,7 @@ export default function InvoiceListDropdown({
     appointment_id,
     invoice_id,
     email,
+    invoice_status,
     invoice_number,
     patient_id,
   } = invoiceData;
@@ -48,6 +64,9 @@ export default function InvoiceListDropdown({
   const { data: financialData } = useFetchData(
     `/financials/view${appointment_id}`,
     ["financialData", "page:InvoiceDropDown", appointment_id]
+  );
+  const { patchMutation: updateInvoice } = usePatchData(
+    `/invoices/update${appointment_id}`
   );
   const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] =
     useState(false);
@@ -142,14 +161,21 @@ export default function InvoiceListDropdown({
         <div className="relative">
           <MenuDivsWithIcon
             className={"py-[10px]"}
-            disabled={!globalPatientData.email}
-            onclick={async () =>
+            disabled={!globalPatientData.email} //////
+            onclick={async () => {
               await emailInvoiceStatement(
                 globalProfileData.id,
                 appointment_id,
                 patient_id
-              )
-            }
+              );
+              await updateInvoice.mutateAsync({
+                invoice_status: setInvoiceStatus(
+                  invoice_status,
+                  financialData.amount_due
+                ),
+              });
+              refetch();
+            }}
             text={
               <>
                 <div className="text-start p-0">

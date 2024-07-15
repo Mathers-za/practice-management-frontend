@@ -24,7 +24,7 @@ export default function PatientPortalInvoiceTab() {
 
   return (
     <>
-      <div className="flex flex-col bg-white min-h-full w-full">
+      <div className="flex flex-col h-full bg-white  w-full">
         {paginatedInvoiceData && paginatedInvoiceData.data.length > 0 ? (
           paginatedInvoiceData.data.map((invoice) => {
             return (
