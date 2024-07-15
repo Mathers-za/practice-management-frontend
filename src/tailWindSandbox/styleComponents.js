@@ -7,7 +7,7 @@ import FullWithButton from "../components/miscellaneous components/FullWidthButt
 
 import { useGlobalStore } from "../zustandStore/store";
 
-import LoginForm from "../components/login/Login";
+import LoginForm from "../components/loginPage/Login";
 import AppointmentTypeCard from "../components/appointmentTypeComponents/AppointmentTypeCard";
 
 import CreateAppointmentType from "../components/miscellaneous components/CreateAppointmentType";

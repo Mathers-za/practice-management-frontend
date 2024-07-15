@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import Fab from "@mui/material/Fab";
-import { usePagination } from "../CustomHooks/serverStateHooks";
+import { usePagination } from "../../CustomHooks/serverStateHooks";
 import { Pagination } from "@mui/material";
-import AppointmentTypeCard from "./appointmentTypeComponents/AppointmentTypeCard";
+import AppointmentTypeCard from "./AppointmentTypeCard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   useGlobalStore,
   useAppointmentTypeListComponenet,
-} from "../zustandStore/store";
-import CreateAppointmentType from "./miscellaneous components/CreateAppointmentType";
-import CustomLinearProgressBar from "./miscellaneous components/CustomLinearProgressBar";
+} from "../../zustandStore/store";
+import CreateAppointmentType from "../miscellaneous components/CreateAppointmentType";
+import CustomLinearProgressBar from "../miscellaneous components/CustomLinearProgressBar";
 import AddIcon from "@mui/icons-material/Add";
 
 export default function AppointmentTypeList({ profileId }) {

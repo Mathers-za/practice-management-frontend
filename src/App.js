@@ -1,5 +1,5 @@
 import { Route, Routes, useNavigate } from "react-router-dom";
-import Entry from "./components/login/Entry";
+import Entry from "./components/loginPage/Entry";
 import DashBoard from "./components/Pages/Dashboard";
 import axiosRequest from "./apiRequests/apiRequests";
 import { useEffect, useRef, useState } from "react";
@@ -15,11 +15,11 @@ import PatientPicker from "./components/Pages/PatientPickerPage";
 import PatientPortal from "./components/Pages/PatientPortal";
 import MedicalAid from "./components/MedicalAid";
 
-import AppointmentTypeList from "./components/AppointmentTypeList";
-import AppointmentPortal from "./components/Pages/AppointmentPortal";
+import AppointmentTypeList from "./components/appointmentTypeComponents/AppointmentTypeList";
+import AppointmentPortal from "./components/appointmentTypeComponents/AppointmentPortal";
 import PatientTreatmentNotesList from "./components/Pages/PatientTreatmentNotes/TreatmentNotesList";
 
-import InvoicePortal from "./components/Pages/ICD10/InvoicePage";
+import InvoicePortal from "./components/Pages/InvoicePage/InvoicePage";
 import InvoiceProgressPage from "./components/Pages/financialsViewPortal/invoiceProgressComponents/InvoiceProgress";
 import PastDueInvoices from "./components/Pages/financialsViewPortal/PastDueInvoices";
 import PaymentsList from "./components/Pages/financialsViewPortal/paymentsList/PaymentsList";

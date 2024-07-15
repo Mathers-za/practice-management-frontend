@@ -9,7 +9,7 @@ import {
 } from "../../zustandStore/store";
 import { format } from "date-fns";
 import { useEffect, useRef, useState } from "react";
-import InvoicePortal from "../Pages/ICD10/InvoicePage";
+import InvoicePortal from "../Pages/InvoicePage/InvoicePage";
 import ICD10Table from "../Pages/ICD10/ICD10-Table";
 import PaymentPage from "../Pages/Payments/PaymentPage";
 import GenericTopBar from "../miscellaneous components/GenericTopBar";

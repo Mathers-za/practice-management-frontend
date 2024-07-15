@@ -1,4 +1,4 @@
-import ICD10Table from "./ICD10-Table";
+import ICD10Table from "../ICD10/ICD10-Table";
 import { useEffect, useState } from "react";
 
 import {
@@ -20,7 +20,7 @@ import GenericTopBar from "../../miscellaneous components/GenericTopBar";
 import MenuDivsWithIcon from "../../miscellaneous components/MenuListDivsWithIcon";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { invoicePageFinancialsValidation } from "../../../form validation Schemas/validationSchemas";
-import PaymentsListDropDownInvoicePage from "./PaymentsDropDownInInvoicePage";
+import PaymentsListDropDownInvoicePage from "../ICD10/PaymentsDropDownInInvoicePage";
 import CustomAlertMessage from "../../miscellaneous components/CustomAlertMessage";
 
 export default function InvoicePortal({
