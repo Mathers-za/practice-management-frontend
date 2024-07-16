@@ -15,14 +15,15 @@ export default function HomePage() {
 
   return (
     <>
-      <div className="w-full space-y-4 h-full bg-white">
+      <div className="w-full space-y-4 py-4  h-full bg-white">
         <h1 className="tracking-widest font-semibold  text-3xl text-center">
           Weekly Statistics
         </h1>
-        <h2></h2>
-        <div className="w-full h-2/4 p-4 flex">
-          <div className=" text-lg space-y-4 w-1/3 flex items-center pl-12 text-white  py-4  bg-slate-400">
+
+        <div className="w-full h-fit gap-4 p-4 flex">
+          <div className=" text-lg shadow-md shadow-black/50 space-y-4 w-2/4 flex items-center pl-12 text-white  py-4  bg-slate-400">
             <div className="space-y-4">
+              <h2 className="text-2xl ">Appointment Stats</h2>
               <p>
                 Total Appointment number:{" "}
                 {stats?.appointmentCount ? stats.appointmentCount : "0"}
@@ -42,49 +43,15 @@ export default function HomePage() {
               </p>
             </div>
           </div>
-          <div className="w-2/4 bg-white border-none flex justify-center items-center ">
-            <PieChart
-              series={[
-                {
-                  data: [
-                    {
-                      id: 0,
-                      label: "Total Value",
-                      value: stats?.totalValue || 0,
-                    },
-                    {
-                      id: 1,
-                      label: "Collected",
-                      value: stats?.totalCollected || 0,
-                    },
-                    {
-                      id: 2,
-                      label: "Outstanding",
-                      value: stats?.totalOutstanding || 0,
-                    },
-                    {
-                      id: 3,
-                      label: "Discount",
-                      value: stats?.totalDiscount || 0,
-                    },
-                  ],
-                  innerRadius: 8,
-                  outerRadius: 100,
-                  paddingAngle: 5,
-                  cornerRadius: 4,
-                  startAngle: -100,
-                  endAngle: 180,
-
-                  highlightScope: { faded: "global", highlighted: "item" },
-                  faded: {
-                    innerRadius: 30,
-                    additionalRadius: -30,
-                    color: "gray",
-                  },
-                },
-              ]}
-              height={200}
-            />
+          <div className="w-2/4 shadow-md shadow-black/50    p-4 text-white text-lg space-y-4 bg-blue-500">
+            <h2 className="text-white text-2xl">Invoice Stats</h2>
+            <p>Total invoices created: {stats?.totalInvoices || 0}</p>
+            <p>Total invoices sent: {stats?.totalInvoicesSent || 0}</p>
+            <p>Total invoices paid in full: {stats?.totalInvoicesPaid || 0}</p>
+            <p>
+              Total invoices that are unpaid and ready for invoicing:{" "}
+              {stats?.totalInvoicesInProgress || 0}{" "}
+            </p>
           </div>
         </div>
       </div>
