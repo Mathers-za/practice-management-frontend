@@ -21,7 +21,11 @@ import InputAdornment from "@mui/material/InputAdornment";
 import { createPaymentValidationSchema } from "../../../form validation Schemas/validationSchemas";
 import { CalendarIcon } from "@mui/x-date-pickers/icons";
 
-import { useAppointmentPortalStore } from "../../../zustandStore/store";
+import {
+  useAppointmentPortalStore,
+  useInvoiceProgessComponent,
+} from "../../../zustandStore/store";
+import { useLocation } from "react-router-dom";
 
 export default function PaymentPage({
   financialData,
@@ -32,7 +36,8 @@ export default function PaymentPage({
   queryKeyToInvalidate = "",
 }) {
   const [error, setError] = useState();
-
+  const location = useLocation();
+  const { refreshInvoiceData } = useInvoiceProgessComponent();
   const { data: invoiceData } = useFetchData(`/invoices/view${appointmentId}`);
 
   const { patchMutation: invoicePatchDataMutation } = usePatchData(
@@ -90,26 +95,31 @@ export default function PaymentPage({
     }
   }
 
+  console.log(location.pathname);
+
   async function handleSubmit() {
     try {
+      setError();
       const validatedData = await createPaymentValidationSchema.validate(
         paymentsPayload,
         { amount_due: financialData?.amount_due }
       );
-      setError();
+
       const response = await createMutation.mutateAsync(validatedData);
-      console.log(
-        "the reponse amount is " +
-          response.amount +
-          " and the amount due is " +
-          financialData.amount_due
-      );
 
       if (invoiceData) {
         if (
           parseFloat(response.amount) >= parseFloat(financialData.amount_due)
         ) {
-          invoicePatchDataMutation.mutate({ invoice_status: "Paid" });
+          await invoicePatchDataMutation.mutateAsync({
+            invoice_status: "Paid",
+          });
+          if (
+            location.pathname == "/invoicesAndpaymentsPortal" &&
+            refreshInvoiceData
+          ) {
+            refreshInvoiceData();
+          }
         }
       }
       setFlagToRefreshAppointmentList(true);

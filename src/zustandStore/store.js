@@ -40,6 +40,7 @@ const useInvoiceProgessComponent = create((set) => ({
   leftColTotalAmount: 0,
   rightColTotalAmount: 0,
   middleColTotalAmount: 0,
+  refreshInvoiceData: undefined,
 
   getLeftColCount: (length) => set((state) => ({ leftColCount: length })),
   getMiddleColCount: (length) =>
@@ -60,6 +61,11 @@ const useInvoiceProgessComponent = create((set) => ({
     set((state) => ({
       middleColTotalAmount: getTotal(data),
     })),
+
+  setRefreshInvoiceData: (callback) =>
+    set({
+      refreshInvoiceData: callback,
+    }),
 }));
 
 const useInvoiceListDropDown = create((set) => ({

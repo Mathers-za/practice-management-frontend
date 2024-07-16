@@ -78,6 +78,7 @@ export default function InvoiceColumnList({
     ["invoiceProgressPage", searchDateCriteria],
     { ...searchDateCriteria, profile_id: profileId }
   );
+  const { setRefreshInvoiceData } = useInvoiceProgessComponent();
   const store = useInvoiceProgessComponent();
   function handleDateChange(date, key) {
     setSearchDateCriteria((prev) => ({
@@ -102,6 +103,7 @@ export default function InvoiceColumnList({
       setRightColumnList(
         filterInvoiceData(invoiceData, "Paid", searchBarInput)
       );
+      setRefreshInvoiceData(invoiceDataRefetch);
     }
 
     if (invoiceData && !progressFlag) {
