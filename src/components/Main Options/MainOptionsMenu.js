@@ -18,6 +18,7 @@ import { useNavigate } from "react-router-dom";
 import {
   useDeleteData,
   useFetchData,
+  usePostData,
 } from "../../CustomHooks/serverStateHooks";
 import CustomAlertMessage from "../miscellaneous components/CustomAlertMessage";
 import { useOnSubmitButtonTextstateManager } from "../../CustomHooks/otherHooks";
@@ -36,7 +37,7 @@ export default function MainOptionsMenu({ hideComponent, refetchData }) {
     globalAppointmentTypeData,
     globalAppointmentData,
     setGlobalPatientData,
-    globalInvoiceData,
+    globalProfileData,
   } = useGlobalStore();
   const setPatientPortalPatientId = usePatientPortalStore(
     (state) => state.setPatientId
@@ -45,7 +46,9 @@ export default function MainOptionsMenu({ hideComponent, refetchData }) {
     `/financials/view${globalAppointmentData.id}`,
     ["financialData", globalAppointmentData.id]
   );
-
+  const { createMutation } = usePostData(
+    `/emailNotifications/sendCancellationEmail`
+  );
   const { deleteMutation } = useDeleteData(`/appointments/delete`);
   const [error, setError] = useState("");
   const {
@@ -182,6 +185,13 @@ export default function MainOptionsMenu({ hideComponent, refetchData }) {
               />
             }
             text="Cancel"
+            onclick={() =>
+              createMutation.mutate({
+                profileId: globalProfileData.id,
+                appointmentId: globalAppointmentData.id,
+                patientId: globalPatientData.id,
+              })
+            }
           />
         </div>
 

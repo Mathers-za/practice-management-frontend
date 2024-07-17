@@ -16,7 +16,7 @@ export default function HomePage() {
   return (
     <>
       <div className="w-full space-y-4 py-4  h-full bg-white">
-        <h1 className="tracking-widest font-semibold  text-3xl text-center">
+        <h1 className="tracking-wider underline underline-offset-4  font-semibold  text-3xl text-center">
           Weekly Statistics
         </h1>
 
@@ -25,7 +25,7 @@ export default function HomePage() {
             <div className="space-y-4">
               <h2 className="text-2xl ">Appointment Stats</h2>
               <p>
-                Total Appointment number:{" "}
+                Total Appointments this week:{" "}
                 {stats?.appointmentCount ? stats.appointmentCount : "0"}
               </p>
               <p>Total Value: R{stats?.totalValue ? stats.totalValue : "0"} </p>
