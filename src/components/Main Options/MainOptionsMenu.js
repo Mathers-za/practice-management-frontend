@@ -32,6 +32,10 @@ export default function MainOptionsMenu({ hideComponent, refetchData }) {
   const [showTreatmentNotePage, setShowTreatmentNotePage] = useState(false);
   const [showConfirmDeletionModal, setShowConfirmDeletionModal] =
     useState(false);
+  const [
+    showConfirmCancelAppointmentModal,
+    setShowConfirmCancelAppointmentModal,
+  ] = useState(false);
   const {
     globalPatientData,
     globalAppointmentTypeData,
@@ -94,6 +98,15 @@ export default function MainOptionsMenu({ hideComponent, refetchData }) {
       globalRefetchAppointmentList();
       setFlagToRefreshAppointmentList(false);
     }
+  }
+
+  async function handleAppointmentCancellation() {
+    await createMutation.mutateAsync({
+      profileId: globalProfileData.id,
+      appointmentId: globalAppointmentData.id,
+      patientId: globalPatientData.id,
+    });
+    setShowConfirmCancelAppointmentModal(!showConfirmCancelAppointmentModal);
   }
 
   return (
@@ -186,11 +199,9 @@ export default function MainOptionsMenu({ hideComponent, refetchData }) {
             }
             text="Cancel"
             onclick={() =>
-              createMutation.mutate({
-                profileId: globalProfileData.id,
-                appointmentId: globalAppointmentData.id,
-                patientId: globalPatientData.id,
-              })
+              setShowConfirmCancelAppointmentModal(
+                !showConfirmCancelAppointmentModal
+              )
             }
           />
         </div>
@@ -286,6 +297,23 @@ export default function MainOptionsMenu({ hideComponent, refetchData }) {
         onAccept={handleAppointmentDelete}
         onCancel={() => setShowConfirmDeletionModal(false)}
         showComponent={showConfirmDeletionModal}
+      />
+      <ConfirmChoiceModal
+        hideComponent={() =>
+          setShowConfirmCancelAppointmentModal(
+            !showConfirmCancelAppointmentModal
+          )
+        }
+        message={
+          "Continueing with this action will send a cancellation email notification to the patient."
+        }
+        onAccept={handleAppointmentCancellation}
+        onCancel={() =>
+          setShowConfirmCancelAppointmentModal(
+            !showConfirmCancelAppointmentModal
+          )
+        }
+        showComponent={showConfirmCancelAppointmentModal}
       />
     </>
   );
