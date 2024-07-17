@@ -5,7 +5,10 @@ import {
   handleInvoiceStatementGeneration,
   emailInvoiceStatement,
 } from "../../../../InvoiceApiRequestFns/invoiceApiHelperFns";
-import { useFetchData } from "../../../../CustomHooks/serverStateHooks";
+import {
+  useFetchData,
+  usePostData,
+} from "../../../../CustomHooks/serverStateHooks";
 import { useLocation, useNavigate } from "react-router-dom";
 import GenericTopBar from "../../../miscellaneous components/GenericTopBar";
 import MenuDivsWithIcon from "../../../miscellaneous components/MenuListDivsWithIcon";
@@ -17,7 +20,7 @@ import {
   usePatientPortalStore,
 } from "../../../../zustandStore/store";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function InvoiceSendCard({
   patientData,
@@ -30,9 +33,9 @@ export default function InvoiceSendCard({
   const [showUpdatePatientPage, setShowUpdatePatientPage] = useState(false);
 
   //TODO add flow step if patient email isnt present. ideally the option to edit the patients email
-  console.log(globalPatientData.email);
+
   const location = useLocation();
-  console.log(location);
+  const { createMutation } = usePostData(`/invoices/sendInvoiceStatment`);
   const { data: invoiceData } = useFetchData(
     `/invoices/view${appointmentId}`,
     "invDataInSendInvoices" // take this out. set invoicedatat global in invoice page during api request and make sure you captur chnages in the patch and post routes. then pass diretcly and save an api request
@@ -41,7 +44,19 @@ export default function InvoiceSendCard({
     (state) => state.setPatientId
   );
   const navigate = useNavigate();
-  console.log(JSON.stringify(globalPatientData));
+
+  useEffect(() => {
+    let timeoutId = "";
+    if (createMutation.isError || createMutation.isSuccess) {
+      timeoutId = setTimeout(() => {
+        createMutation.reset();
+      }, 1000);
+    }
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [createMutation.isSuccess]);
 
   return (
     <div className="fixed top-0 left-0 bg-black/40 w-full h-screen z-30 flex items-center justify-center">
@@ -62,19 +77,22 @@ export default function InvoiceSendCard({
         </div>
         <div className="relative">
           <MenuDivsWithIcon
-            disabled={!globalPatientData?.email}
-            onclick={() =>
-              emailInvoiceStatement(
-                profileId,
-                invoiceData.appointment_id,
-                patientData.patientId
-              )
-            }
+            disabled={!globalPatientData?.email || !createMutation.isIdle}
+            onclick={async () => {
+              await createMutation.mutateAsync({
+                profileId: profileId,
+                appointmentId: invoiceData.appointment_id,
+                patientId: patientData.patientId,
+              });
+            }}
             className="px-1 py-[10px]"
             text={
               <>
                 <div className="text-start">
-                  <p>Send to patient</p>
+                  <p>
+                    {" "}
+                    {createMutation.isIdle ? "Send to patient" : "Sending"}
+                  </p>
                   <p className="text-xs">
                     {globalPatientData.email
                       ? `Patient email: ${globalPatientData.email}`
