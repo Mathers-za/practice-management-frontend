@@ -1,7 +1,7 @@
 import { endOfWeek, format, startOfWeek } from "date-fns";
 import { useFetchData } from "../CustomHooks/serverStateHooks";
 import { useGlobalStore } from "../zustandStore/store";
-import { PieChart } from "@mui/x-charts/PieChart";
+import backgroundImage from "../images/palmTrees.webp";
 export default function HomePage() {
   const { globalProfileData } = useGlobalStore();
   const { data: stats } = useFetchData(
@@ -15,7 +15,16 @@ export default function HomePage() {
 
   return (
     <>
-      <div className="w-full space-y-4 py-4  h-full bg-white">
+      <div
+        style={{
+          backgroundImage: `url(${backgroundImage})`,
+          backgroundSize: "cover",
+
+          backgroundAttachment: "fixed",
+          backgroundRepeat: "no-repeat",
+        }}
+        className="w-full space-y-4   py-4  h-full bg-white"
+      >
         <h1 className="tracking-wider underline underline-offset-4  font-semibold  text-3xl text-center">
           Weekly Statistics
         </h1>

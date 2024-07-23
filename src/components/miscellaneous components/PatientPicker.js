@@ -90,7 +90,10 @@ export default function PatientPickerComponent({
         <div className="mt-1 select-none  ">
           {filteredSearch.length > 0
             ? filteredSearch
-                .sort((a, b) => a.first_name - b.first_name)
+                .sort(
+                  (a, b) =>
+                    a.first_name.charCodeAt(0) - b.first_name.charCodeAt(0)
+                )
                 .slice(0, showLength.current)
                 .map((patient) => (
                   <div
