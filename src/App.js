@@ -8,7 +8,7 @@ import PracticeDetails from "./components/PracticeDetails";
 import PatientList from "./components/PatientList";
 
 import { QueryClient, QueryClientProvider } from "react-query";
-
+import JotformTab from "./components/Patient PortalComponents/jotformTab";
 import AppTypeCreation from "./components/AppointmentTypes";
 
 import PatientPicker from "./components/Pages/PatientPickerPage";
@@ -199,6 +199,7 @@ function App() {
                       path="additionalInformation"
                       element={<PatientAdditionalInformation />}
                     />
+                    <Route path="jotform" element={<JotformTab />} />
                   </Route>
                 </Route>
                 <Route

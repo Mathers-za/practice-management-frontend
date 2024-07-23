@@ -16,6 +16,7 @@ export default function ClientInfoPortal() {
           <Link to={"patientContactDetails"}>Contact Details</Link>
           <Link to={"medicalAid"}>Medical Aid information</Link>
           <Link to={"additionalInformation"}>Additional Information</Link>
+          <Link to={"jotform"}>Send Form</Link>
           <CustomLinearProgressBar
             className="absolute left-0 -bottom-1 w-full"
             isLoading={

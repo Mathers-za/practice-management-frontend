@@ -68,6 +68,7 @@ const defaultData = {
     "Urologist",
     "Veterinarian",
   ],
+  urlForJotFormWebHook: `https://form.jotform.com/242003653382045`,
 };
 
 export default defaultData;
