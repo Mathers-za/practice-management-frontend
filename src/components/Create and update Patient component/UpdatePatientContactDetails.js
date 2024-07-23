@@ -24,7 +24,7 @@ export default function UpdatePatientContactDetails({
   },
   hideComponent = false,
 }) {
-  const { patientId } = usePatientPortalStore();
+  const { patientId, setPatientData } = usePatientPortalStore();
   console.log("global patient portal id  is " + patientId);
   const { data: patientContactDetailsData, isLoading } = useFetchData(
     `/patients/viewPatient${patientId}`,
@@ -70,6 +70,7 @@ export default function UpdatePatientContactDetails({
         changes
       );
       const { data: response } = await patchMutation.mutateAsync(validatedData);
+      setPatientData(response);
 
       setterFnForPatientDataInCreateAppointmentTree(response);
       setChanges({});
