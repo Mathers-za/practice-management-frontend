@@ -19,26 +19,13 @@ import AppointmentNotificationSettings from "../miscellaneous components/Appoint
 import { Button } from "@mui/material";
 import CustomAlertMessage from "../miscellaneous components/CustomAlertMessage";
 
-function setDateAndTimes() {
-  const currentDateAndTime = new Date();
-  const formattedCurrentDate = format(currentDateAndTime, "yyyy-MM-dd");
-
-  const currentTime = format(currentDateAndTime, "HH:mm");
-  const endTime = format(add(currentDateAndTime, { minutes: 30 }), "HH:mm");
-
-  return { formattedCurrentDate, endTime, currentTime };
-}
-
 function getEndTimeBasedOffDuration(
   startTime,
 
   duration
 ) {
   if (startTime) {
-    console.log("the getendtime fucntion ran");
-    const [hours, minutes] = startTime
-      .split(":")
-      .map((number) => parseInt(number));
+    const [hours, minutes] = startTime.split(":").map(Number);
 
     const dateTimeCombined = set(new Date(), {
       hours: hours,
@@ -68,7 +55,7 @@ export default function CreateAppointment({
     useState(false);
   const [showStartTimePicker, setShowStartTimePicker] = useState(false);
   const [showPatientPicker, setShowPatientPicker] = useState(false);
-  const { formattedCurrentDate, currentTime, endTime } = setDateAndTimes();
+
   const [showDatePicker, setShowDatePicker] = useState(false);
   const setGlobalPatientData = useGlobalStore(
     (state) => state.setGlobalPatientData
@@ -89,14 +76,13 @@ export default function CreateAppointment({
   const [appointment, setAppointment] = useState({
     appointment_date: calendarSelectedJsDateTimeString
       ? calendarSelectedJsDateTimeString
-      : formattedCurrentDate,
+      : format(new Date(), "yyyy-MM-dd"),
     send_reminder: false,
     sent_confirmation: false,
     start_time: calendarSelectedJsDateTimeString
       ? format(new Date(calendarSelectedJsDateTimeString), "HH:mm")
       : format(new Date(), "HH:mm"),
   });
-  console.log("global duration is " + globalAppointmentTypeData.duration);
 
   useEffect(() => {
     return () => {
@@ -126,10 +112,7 @@ export default function CreateAppointment({
     `/emailNotifications/sendConfirmationEmail`
   );
 
-  console.log("global patient data is " + JSON.stringify(globalPatientData));
-
-  //TODO add clean up fcntion to patient sreach list in patentent portal. the patient data is persisting
-  const { createMutation } = usePostData(
+  const { createMutation: createAppointmentMutation } = usePostData(
     "/appointments/createAppointment",
     querykeyToInvalidate && querykeyToInvalidate
   );
@@ -189,7 +172,7 @@ export default function CreateAppointment({
     }
   }
   useEffect(() => {
-    if (createMutation.isSuccess) {
+    if (createAppointmentMutation.isSuccess) {
       setAppointment({
         sent_confirmation: false,
         send_reminder: false,
@@ -201,14 +184,14 @@ export default function CreateAppointment({
       setAppointmentTypeSelectionDisplay("");
       setError();
     }
-  }, [createMutation.isSuccess]);
+  }, [createAppointmentMutation.isSuccess]);
   async function handleSubmission() {
     try {
       const validatedData = await createAppointmentValidationSchema.validate(
         appointment
       );
 
-      const result = await createMutation.mutateAsync(validatedData);
+      const result = await createAppointmentMutation.mutateAsync(validatedData);
       await checkAndSetIcds(result.id, result.appointment_type_id);
 
       if (result.sent_confirmation) {
@@ -225,7 +208,7 @@ export default function CreateAppointment({
       setAppointment({
         appointment_date: calendarSelectedJsDateTimeString
           ? format(calendarSelectedJsDateTimeString, "yyyy-MM-dd")
-          : formattedCurrentDate,
+          : format(new Date(), "yyyy-MM-dd"),
         send_reminder: false,
         sent_confirmation: false,
       });
@@ -446,7 +429,7 @@ export default function CreateAppointment({
           <div className="fixed left-0 top-0  w-full min-h-screen flex justify-center items-center bg-black bg-opacity-50 z-10 ">
             <AppointmentNotificationSettings
               hideCreateAppointmentComponent={hideCreateAppointmentComponent}
-              createMutationStateObject={createMutation}
+              createMutationStateObject={createAppointmentMutation}
               onchange={handleEmailNotificationChanges}
               onsubmit={handleSubmission}
               hideComponent={() =>
@@ -457,7 +440,7 @@ export default function CreateAppointment({
         )}
         <CustomAlertMessage
           errorFlag={error}
-          successFlag={createMutation.isSuccess}
+          successFlag={createAppointmentMutation.isSuccess}
           errorMessage={error}
           successMessage="Successfully created appointment"
         />
