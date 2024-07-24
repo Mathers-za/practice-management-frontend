@@ -114,7 +114,7 @@ export const useGlobalStore = create((set) => ({
   globalPatientData: "",
   globalAppointmentTypeData: {},
   globalAppointmentData: {},
-  globalProfileData: {},
+  globalProfileData: { id: localStorage.getItem("profileIdFk") },
   globalPracticeDetailsData: {},
   globalFinancialData: {},
   globalInvoiceData: {},
@@ -136,8 +136,15 @@ export const useGlobalStore = create((set) => ({
     set({ globalAppointmentTypeData: apptypeDataObj }),
   setGlobalAppointmentData: (appointmentDataObj) =>
     set({ globalAppointmentData: appointmentDataObj }),
-  setGlobalProfileData: (profileDataObj) =>
-    set({ globalProfileData: profileDataObj }),
+  setGlobalProfileData: (profileDataObj) => {
+    localStorage.setItem("profileIdFk", profileDataObj.id);
+    set({
+      globalProfileData: {
+        ...profileDataObj,
+        id: localStorage.getItem("profileIdFk"),
+      },
+    });
+  },
   setGlobalPracticeDetails: (practiceDataObj) =>
     set({ globalPracticeDetailsData: practiceDataObj }),
 }));
@@ -283,7 +290,7 @@ export const useAppointmentCard = create((set) => ({
 
 export const usePatientPortalStore = create((set) => ({
   patientData: "",
-  patientId: "",
+  patientId: localStorage.getItem("patientIdFk"),
   appointmentTabLoadingState: false,
   invoiceTabLoadingState: false,
   treatmentNotesTabLoadingState: false,
@@ -300,10 +307,12 @@ export const usePatientPortalStore = create((set) => ({
     set({
       treatmentNotesTabLoadingState: loadingState,
     }),
-  setPatientId: (id) =>
+  setPatientId: (id) => {
+    localStorage.setItem("patientIdFk", id);
     set({
       patientId: id,
-    }),
+    });
+  },
   setPatientData: (patientDataObj) =>
     set({
       patientData: patientDataObj,
