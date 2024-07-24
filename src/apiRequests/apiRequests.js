@@ -1,19 +1,14 @@
 import axios from "axios";
 
-export default async function axiosRequest(
-  method,
-  endpoint,
-  payload = null,
-  params = null
-) {
+export default async function axiosRequest(method, endpoint, data, params) {
   try {
     const response = await axios(endpoint, {
       baseURL: "http://localhost:4000",
-      method: method,
+      method,
       url: endpoint,
       withCredentials: true,
-      data: payload && payload,
-      params: params && params,
+      data,
+      params,
     });
 
     return response;
@@ -24,19 +19,20 @@ export default async function axiosRequest(
 }
 
 async function checkAndSetIcds(appointmentId, appointmentTypeId) {
-  const result1 = await axiosRequest("get", `/icd10Codes/view${appointmentId}`);
+  const icd10Data = await axiosRequest(
+    "get",
+    `/icd10Codes/view${appointmentId}`
+  );
 
-  const result2 = await axiosRequest(
+  const predefinedICD10Data = await axiosRequest(
     "get",
     `/predefinedIcd10/view${appointmentTypeId}`
   );
 
-  if (result1.status === 200) {
+  if (icd10Data.status === 200) {
     return;
-  }
-
-  if (result2.status === 200 && result1.status !== 200) {
-    result2.data.forEach(async (code) => {
+  } else if (predefinedICD10Data.status === 200) {
+    predefinedICD10Data.data.forEach(async (code) => {
       await axiosRequest(`post`, `/icd10Codes/create${appointmentId}`, {
         icd_10_code: code.icd10_code,
         procedural_codes: code.procedural_code,
