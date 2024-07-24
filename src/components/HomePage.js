@@ -1,8 +1,9 @@
 import { endOfWeek, format, startOfWeek } from "date-fns";
 import { useFetchData } from "../CustomHooks/serverStateHooks";
-import { useGlobalStore } from "../zustandStore/store";
-import backgroundImage from "../images/palmTrees.webp";
+import { useDashBoardSideBar, useGlobalStore } from "../zustandStore/store";
+import backgroundImage from "../images/darren.jpg";
 export default function HomePage() {
+  const { sideBarToggleState } = useDashBoardSideBar();
   const { globalProfileData } = useGlobalStore();
   const { data: stats } = useFetchData(
     `/stats/financialStatistics${globalProfileData.id}`,
@@ -12,24 +13,25 @@ export default function HomePage() {
       end_date: format(endOfWeek(new Date()), "yyyy-MM-dd"),
     }
   );
+  console.log("sidebar toggle state is " + sideBarToggleState);
 
   return (
     <>
       <div
         style={{
           backgroundImage: `url(${backgroundImage})`,
-          backgroundSize: "cover",
-
+          backgroundSize: sideBarToggleState ? "100%" : "80%",
+          backgroundPositionX: sideBarToggleState ? "right" : "right",
           backgroundAttachment: "fixed",
           backgroundRepeat: "no-repeat",
         }}
         className="w-full space-y-4   py-4  h-full bg-white"
       >
-        <h1 className="tracking-wider underline underline-offset-4  font-semibold  text-3xl text-center">
+        <h1 className="tracking-wider text-white underline underline-offset-4  font-semibold  text-3xl text-center">
           Weekly Statistics
         </h1>
 
-        <div className="w-full h-fit gap-4 p-4 flex">
+        <div className="w-full h-fit gap-4 p-4 flex ">
           <div className=" text-lg shadow-md shadow-black/50 space-y-4 w-2/4 flex items-center pl-12 text-white  py-4  bg-slate-400">
             <div className="space-y-4">
               <h2 className="text-2xl ">Appointment Stats</h2>

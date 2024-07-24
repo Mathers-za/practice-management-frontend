@@ -363,3 +363,11 @@ export const useIcd10Component = create((set) => ({
       successfullMutationFeedbackMessage: customSuccessMessage,
     }),
 }));
+
+export const useDashBoardSideBar = create((set) => ({
+  sideBarToggleState: false,
+  setSideBarToggleState: () =>
+    set((state) => ({
+      sideBarToggleState: !state.sideBarToggleState,
+    })),
+}));

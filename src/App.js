@@ -1,4 +1,4 @@
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { Route, useLocation, Routes, useNavigate } from "react-router-dom";
 import Entry from "./components/loginPage/Entry";
 import DashBoard from "./components/Pages/Dashboard";
 import axiosRequest from "./apiRequests/apiRequests";
@@ -51,19 +51,21 @@ const queryClient = new QueryClient();
 function App() {
   const [profileId, setProfileId] = useState();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [appTypeId, setAppTypeId] = useState();
   const patientIdRef = useRef(null);
+  console.log("the current location is " + location.pathname);
 
   useEffect(() => {
-    async function checkSession() {
+    async function checkSession(location) {
       try {
         const response = await axiosRequest("get", "/session/validate");
         console.log(
           "respnse from validate is " + JSON.stringify(response.data)
         );
         if (response.data) {
-          navigate("/", { replace: true });
+          navigate(location.pathname, { replace: true });
         } else {
           navigate("/entry");
         }
@@ -72,7 +74,7 @@ function App() {
       }
     }
 
-    checkSession();
+    checkSession(location);
   }, []);
 
   function setProfileIdProp(id) {

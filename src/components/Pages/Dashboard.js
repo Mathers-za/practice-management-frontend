@@ -4,7 +4,7 @@ import { Outlet } from "react-router-dom";
 import { useFetchData, usePostData } from "../../CustomHooks/serverStateHooks";
 import MainMenuSideBar from "../mainMenuSideBar/MainMenuSideBar";
 import MainMenuTopBar from "../MainMenuTopBar/MainMenuTopBar";
-import { useGlobalStore } from "../../zustandStore/store";
+import { useGlobalStore, useDashBoardSideBar } from "../../zustandStore/store";
 import { motion, AnimatePresence } from "framer-motion";
 import axiosRequest from "../../apiRequests/apiRequests";
 import DashboardMenuButton from "../miscellaneous components/DashboardMenuButton";
@@ -12,7 +12,7 @@ import WelcomingMessageAndSpinner from "../miscellaneous components/WelcomingMes
 
 export default function DashBoard({ profileIdStateSetter }) {
   const [showSideBar, setShowSideBar] = useState(true);
-
+  const { setSideBarToggleState } = useDashBoardSideBar();
   const { setGlobalProfileData, setGlobalPracticeDetails, globalProfileData } =
     useGlobalStore();
   const { data, httpStatus } = useFetchData(
@@ -42,6 +42,7 @@ export default function DashBoard({ profileIdStateSetter }) {
 
   function toggleSideBar() {
     setShowSideBar(!showSideBar);
+    setSideBarToggleState();
   }
 
   const { createMutation: profileMutation } = usePostData(
