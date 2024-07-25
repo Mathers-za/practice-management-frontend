@@ -1,9 +1,8 @@
 import { endOfWeek, format, startOfWeek } from "date-fns";
 import { useFetchData } from "../CustomHooks/serverStateHooks";
 import { useDashBoardSideBar, useGlobalStore } from "../zustandStore/store";
-import backgroundImage from "../images/darren.jpg";
+import backgroundImage from "../images/palmTrees.webp";
 export default function HomePage() {
-  const { sideBarToggleState } = useDashBoardSideBar();
   const { globalProfileData } = useGlobalStore();
   const { data: stats } = useFetchData(
     `/stats/financialStatistics${globalProfileData.id}`,
@@ -13,15 +12,14 @@ export default function HomePage() {
       end_date: format(endOfWeek(new Date()), "yyyy-MM-dd"),
     }
   );
-  console.log("sidebar toggle state is " + sideBarToggleState);
 
   return (
     <>
       <div
         style={{
           backgroundImage: `url(${backgroundImage})`,
-          backgroundSize: sideBarToggleState ? "100%" : "80%",
-          backgroundPositionX: sideBarToggleState ? "right" : "right",
+          backgroundSize: "cover",
+          backgroundPositionX: "left",
           backgroundAttachment: "fixed",
           backgroundRepeat: "no-repeat",
         }}

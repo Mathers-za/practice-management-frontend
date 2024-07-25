@@ -25,6 +25,8 @@ import UpdatePatientContactDetails from "../../../Create and update Patient comp
 import CustomAlertMessage from "../../../miscellaneous components/CustomAlertMessage";
 import { useOnSubmitButtonTextstateManager } from "../../../../CustomHooks/otherHooks";
 import ConfirmChoiceModal from "../../../miscellaneous components/ConfirmComponent";
+import MedicalAidSender from "./MedicalAidSender";
+
 function setInvoiceStatus(currentStatus, amountDue) {
   if (currentStatus && amountDue) {
     amountDue = parseFloat(amountDue); //TODO add a simialr fucntion in payments page to taht if they pay fiull it puts it in the paid coloumn. will also nned to sync
@@ -83,6 +85,7 @@ export default function InvoiceListDropdown({
   console.log(globalPatientData);
   const { deleteMutation } = useDeleteData(`/invoices/delete`);
   const [error, setError] = useState("");
+  const [showMedicalAidSender, setShowMedicalAidSender] = useState(false);
   const deleteButtonMessage = useOnSubmitButtonTextstateManager(
     "Delete",
     "...Deleting",
@@ -206,6 +209,7 @@ export default function InvoiceListDropdown({
         </div>
 
         <MenuDivsWithIcon
+          onclick={() => setShowMedicalAidSender(!showMedicalAidSender)}
           text="Send to Medical Aid"
           iconStart={
             <FontAwesomeIcon
@@ -289,6 +293,11 @@ export default function InvoiceListDropdown({
         onCancel={() => setShowDeleteConfirmationModal(false)}
         showComponent={showDeleteConfirmationModal}
         hideComponent={() => setShowDeleteConfirmationModal(false)}
+      />
+
+      <MedicalAidSender
+        invoiceData={invoiceData}
+        isVisible={showMedicalAidSender}
       />
     </>
   );
