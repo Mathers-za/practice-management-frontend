@@ -296,6 +296,7 @@ export default function InvoiceListDropdown({
       />
 
       <MedicalAidSender
+        hideComponent={() => setShowMedicalAidSender(!showMedicalAidSender)}
         invoiceData={invoiceData}
         isVisible={showMedicalAidSender}
       />

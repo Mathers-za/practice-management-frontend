@@ -32,11 +32,12 @@ export async function handleInvoiceStatementGeneration(
 export async function emailInvoiceStatement(
   profileId,
   appointmentId,
-  patientId
+  patientId,
+  medicalAidEmailAddress
 ) {
   await axios.post(
     `http://localhost:4000/invoices//sendInvoiceStatment`,
-    { profileId, appointmentId, patientId },
+    { profileId, appointmentId, patientId, medicalAidEmailAddress },
     { withCredentials: true }
   );
 }
